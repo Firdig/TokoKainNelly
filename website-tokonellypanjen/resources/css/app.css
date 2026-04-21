@@ -1,0 +1,123 @@
+@import 'tailwindcss';
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap');
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    /* Custom Fonts */
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-outfit: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+    
+    /* Premium Blue & White Palette */
+    --color-brand-50:  #f0f6ff;   /* softest blue tint for page background */
+    --color-brand-100: #dbeafe;   /* light blue for card borders & dividers */
+    --color-brand-200: #bfdbfe;   /* medium light for accents */
+    --color-brand-300: #93c5fd;   /* soft blue for icons / decorative */
+    --color-brand-400: #60a5fa;   /* interactive blue (hover) */
+    --color-brand-500: #3b82f6;   /* primary brand blue */
+    --color-brand-600: #2563eb;   /* darker primary for CTAs */
+    --color-brand-700: #1d4ed8;   /* deep action blue */
+    --color-brand-800: #1e40af;   /* very dark blue for text headings */
+    --color-brand-900: #1e3a8a;   /* deepest navy for headings */
+    --color-brand-950: #172554;   /* near-black navy for footers */
+    
+    /* Gold Accent */
+    --color-accent-400: #f59e0b;
+    --color-accent-500: #d97706;
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+    body {
+        @apply font-sans antialiased text-slate-700 bg-brand-50;
+    }
+    h1, h2, h3, h4 {
+        @apply font-outfit;
+    }
+}
+
+@layer utilities {
+    .glassmorphism {
+        @apply bg-white/70 backdrop-blur-xl border border-white/30 shadow-2xl;
+    }
+    
+    .card-hover {
+        @apply transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl;
+    }
+    
+    .btn-primary {
+        @apply bg-brand-600 hover:bg-brand-700 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-brand-600/25 hover:-translate-y-0.5 transition-all duration-200;
+    }
+    
+    .btn-outline {
+        @apply border-2 border-brand-200 text-brand-700 hover:border-brand-400 hover:bg-brand-50 font-bold px-6 py-3 rounded-xl transition-all duration-200;
+    }
+    
+    .section-title {
+        @apply text-3xl md:text-4xl font-extrabold text-brand-900 font-outfit;
+    }
+    
+    .input-field {
+        @apply w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-400 focus:border-brand-400 outline-none transition-all bg-white text-slate-700;
+    }
+    
+    .text-gradient-blue {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .bg-mesh {
+        background-image: 
+            radial-gradient(at 40% 20%, hsla(214,100%,85%,0.4) 0px, transparent 50%),
+            radial-gradient(at 80% 0%, hsla(220,100%,80%,0.3) 0px, transparent 50%),
+            radial-gradient(at 0% 50%, hsla(210,100%,90%,0.3) 0px, transparent 50%);
+    }
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #bfdbfe; border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #93c5fd; }
+
+/* Animations */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-24px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes pulse-slow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+@keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+
+.animate-fade-in    { animation: fadeInUp   0.6s ease-out forwards; }
+.animate-fade-left  { animation: fadeInLeft 0.5s ease-out forwards; }
+.animate-float      { animation: float      3s ease-in-out infinite; }
+.animate-pulse-slow { animation: pulse-slow 2s ease-in-out infinite; }
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+
+

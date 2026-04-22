@@ -12,10 +12,8 @@
     <header class="bg-white/80 backdrop-blur-md shadow-sm fixed top-0 w-full z-50 border-b border-brand-100 transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
-                <a href="{{ route('home') }}" class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-brand-900 rounded-lg flex items-center justify-center text-white font-bold text-2xl shadow-brand-500/50 shadow-sm">
-                        <span class="font-outfit">N</span>
-                    </div>
+                <a href="{{ route('home') }}" class="flex items-center gap-3 group">
+                    <img src="{{ asset('images/logo.jpg') }}" alt="Toko Kain Nelly" class="h-12 w-12 rounded-xl object-cover shadow-lg shadow-brand-600/20 ring-1 ring-brand-200/50">
                     <span class="font-outfit font-bold text-2xl text-brand-900 tracking-tight">Toko Nelly</span>
                 </a>
                 <nav class="flex items-center gap-4">

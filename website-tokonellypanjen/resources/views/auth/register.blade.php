@@ -12,9 +12,7 @@
         <!-- Logo -->
         <div class="text-center mb-8">
             <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
-                <div class="w-12 h-12 bg-brand-900 rounded-xl flex items-center justify-center text-white font-bold text-3xl shadow-lg relative overflow-hidden">
-                    <span class="relative z-10 font-outfit">N</span>
-                </div>
+                <img src="{{ asset('images/logo.jpg') }}" alt="Toko Kain Nelly" class="w-14 h-14 rounded-xl object-cover shadow-lg">
                 <span class="font-outfit font-bold text-3xl text-brand-900 tracking-tight">Toko Nelly</span>
             </a>
         </div>

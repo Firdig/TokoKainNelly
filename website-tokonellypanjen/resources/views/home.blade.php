@@ -13,15 +13,13 @@
     <header class="bg-white/90 backdrop-blur-md shadow-sm fixed top-0 w-full z-50 border-b border-brand-100 transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-brand-700 to-brand-500 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-600/30">
-                        <span class="font-outfit">N</span>
-                    </div>
+                <a href="{{ route('home') }}" class="flex items-center gap-3 group">
+                    <img src="{{ asset('images/logo.jpg') }}" alt="Toko Kain Nelly" class="h-12 w-12 rounded-xl object-cover shadow-lg shadow-brand-600/20 ring-1 ring-brand-200/50">
                     <div>
                         <span class="font-outfit font-bold text-xl text-brand-900 tracking-tight block leading-none">Toko Nelly</span>
                         <span class="text-[10px] text-brand-400 font-medium tracking-widest uppercase">Panjen, Malang</span>
                     </div>
-                </div>
+                </a>
                 <!-- Navigation Component -->
                 <x-frontend-navbar />
             </div>
@@ -115,7 +113,7 @@
                 @foreach($featuredProducts as $product)
                 <a href="{{ route('product.show', $product->id) }}" class="group bg-white rounded-2xl border border-brand-100 shadow-sm hover:shadow-2xl hover:shadow-brand-600/10 hover:border-brand-300 transition-all duration-300 overflow-hidden flex flex-col hover:-translate-y-2">
                     <!-- Image Placeholder w/ fallback -->
-                    <div class="h-52 bg-gradient-to-br from-brand-50 to-blue-50 relative overflow-hidden">
+                    <div class="h-52 bg-gradient-to-br from-brand-50 to-amber-50 relative overflow-hidden">
                         @php
                             $img = null;
                             if(isset($product->images) && $product->images->count() > 0) $img = $product->images->first()->image_path;
@@ -192,7 +190,7 @@
             <div class="flex flex-col md:flex-row justify-between gap-10 pb-12 border-b border-brand-800">
                 <div class="max-w-xs">
                     <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 bg-gradient-to-br from-brand-600 to-brand-400 rounded-xl flex items-center justify-center text-white font-bold text-xl">N</div>
+                        <img src="{{ asset('images/logo.jpg') }}" alt="Toko Kain Nelly" class="h-10 w-10 rounded-xl object-cover">
                         <span class="font-outfit font-bold text-2xl text-white">Toko Nelly</span>
                     </div>
                     <p class="text-brand-400 text-sm leading-relaxed">Menyediakan berbagai macam kain berkualitas untuk fashion dan dekorasi. Jl. Kepanjen, Malang, Jawa Timur.</p>

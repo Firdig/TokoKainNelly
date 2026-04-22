@@ -13,9 +13,7 @@
     <aside class="w-64 bg-brand-900 text-white min-h-screen fixed left-0 top-0 flex flex-col transition-all z-20 shadow-2xl shadow-brand-900/50">
         <div class="h-20 flex items-center justify-center border-b border-brand-800">
             <a href="{{ url('/admin') }}" class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-2xl shadow-lg">
-                    <span class="font-outfit">N</span>
-                </div>
+                <img src="{{ asset('images/logo.jpg') }}" alt="Toko Kain Nelly" class="h-10 w-10 rounded-lg object-cover shadow-lg">
                 <span class="font-outfit font-bold text-xl tracking-tight">Admin Panel</span>
             </a>
         </div>

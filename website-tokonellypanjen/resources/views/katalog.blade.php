@@ -14,9 +14,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
                 <a href="{{ route('home') }}" class="flex items-center gap-3 group">
-                    <div class="w-10 h-10 bg-gradient-to-br from-brand-700 to-brand-500 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md shadow-brand-600/30">
-                        <span class="font-outfit">N</span>
-                    </div>
+                    <img src="{{ asset('images/logo.jpg') }}" alt="Toko Kain Nelly" class="h-12 w-12 rounded-xl object-cover shadow-lg shadow-brand-600/20 ring-1 ring-brand-200/50">
                     <div>
                         <span class="font-outfit font-bold text-xl text-brand-900 tracking-tight block leading-none">Toko Nelly</span>
                         <span class="text-[10px] text-brand-400 font-medium tracking-widest uppercase">Panjen, Malang</span>
@@ -161,7 +159,7 @@
                                 @endif
 
                                 <!-- Image Area -->
-                                <div class="h-56 bg-gradient-to-br from-blue-50 to-brand-50 relative overflow-hidden">
+                                <div class="h-56 bg-gradient-to-br from-amber-50 to-brand-50 relative overflow-hidden">
                                     @php
                                         $primaryImage = null;
                                         if($product->images->count() > 0) { $primaryImage = $product->images->first()->image_path; }
@@ -248,7 +246,7 @@
     <footer class="bg-brand-950 text-brand-100 py-10 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-gradient-to-br from-brand-600 to-brand-400 rounded-lg flex items-center justify-center text-white font-bold">N</div>
+                <img src="{{ asset('images/logo.jpg') }}" alt="Toko Kain Nelly" class="h-8 w-8 rounded-lg object-cover">
                 <span class="font-outfit font-bold text-lg text-white">Toko Nelly Panjen</span>
             </div>
             <p class="text-brand-500 text-sm">&copy; {{ date('Y') }} Toko Kain Nelly Panjen. All rights reserved.</p>

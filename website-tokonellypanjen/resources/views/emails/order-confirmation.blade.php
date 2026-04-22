@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #1e293b; margin: 0; padding: 0; background: #f8fafc; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #1e293b; margin: 0; padding: 0; background: #faf8f2; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
         .card { background: white; border-radius: 16px; padding: 32px; margin-top: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
         .header { text-align: center; padding: 24px 0; }
-        .logo { font-size: 24px; font-weight: bold; color: #1e40af; }
+        .logo { font-size: 24px; font-weight: bold; color: #3a3225; }
         .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
         .badge-bops { background: #ede9fe; color: #7c3aed; }
-        .badge-delivery { background: #dbeafe; color: #2563eb; }
+        .badge-delivery { background: #f0ead8; color: #9a7925; }
         .item-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
-        .total { font-size: 24px; font-weight: bold; color: #1e40af; text-align: right; margin-top: 16px; }
-        .pickup-box { background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; border-radius: 12px; padding: 24px; margin: 20px 0; text-align: center; }
+        .total { font-size: 24px; font-weight: bold; color: #9a7925; text-align: right; margin-top: 16px; }
+        .pickup-box { background: linear-gradient(135deg, #7d621e, #c9a54a); color: white; border-radius: 12px; padding: 24px; margin: 20px 0; text-align: center; }
         .pickup-code { font-size: 32px; letter-spacing: 8px; font-weight: bold; margin: 12px 0; }
         .footer { text-align: center; padding: 24px 0; color: #94a3b8; font-size: 12px; }
     </style>

@@ -14,7 +14,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-brand-900 rounded flex items-center justify-center text-white font-bold text-lg">N</div>
+                    <img src="{{ asset('images/logo.jpg') }}" alt="Toko Kain Nelly" class="h-8 w-8 rounded object-cover shadow-sm">
                     <span class="font-outfit font-bold text-lg text-brand-900">Admin Panel <span class="text-brand-400 font-normal ml-2">| Laporan Harian</span></span>
                 </div>
                 <div class="flex gap-4 items-center">

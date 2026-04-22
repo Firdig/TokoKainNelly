@@ -13,7 +13,7 @@
     <nav class="bg-white border-b border-brand-100 flex-shrink-0 z-10 shadow-sm relative">
         <div class="px-4 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-gradient-to-br from-brand-600 to-brand-500 rounded flex items-center justify-center text-white font-bold text-lg shadow-sm">N</div>
+                <img src="{{ asset('images/logo.jpg') }}" alt="Toko Kain Nelly" class="h-8 w-8 rounded object-cover shadow-sm">
                 <h1 class="font-outfit font-bold text-lg text-brand-900">Toko Kain Nelly <span class="text-brand-400 font-normal ml-2">| Point of Sale</span></h1>
             </div>
             <div class="flex items-center gap-4">

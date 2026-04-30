@@ -134,8 +134,8 @@
                         <div class="space-y-4">
                             @foreach($order->items as $item)
                             <div class="flex items-center gap-4 pb-4 border-b border-brand-50 last:border-0 last:pb-0">
-                                @if($item->productVariant && $item->productVariant->image_path)
-                                    <img src="{{ Storage::url($item->productVariant->image_path) }}" class="w-14 h-14 rounded-lg object-cover shadow-sm border border-slate-100" alt="">
+                                @if($item->productVariant && $item->productVariant->image_mime)
+                                    <img src="{{ route('image.variant', $item->productVariant->id) }}" class="w-14 h-14 rounded-lg object-cover shadow-sm border border-slate-100" alt="">
                                 @else
                                     <div class="w-14 h-14 rounded-lg shadow-sm border border-slate-200" style="background-color: {{ $item->productVariant->hex_code ?? '#ccc' }}"></div>
                                 @endif

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Product;
 use App\Services\ReportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 /**
- * Controller for POS page display and daily reports.
+ * Controller for POS page display, daily reports, and POS receipt.
  * Report logic is delegated to ReportService.
  */
 class WebController extends Controller
@@ -28,6 +29,22 @@ class WebController extends Controller
             ->get();
 
         return view('pos', compact('products'));
+    }
+
+    /**
+     * Display the POS receipt/struk for a given order.
+     * Only accessible for POS transaction orders.
+     */
+    public function receipt(int $id)
+    {
+        $order = Order::with([
+                'items.productVariant.product',
+                'user',
+            ])
+            ->where('transaction_type', 'pos')
+            ->findOrFail($id);
+
+        return view('pos-receipt', compact('order'));
     }
 
     /**

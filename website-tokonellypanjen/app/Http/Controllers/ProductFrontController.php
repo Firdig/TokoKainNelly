@@ -12,11 +12,15 @@ class ProductFrontController extends Controller
      */
     public function show($id)
     {
-        // Gunakan findOrFail agar otomatis memunculkan 404 jika produk tidak ada
-        $product = Product::findOrFail($id);
+        // Eager-load variants & images so they are available in the view
+        $product = Product::with(['variants', 'images'])->findOrFail($id);
         
         // Ambil produk terkait (opsional, bisa produk lain yang mirip)
-        $relatedProducts = Product::where('id', '!=', $id)->inRandomOrder()->take(4)->get();
+        $relatedProducts = Product::with(['variants', 'images'])
+            ->where('id', '!=', $id)
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
 
         return view('product.show', compact('product', 'relatedProducts'));
     }

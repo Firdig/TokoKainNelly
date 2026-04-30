@@ -13,11 +13,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
                 <a href="{{ route('home') }}" class="flex items-center gap-3 group">
-                    <img src="{{ asset('images/logo.jpg') }}" alt="Toko Kain Nelly" class="h-12 w-12 rounded-xl object-cover shadow-lg shadow-brand-600/20 ring-1 ring-brand-200/50">
-                    <div>
-                        <span class="font-outfit font-bold text-xl text-brand-900 tracking-tight block leading-none">Toko Nelly</span>
-                        <span class="text-[10px] text-brand-400 font-medium tracking-widest uppercase">Panjen, Malang</span>
-                    </div>
+                    <img src="{{ asset('images/logo.jpg') }}" alt="Toko Kain Nelly" class="h-14 w-auto rounded-xl object-contain">
+                    <span class="font-outfit font-bold text-xl text-brand-900 tracking-tight">Toko Kain Nelly</span>
                 </a>
                 <x-frontend-navbar />
             </div>
@@ -81,8 +78,8 @@
                             
                             <!-- Image -->
                             <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-xl bg-brand-50 flex items-center justify-center shrink-0 border border-brand-100 overflow-hidden">
-                                @if($item->productVariant && $item->productVariant->image_path)
-                                    <img src="{{ Storage::url($item->productVariant->image_path) }}" class="w-full h-full object-cover">
+                                @if($item->productVariant && $item->productVariant->image_mime)
+                                    <img src="{{ route('image.variant', $item->productVariant->id) }}" class="w-full h-full object-cover">
                                 @else
                                     <svg class="w-10 h-10 text-brand-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
                                 @endif
@@ -113,15 +110,23 @@
 
                                 <!-- Qty + Subtotal -->
                                 <div class="flex flex-col items-center sm:items-end gap-2">
-                                    <form action="{{ route('cart.update', $item->id) }}" method="POST">
+                                    <form action="{{ route('cart.update', $item->id) }}" method="POST" class="cart-update-form">
                                         @csrf
                                         <div class="flex items-center bg-brand-50 border border-brand-100 rounded-lg h-9 overflow-hidden">
-                                            <button type="button" onclick="const i=this.parentNode.querySelector('input[type=number]'); if(parseFloat(i.value) - 0.5 >= parseFloat(i.min)) { i.value = parseFloat(i.value) - 0.5; i.form.submit(); }" class="w-9 h-full flex items-center justify-center text-brand-600 hover:bg-brand-100 font-bold transition-colors border-r border-brand-100">−</button>
-                                            <input type="number" step="any" name="quantity" value="{{ $item->quantity }}" min="0.5" max="{{ $item->productVariant->stock }}" class="w-12 text-center text-sm font-bold text-brand-900 border-none focus:ring-0 p-0 outline-none bg-transparent" onchange="this.form.submit()">
-                                            <button type="button" onclick="const i=this.parentNode.querySelector('input[type=number]'); if(parseFloat(i.value) + 0.5 <= parseFloat(i.max)) { i.value = parseFloat(i.value) + 0.5; i.form.submit(); }" class="w-9 h-full flex items-center justify-center text-brand-600 hover:bg-brand-100 font-bold transition-colors border-l border-brand-100">+</button>
+                                            <button type="button"
+                                                class="qty-btn minus w-9 h-full flex items-center justify-center text-brand-600 hover:bg-brand-100 font-bold transition-colors border-r border-brand-100"
+                                                data-step="-0.5">−</button>
+                                            <input type="number" step="any" name="quantity"
+                                                value="{{ $item->quantity }}"
+                                                min="0.5" max="{{ $item->productVariant->stock }}"
+                                                class="qty-input w-12 text-center text-sm font-bold text-brand-900 border-none focus:ring-0 p-0 outline-none bg-transparent"
+                                                data-price="{{ $item->productVariant->product->price }}">
+                                            <button type="button"
+                                                class="qty-btn plus w-9 h-full flex items-center justify-center text-brand-600 hover:bg-brand-100 font-bold transition-colors border-l border-brand-100"
+                                                data-step="0.5">+</button>
                                         </div>
                                     </form>
-                                    <div class="font-outfit font-bold text-brand-900 text-sm">Rp{{ number_format($itemTotal, 0, ',', '.') }}</div>
+                                    <div class="item-subtotal font-outfit font-bold text-brand-900 text-sm">Rp{{ number_format($itemTotal, 0, ',', '.') }}</div>
                                 </div>
                             </div>
                         </div>
@@ -141,17 +146,17 @@
                             <div class="space-y-3 mb-5 text-sm">
                                 <div class="flex justify-between text-slate-500">
                                     <span>Subtotal Produk</span>
-                                    <span class="font-bold text-brand-900">Rp{{ number_format($cartTotal, 0, ',', '.') }}</span>
+                                    <span id="summary-subtotal" class="font-bold text-brand-900">Rp{{ number_format($cartTotal, 0, ',', '.') }}</span>
                                 </div>
                                 <div class="flex justify-between text-slate-500">
                                     <span>Total Meter</span>
-                                    <span class="font-bold text-brand-900">{{ $cart->items->sum('quantity') }} m</span>
+                                    <span id="summary-meters" class="font-bold text-brand-900">{{ $cart->items->sum('quantity') }} m</span>
                                 </div>
                             </div>
                             
                             <div class="border-t border-brand-100 pt-5 mb-6 flex justify-between items-center">
                                 <span class="font-outfit font-bold text-brand-900">Total Bayar</span>
-                                <span class="font-outfit font-extrabold text-2xl text-brand-600">Rp{{ number_format($cartTotal, 0, ',', '.') }}</span>
+                                <span id="summary-total" class="font-outfit font-extrabold text-2xl text-brand-600">Rp{{ number_format($cartTotal, 0, ',', '.') }}</span>
                             </div>
 
                             <a href="{{ route('checkout.index') }}" class="btn-primary flex items-center justify-center gap-2 w-full text-center text-lg">
@@ -179,6 +184,86 @@
             <p class="text-brand-500 text-sm">&copy; {{ date('Y') }} Toko Kain Nelly Panjen. All rights reserved.</p>
         </div>
     </footer>
+
+<script>
+(function () {
+    // Format a number as Indonesian Rupiah string (no decimal)
+    function formatRp(amount) {
+        return 'Rp' + Math.round(amount).toLocaleString('id-ID');
+    }
+
+    // Recalculate all subtotals and the grand-total summary
+    function recalcTotals() {
+        let grandTotal = 0;
+        let grandMeters = 0;
+
+        document.querySelectorAll('.cart-update-form').forEach(function (form) {
+            const input = form.querySelector('.qty-input');
+            const subtotalEl = form.closest('.flex.flex-col.items-center').querySelector('.item-subtotal');
+            const qty = parseFloat(input.value) || 0;
+            const price = parseFloat(input.dataset.price) || 0;
+            const itemTotal = qty * price;
+
+            if (subtotalEl) subtotalEl.textContent = formatRp(itemTotal);
+            grandTotal += itemTotal;
+            grandMeters += qty;
+        });
+
+        const summarySubtotal = document.getElementById('summary-subtotal');
+        const summaryMeters   = document.getElementById('summary-meters');
+        const summaryTotal    = document.getElementById('summary-total');
+
+        if (summarySubtotal) summarySubtotal.textContent = formatRp(grandTotal);
+        if (summaryMeters)   summaryMeters.textContent   = grandMeters.toLocaleString('id-ID') + ' m';
+        if (summaryTotal)    summaryTotal.textContent     = formatRp(grandTotal);
+    }
+
+    // Debounce helper — waits `delay` ms after the last call before firing fn
+    function debounce(fn, delay) {
+        let timer;
+        return function () {
+            const ctx  = this;
+            const args = arguments;
+            clearTimeout(timer);
+            timer = setTimeout(function () { fn.apply(ctx, args); }, delay);
+        };
+    }
+
+    // Wire up every cart form
+    document.querySelectorAll('.cart-update-form').forEach(function (form) {
+        const input    = form.querySelector('.qty-input');
+        const minusBtn = form.querySelector('.qty-btn.minus');
+        const plusBtn  = form.querySelector('.qty-btn.plus');
+
+        // Debounced submit — fires 600 ms after the last quantity change
+        const submitDebounced = debounce(function () {
+            form.submit();
+        }, 600);
+
+        function changeQty(delta) {
+            const current = parseFloat(input.value) || 0;
+            const min     = parseFloat(input.min)   || 0.5;
+            const max     = parseFloat(input.max)   || Infinity;
+            const next    = Math.round((current + delta) * 10) / 10; // avoid float drift
+
+            if (next < min || next > max) return;
+
+            input.value = next;
+            recalcTotals();      // instant visual feedback
+            submitDebounced();   // delayed server sync
+        }
+
+        minusBtn.addEventListener('click', function () { changeQty(-0.5); });
+        plusBtn.addEventListener('click',  function () { changeQty(+0.5); });
+
+        // Also handle manual typing in the input
+        input.addEventListener('input', function () {
+            recalcTotals();
+            submitDebounced();
+        });
+    });
+})();
+</script>
 
 </body>
 </html>

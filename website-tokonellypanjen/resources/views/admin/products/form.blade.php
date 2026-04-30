@@ -131,7 +131,7 @@
                         <div class="flex gap-4 mt-4 overflow-x-auto pb-2 custom-scrollbar">
                             @foreach($product->images as $img)
                                 <div class="relative w-24 h-24 shrink-0 rounded-lg overflow-hidden border border-slate-200">
-                                    <img src="{{ Storage::url($img->image_path) }}" class="w-full h-full object-cover">
+                                    <img src="{{ route('image.gallery', $img->id) }}" class="w-full h-full object-cover">
                                 </div>
                             @endforeach
                         </div>
@@ -155,8 +155,8 @@
                                     <input type="hidden" name="variants[{{ $index }}][id]" value="{{ $variant->id }}">
                                     <!-- Photo Preview -->
                                     <div class="w-16 h-16 shrink-0 bg-white rounded-lg border border-slate-200 overflow-hidden flex items-center justify-center relative group">
-                                        @if($variant->image_path)
-                                            <img src="{{ Storage::url($variant->image_path) }}" class="w-full h-full object-cover">
+                                        @if($variant->image_mime)
+                                            <img src="{{ route('image.variant', $variant->id) }}" class="w-full h-full object-cover">
                                         @else
                                             <span class="text-xs text-slate-400 font-bold">Foto</span>
                                         @endif

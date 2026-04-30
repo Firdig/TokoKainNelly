@@ -11,8 +11,10 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerOrderController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\StockReportController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductImageServeController;
 
 // ═══════════════════════════════════════════════════════════════
 // PUBLIC ROUTES (No Auth Required)
@@ -21,6 +23,12 @@ use App\Http\Controllers\OrderController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/katalog', [CatalogController::class, 'index'])->name('katalog');
 Route::get('/produk/{id}', [ProductFrontController::class, 'show'])->name('product.show');
+Route::view('/tentang-kami', 'about')->name('about');
+Route::view('/hubungi-kami', 'contact')->name('contact');
+
+// Product Images from Database
+Route::get('/product-image/variant/{variant}', [ProductImageServeController::class, 'variant'])->name('image.variant');
+Route::get('/product-image/gallery/{image}', [ProductImageServeController::class, 'gallery'])->name('image.gallery');
 
 // Session-based Cart (accessible without login)
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -61,6 +69,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'role:admin,staff'])->group(function () {
     Route::get('/kasir', [WebController::class, 'pos'])->name('pos');
+    Route::get('/kasir/receipt/{id}', [WebController::class, 'receipt'])->name('pos.receipt');
     Route::get('/laporan', [WebController::class, 'laporan'])->name('laporan');
     Route::post('/checkout', [TransactionController::class, 'store'])->name('pos.checkout');
 });
@@ -87,4 +96,7 @@ Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
 
     // User Management
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'store', 'destroy']);
+
+    // Laporan Stok (Stock Movement Log)
+    Route::get('stock-report', [StockReportController::class, 'index'])->name('admin.stock-report.index');
 });

@@ -7,7 +7,6 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * Admin controller for managing fabric products and their variants.
@@ -57,23 +56,28 @@ class ProductController extends Controller
         // Store gallery images
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $image) {
-                $path = $image->store('products/gallery', 'public');
-                $product->images()->create(['image_path' => $path]);
+                $product->images()->create([
+                    'image_data' => base64_encode(file_get_contents($image->getRealPath())),
+                    'image_mime' => $image->getMimeType(),
+                ]);
             }
         }
 
         // Create variants with optional images
         foreach ($request->variants as $variantData) {
-            $imagePath = null;
+            $imageData = null;
+            $imageMime = null;
             if (isset($variantData['image'])) {
-                $imagePath = $variantData['image']->store('products', 'public');
+                $imageData = base64_encode(file_get_contents($variantData['image']->getRealPath()));
+                $imageMime = $variantData['image']->getMimeType();
             }
 
             $product->variants()->create([
                 'color_name' => $variantData['color_name'],
                 'hex_code'   => $variantData['hex_code'] ?? '#cccccc',
                 'stock'      => $variantData['stock'],
-                'image_path' => $imagePath,
+                'image_data' => $imageData,
+                'image_mime' => $imageMime,
             ]);
         }
 
@@ -116,8 +120,10 @@ class ProductController extends Controller
         // Add new gallery images
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $image) {
-                $path = $image->store('products/gallery', 'public');
-                $product->images()->create(['image_path' => $path]);
+                $product->images()->create([
+                    'image_data' => base64_encode(file_get_contents($image->getRealPath())),
+                    'image_mime' => $image->getMimeType(),
+                ]);
             }
         }
 
@@ -132,12 +138,11 @@ class ProductController extends Controller
                 $existingVariantIds[] = $variant->id;
             }
 
-            $imagePath = $variant ? $variant->image_path : null;
+            $imageData = $variant ? $variant->image_data : null;
+            $imageMime = $variant ? $variant->image_mime : null;
             if (isset($variantData['image'])) {
-                if ($imagePath) {
-                    Storage::disk('public')->delete($imagePath);
-                }
-                $imagePath = $variantData['image']->store('products', 'public');
+                $imageData = base64_encode(file_get_contents($variantData['image']->getRealPath()));
+                $imageMime = $variantData['image']->getMimeType();
             }
 
             if ($variant) {
@@ -145,14 +150,16 @@ class ProductController extends Controller
                     'color_name' => $variantData['color_name'],
                     'hex_code'   => $variantData['hex_code'],
                     'stock'      => $variantData['stock'],
-                    'image_path' => $imagePath,
+                    'image_data' => $imageData,
+                    'image_mime' => $imageMime,
                 ]);
             } else {
                 $newVariant = $product->variants()->create([
                     'color_name' => $variantData['color_name'],
                     'hex_code'   => $variantData['hex_code'],
                     'stock'      => $variantData['stock'],
-                    'image_path' => $imagePath,
+                    'image_data' => $imageData,
+                    'image_mime' => $imageMime,
                 ]);
                 $existingVariantIds[] = $newVariant->id;
             }
@@ -162,9 +169,6 @@ class ProductController extends Controller
         $variantsToDelete = $product->variants()
             ->whereNotIn('id', $existingVariantIds)->get();
         foreach ($variantsToDelete as $varDelete) {
-            if ($varDelete->image_path) {
-                Storage::disk('public')->delete($varDelete->image_path);
-            }
             $varDelete->delete();
         }
 
@@ -180,16 +184,6 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        foreach ($product->variants as $variant) {
-            if ($variant->image_path) {
-                Storage::disk('public')->delete($variant->image_path);
-            }
-        }
-        foreach ($product->images as $img) {
-            if ($img->image_path) {
-                Storage::disk('public')->delete($img->image_path);
-            }
-        }
         $product->delete();
 
         // Invalidate catalog cache

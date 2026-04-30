@@ -24,8 +24,20 @@ class ProductVariant extends Model
         'color_name',
         'hex_code',
         'stock',
-        'image_path',
+        'image_data',
+        'image_mime',
     ];
+
+    /**
+     * Get the URL to serve the variant image.
+     */
+    public function getImageUrlAttribute()
+    {
+        if ($this->image_data) {
+            return route('image.variant', $this->id);
+        }
+        return null;
+    }
 
     /**
      * Get the parent product.
@@ -41,5 +53,13 @@ class ProductVariant extends Model
     public function stockAudits()
     {
         return $this->hasMany(StockAudit::class);
+    }
+
+    /**
+     * Get all stock movement logs for this variant.
+     */
+    public function stockMovements()
+    {
+        return $this->hasMany(StockMovement::class);
     }
 }

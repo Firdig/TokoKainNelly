@@ -1,6 +1,8 @@
 <nav class="hidden md:flex space-x-6 items-center font-outfit font-medium text-sm">
     <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'text-brand-700 font-bold' : 'text-slate-500 hover:text-brand-600 transition-colors' }}">Beranda</a>
     <a href="{{ route('katalog') }}" class="{{ request()->routeIs('katalog') || request()->routeIs('product.show') ? 'text-brand-700 font-bold' : 'text-slate-500 hover:text-brand-600 transition-colors' }}">Katalog Kain</a>
+    <a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'text-brand-700 font-bold' : 'text-slate-500 hover:text-brand-600 transition-colors' }}">Tentang Kami</a>
+    <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'text-brand-700 font-bold' : 'text-slate-500 hover:text-brand-600 transition-colors' }}">Hubungi Kami</a>
     
     @auth
         @if(auth()->user()->role === 'admin' || auth()->user()->role === 'staff')

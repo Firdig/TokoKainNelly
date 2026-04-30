@@ -23,3 +23,19 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Increase PHP input limits to support forms with many variants and images.
+# NOTE: php_value only works with Apache mod_php (XAMPP/Apache).
+# If using PHP built-in server (php artisan serve), edit php.ini directly instead.
+<IfModule mod_php.c>
+    php_value max_input_vars 5000
+    php_value max_file_uploads 100
+    php_value upload_max_filesize 20M
+    php_value post_max_size 200M
+</IfModule>
+<IfModule mod_php8.c>
+    php_value max_input_vars 5000
+    php_value max_file_uploads 100
+    php_value upload_max_filesize 20M
+    php_value post_max_size 200M
+</IfModule>

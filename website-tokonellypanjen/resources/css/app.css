@@ -106,8 +106,14 @@
     50% { transform: translateY(-10px); }
 }
 @keyframes shimmer {
-    0% { background-position: -200% center; }
-    100% { background-position: 200% center; }
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.skeleton-loader {
+    background: linear-gradient(90deg, var(--color-brand-50) 25%, var(--color-brand-100) 50%, var(--color-brand-50) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
 }
 
 .animate-fade-in    { animation: fadeInUp   0.6s ease-out forwards; }

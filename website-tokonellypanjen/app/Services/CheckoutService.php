@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ProductVariant;
+use App\Models\StockMovement;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -91,8 +93,23 @@ class CheckoutService
                     'price'              => $variant->product->price,
                 ]);
 
+                // Simpan stok sebelum dikurangi untuk log movement
+                $stockBefore = $variant->stock;
+
                 // Deduct stock atomically
                 $variant->decrement('stock', $item->quantity);
+
+                // Catat pergerakan stok ke log terpusat
+                StockMovement::create([
+                    'product_variant_id' => $variant->id,
+                    'movement_type'      => 'sale_online',
+                    'quantity'           => -$item->quantity,
+                    'stock_before'       => $stockBefore,
+                    'stock_after'        => $stockBefore - $item->quantity,
+                    'reference_type'     => 'order',
+                    'reference_id'       => $order->id,
+                    'created_by'         => $userId,
+                ]);
             }
 
             // 3. Update total amount
@@ -114,9 +131,9 @@ class CheckoutService
      *
      * @throws \Exception If stock is insufficient for any item.
      */
-    public function processPosTransaction(array $items, ?int $cashierId = null): Order
+    public function processPosTransaction(array $items, ?int $cashierId = null, string $paymentMethod = 'cash'): Order
     {
-        return DB::transaction(function () use ($items, $cashierId) {
+        return DB::transaction(function () use ($items, $cashierId, $paymentMethod) {
             $totalAmount = 0;
 
             $order = Order::create([
@@ -125,7 +142,7 @@ class CheckoutService
                 'transaction_type' => 'pos',
                 'status'           => 'completed',
                 'total_amount'     => 0,
-                'payment_method'   => 'cash',
+                'payment_method'   => $paymentMethod,
             ]);
 
             foreach ($items as $itemData) {
@@ -151,7 +168,22 @@ class CheckoutService
                     'price'              => $variant->product->price,
                 ]);
 
+                // Simpan stok sebelum dikurangi untuk log movement
+                $stockBefore = $variant->stock;
+
                 $variant->decrement('stock', $itemData['quantity']);
+
+                // Catat pergerakan stok ke log terpusat
+                StockMovement::create([
+                    'product_variant_id' => $variant->id,
+                    'movement_type'      => 'sale_pos',
+                    'quantity'           => -$itemData['quantity'],
+                    'stock_before'       => $stockBefore,
+                    'stock_after'        => $stockBefore - $itemData['quantity'],
+                    'reference_type'     => 'order',
+                    'reference_id'       => $order->id,
+                    'created_by'         => $cashierId,
+                ]);
             }
 
             $order->update(['total_amount' => $totalAmount]);

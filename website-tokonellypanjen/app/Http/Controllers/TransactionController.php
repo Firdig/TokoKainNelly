@@ -28,7 +28,8 @@ class TransactionController extends Controller
         try {
             $order = $this->checkoutService->processPosTransaction(
                 items: $request->validated('items'),
-                cashierId: Auth::id()
+                cashierId: Auth::id(),
+                paymentMethod: $request->validated('payment_method') ?? 'cash',
             );
 
             return response()->json([

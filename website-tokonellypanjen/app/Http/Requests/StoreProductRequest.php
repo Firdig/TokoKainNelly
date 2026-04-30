@@ -30,6 +30,7 @@ class StoreProductRequest extends FormRequest
             'width'                => 'nullable|string|max:255',
             'composition'          => 'nullable|string|max:255',
             'fabric_care'          => 'nullable|string',
+            'gallery'              => 'nullable|array',
             'gallery.*'            => 'nullable|image|max:2048',
             'variants'             => 'required|array|min:1',
             'variants.*.color_name' => 'required|string|max:255',

@@ -93,6 +93,12 @@ Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
     // Order Management
     Route::get('orders', [OrderController::class, 'index'])->name('admin.orders.index');
     Route::post('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('admin.orders.updateStatus');
+    Route::get('orders/{order}/picking-slip', [OrderController::class, 'pickingSlip'])->name('admin.orders.picking-slip');
+
+    // BOPS Scanner Module
+    Route::get('scanner', [\App\Http\Controllers\Admin\BopsScannerController::class, 'index'])->name('admin.scanner.index');
+    Route::post('scanner/verify', [\App\Http\Controllers\Admin\BopsScannerController::class, 'verify'])->name('admin.scanner.verify');
+    Route::post('scanner/handover/{order}', [\App\Http\Controllers\Admin\BopsScannerController::class, 'handover'])->name('admin.scanner.handover');
 
     // User Management
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'store', 'destroy']);

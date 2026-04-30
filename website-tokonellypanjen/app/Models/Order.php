@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $user_id
  * @property string $invoice_number
  * @property string $transaction_type  'pos', 'bops', or 'delivery'
- * @property string $status            'pending', 'ready_for_pickup', 'shipped', 'completed', 'cancelled'
+ * @property string $status            'pending', 'in_preparation', 'ready_for_pickup', 'shipped', 'completed', 'cancelled'
  * @property float $total_amount
  * @property string|null $pickup_code
  * @property \Carbon\Carbon|null $estimated_pickup_at

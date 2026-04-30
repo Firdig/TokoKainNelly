@@ -35,12 +35,21 @@ class OrderController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $validated = $request->validate([
-            'status' => 'required|in:pending,ready_for_pickup,shipped,completed,cancelled',
+            'status' => 'required|in:pending,in_preparation,ready_for_pickup,shipped,completed,cancelled',
         ]);
 
         $order->update(['status' => $validated['status']]);
 
         return redirect()->back()
             ->with('success', "Status Pesanan #{$order->invoice_number} berhasil diperbarui menjadi {$validated['status']}.");
+    }
+
+    /**
+     * Print Picking Slip for BOPS/Delivery
+     */
+    public function pickingSlip(Order $order)
+    {
+        $order->load(['items.productVariant.product', 'user']);
+        return view('admin.orders.picking-slip', compact('order'));
     }
 }

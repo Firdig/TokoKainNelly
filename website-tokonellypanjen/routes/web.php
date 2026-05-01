@@ -110,4 +110,7 @@ Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
 
     // Laporan Stok (Stock Movement Log)
     Route::get('stock-report', [StockReportController::class, 'index'])->name('admin.stock-report.index');
+
+    // Laporan Penjualan (Overall Sales)
+    Route::get('sales-report', [\App\Http\Controllers\Admin\SalesReportController::class, 'index'])->name('admin.sales-report.index');
 });

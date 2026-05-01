@@ -109,7 +109,7 @@ class StockMovement extends Model
         return match($this->movement_type) {
             'sale_pos'          => 'Penjualan Kasir',
             'sale_online'       => 'Penjualan Online',
-            'opname_adjustment' => 'Penyesuaian Opname',
+            'opname_adjustment' => 'Penyesuaian Audit',
             'manual_addition'   => 'Penambahan Manual',
             'return'            => 'Retur Barang',
             default             => ucfirst($this->movement_type),

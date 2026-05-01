@@ -6,6 +6,8 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\StockMovement;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -72,13 +74,24 @@ class ProductController extends Controller
                 $imageMime = $variantData['image']->getMimeType();
             }
 
-            $product->variants()->create([
+            $variant = $product->variants()->create([
                 'color_name' => $variantData['color_name'],
                 'hex_code'   => $variantData['hex_code'] ?? '#cccccc',
                 'stock'      => $variantData['stock'],
                 'image_data' => $imageData,
                 'image_mime' => $imageMime,
             ]);
+
+            if ($variant->stock > 0) {
+                StockMovement::create([
+                    'product_variant_id' => $variant->id,
+                    'movement_type'      => 'manual_addition',
+                    'quantity'           => $variant->stock,
+                    'stock_before'       => 0,
+                    'stock_after'        => $variant->stock,
+                    'created_by'         => Auth::id(),
+                ]);
+            }
         }
 
         // Invalidate catalog cache
@@ -149,10 +162,12 @@ class ProductController extends Controller
                 $variant->update([
                     'color_name' => $variantData['color_name'],
                     'hex_code'   => $variantData['hex_code'],
-                    'stock'      => $variantData['stock'],
+                    // 'stock'      => $stockAfter, // Stok tidak lagi diperbarui dari katalog
                     'image_data' => $imageData,
                     'image_mime' => $imageMime,
                 ]);
+
+                // Hapus pencatatan StockMovement dari sini karena sudah dipindah ke modul khusus
             } else {
                 $newVariant = $product->variants()->create([
                     'color_name' => $variantData['color_name'],
@@ -162,6 +177,17 @@ class ProductController extends Controller
                     'image_mime' => $imageMime,
                 ]);
                 $existingVariantIds[] = $newVariant->id;
+
+                if ($newVariant->stock > 0) {
+                    StockMovement::create([
+                        'product_variant_id' => $newVariant->id,
+                        'movement_type'      => 'manual_addition',
+                        'quantity'           => $newVariant->stock,
+                        'stock_before'       => 0,
+                        'stock_after'        => $newVariant->stock,
+                        'created_by'         => Auth::id(),
+                    ]);
+                }
             }
         }
 

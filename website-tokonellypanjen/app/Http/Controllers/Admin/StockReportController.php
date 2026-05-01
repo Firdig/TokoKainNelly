@@ -79,7 +79,7 @@ class StockReportController extends Controller
         $movementTypes = [
             'sale_pos'          => 'Penjualan Kasir',
             'sale_online'       => 'Penjualan Online',
-            'opname_adjustment' => 'Penyesuaian Opname',
+            'opname_adjustment' => 'Penyesuaian Audit',
             'manual_addition'   => 'Penambahan Manual',
             'return'            => 'Retur Barang',
         ];

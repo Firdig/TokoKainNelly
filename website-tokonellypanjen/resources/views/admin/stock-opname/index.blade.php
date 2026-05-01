@@ -1,12 +1,12 @@
 @extends('layouts.admin')
 
-@section('title', 'Stock Opname (Audit Inventaris)')
+@section('title', 'Stock Audit (Audit Inventaris)')
 
 @section('content')
 <div class="max-w-7xl mx-auto space-y-8">
     
     <div>
-        <h2 class="font-outfit text-3xl font-bold text-brand-900">Stock Opname</h2>
+        <h2 class="font-outfit text-3xl font-bold text-brand-900">Stock Audit</h2>
         <p class="mt-1 text-sm text-slate-500">Bandingkan Stok Sistem dengan Stok Fisik Toko secara massal.</p>
     </div>
 
@@ -27,7 +27,7 @@
         <div class="xl:col-span-2">
             <div class="bg-white shadow-sm border border-brand-100 rounded-2xl overflow-hidden">
                 <div class="px-6 py-5 border-b border-brand-100 bg-brand-50 flex justify-between items-center">
-                    <h3 class="font-outfit font-bold text-lg text-brand-900">Entri Stock Opname</h3>
+                    <h3 class="font-outfit font-bold text-lg text-brand-900">Entri Stock Audit</h3>
                     <span class="text-xs font-bold bg-amber-100 text-amber-800 px-3 py-1 rounded-full">Proses Cepat</span>
                 </div>
                 
@@ -69,7 +69,7 @@
                     </div>
                     <div class="p-6 bg-brand-50 border-t border-brand-100 text-right sticky bottom-0 z-20">
                         <button type="submit" class="px-8 py-3 bg-brand-900 hover:bg-brand-950 text-white rounded-xl font-bold shadow-lg shadow-brand-900/20 transition-all">
-                            Simpan Hasil Opname Fisik
+                            Simpan Hasil Audit Fisik
                         </button>
                     </div>
                 </form>
@@ -109,7 +109,7 @@
                         @endif
                     </div>
                     @empty
-                    <div class="py-10 text-center text-slate-500 text-sm">Belum ada riwayat stock opname yang tercatat sejauh ini.</div>
+                    <div class="py-10 text-center text-slate-500 text-sm">Belum ada riwayat stock audit yang tercatat sejauh ini.</div>
                     @endforelse
                 </div>
             </div>

@@ -90,8 +90,13 @@ Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
     Route::get('stock-opname', [\App\Http\Controllers\Admin\StockOpnameController::class, 'index'])->name('stock-opname.index');
     Route::post('stock-opname', [\App\Http\Controllers\Admin\StockOpnameController::class, 'store'])->name('stock-opname.store');
 
+    // Restock (Penerimaan Stok)
+    Route::get('restock', [\App\Http\Controllers\Admin\RestockController::class, 'index'])->name('admin.restock.index');
+    Route::post('restock', [\App\Http\Controllers\Admin\RestockController::class, 'store'])->name('admin.restock.store');
+
     // Order Management
     Route::get('orders', [OrderController::class, 'index'])->name('admin.orders.index');
+    Route::get('orders/{order}', [OrderController::class, 'show'])->name('admin.orders.show');
     Route::post('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('admin.orders.updateStatus');
     Route::get('orders/{order}/picking-slip', [OrderController::class, 'pickingSlip'])->name('admin.orders.picking-slip');
 

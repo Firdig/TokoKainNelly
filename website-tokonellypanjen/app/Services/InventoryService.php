@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\StockAudit;
+use App\Models\StockMovement;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -73,7 +74,7 @@ class InventoryService
 
                 // Only create audit if there's a difference or a note
                 if ($difference != 0 || !empty($auditData['notes'])) {
-                    StockAudit::create([
+                    $audit = StockAudit::create([
                         'product_id'         => $variant->product_id,
                         'product_variant_id' => $variant->id,
                         'auditor_id'         => $auditorId,
@@ -83,6 +84,20 @@ class InventoryService
                         'notes'              => $auditData['notes'] ?? null,
                         'status'             => 'reconciled',
                     ]);
+
+                    if ($difference != 0) {
+                        StockMovement::create([
+                            'product_variant_id' => $variant->id,
+                            'movement_type'      => 'opname_adjustment',
+                            'quantity'           => $difference,
+                            'stock_before'       => $variant->stock,
+                            'stock_after'        => $auditData['physical_stock'],
+                            'reference_type'     => 'stock_audit',
+                            'reference_id'       => $audit->id,
+                            'notes'              => $auditData['notes'] ?? null,
+                            'created_by'         => $auditorId,
+                        ]);
+                    }
 
                     // Reconcile: update system stock to match physical count
                     $variant->update(['stock' => $auditData['physical_stock']]);

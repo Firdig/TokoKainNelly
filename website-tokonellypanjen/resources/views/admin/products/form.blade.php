@@ -177,7 +177,7 @@
                                         </div>
                                         <div>
                                             <label class="block text-xs font-bold text-slate-500 mb-1">Stok (m)</label>
-                                            <input type="number" step="any" name="variants[{{ $index }}][stock]" value="{{ $variant->stock }}" required class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-1 focus:ring-brand-500 outline-none" min="0">
+                                            <input type="number" step="any" name="variants[{{ $index }}][stock]" value="{{ $variant->stock }}" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-1 focus:ring-brand-500 outline-none bg-slate-100 text-slate-500 cursor-not-allowed" readonly title="Stok hanya dapat diubah melalui fitur Penerimaan Stok atau Stock Audit">
                                         </div>
                                     </div>
 

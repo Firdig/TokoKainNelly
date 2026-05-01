@@ -45,6 +45,15 @@ class OrderController extends Controller
     }
 
     /**
+     * Show order details.
+     */
+    public function show(Order $order)
+    {
+        $order->load(['items.productVariant.product', 'user']);
+        return view('admin.orders.show', compact('order'));
+    }
+
+    /**
      * Print Picking Slip for BOPS/Delivery
      */
     public function pickingSlip(Order $order)

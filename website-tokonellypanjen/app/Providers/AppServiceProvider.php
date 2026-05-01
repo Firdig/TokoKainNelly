@@ -27,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (app()->environment('production')) {
+        URL::forceScheme('https');
+    }
         // Rate Limiter: Login — 5 attempts per minute per IP
         // Prevents brute-force password attacks
         RateLimiter::for('login', function (Request $request) {

@@ -108,4 +108,43 @@ class InventoryService
 
         return $hasUpdates;
     }
+
+    /**
+     * Restore stock when an order is cancelled.
+     *
+     * @param \App\Models\Order $order
+     * @param int $userId ID of the user cancelling the order
+     */
+    public function restoreStockForCancelledOrder($order, int $userId): void
+    {
+        DB::transaction(function () use ($order, $userId) {
+            foreach ($order->items as $item) {
+                if ($item->product_variant_id) {
+                    $variant = ProductVariant::where('id', $item->product_variant_id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if ($variant) {
+                        $stockBefore = $variant->stock;
+                        $quantityToRestore = $item->quantity;
+                        $stockAfter = $stockBefore + $quantityToRestore;
+
+                        $variant->update(['stock' => $stockAfter]);
+
+                        StockMovement::create([
+                            'product_variant_id' => $variant->id,
+                            'movement_type'      => 'return',
+                            'quantity'           => $quantityToRestore,
+                            'stock_before'       => $stockBefore,
+                            'stock_after'        => $stockAfter,
+                            'reference_type'     => 'order_cancellation',
+                            'reference_id'       => $order->id,
+                            'notes'              => "Pesanan #{$order->invoice_number} dibatalkan",
+                            'created_by'         => $userId,
+                        ]);
+                    }
+                }
+            }
+        });
+    }
 }

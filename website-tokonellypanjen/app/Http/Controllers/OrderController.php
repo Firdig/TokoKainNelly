@@ -32,13 +32,19 @@ class OrderController extends Controller
      * Update the status of an order (e.g., pending → ready_for_pickup).
      * Uses Form Request-style inline validation.
      */
-    public function updateStatus(Request $request, Order $order)
+    public function updateStatus(Request $request, Order $order, \App\Services\InventoryService $inventoryService)
     {
         $validated = $request->validate([
             'status' => 'required|in:pending,in_preparation,ready_for_pickup,shipped,completed,cancelled',
         ]);
 
+        $oldStatus = $order->status;
         $order->update(['status' => $validated['status']]);
+
+        // Restore stock if the order is cancelled
+        if ($oldStatus !== 'cancelled' && $validated['status'] === 'cancelled') {
+            $inventoryService->restoreStockForCancelledOrder($order, \Illuminate\Support\Facades\Auth::id() ?? 1);
+        }
 
         return redirect()->back()
             ->with('success', "Status Pesanan #{$order->invoice_number} berhasil diperbarui menjadi {$validated['status']}.");

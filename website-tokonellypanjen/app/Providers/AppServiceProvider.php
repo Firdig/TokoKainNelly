@@ -6,7 +6,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
-
+use Illuminate\Support\Facades\URL;
 /**
  * Application Service Provider.
  * Registers rate limiters and other application-level bootstrapping.

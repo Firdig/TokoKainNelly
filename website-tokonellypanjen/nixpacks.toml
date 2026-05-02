@@ -3,7 +3,6 @@ nixPkgs = ["..#php83", "..#php83Extensions.pdo_mysql", "..#nodejs_20"]
 
 [phases.install]
 cmds = [
-  "mkdir -p /etc/php83/conf.d && echo 'extension=pdo_mysql.so' > /etc/php83/conf.d/pdo_mysql.ini || true",
   "composer install --no-dev --optimize-autoloader",
   "npm install"
 ]
@@ -13,9 +12,8 @@ cmds = [
   "npm run build",
   "php artisan config:cache",
   "php artisan route:cache",
-  "php artisan view:cache",
-  "php artisan migrate --force"
+  "php artisan view:cache"
 ]
 
 [start]
-cmd = "php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
+cmd = "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"

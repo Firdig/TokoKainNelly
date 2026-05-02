@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Mail\OrderStatusUpdatedMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Admin controller for managing orders (Delivery, BOPS, and POS).
@@ -44,6 +46,13 @@ class OrderController extends Controller
         // Restore stock if the order is cancelled
         if ($oldStatus !== 'cancelled' && $validated['status'] === 'cancelled') {
             $inventoryService->restoreStockForCancelledOrder($order, \Illuminate\Support\Facades\Auth::id() ?? 1);
+        }
+
+        // Send email notification to customer if they have an account
+        if ($order->user && $order->user->email && $oldStatus !== $validated['status']) {
+            Mail::to($order->user->email)->queue(
+                new OrderStatusUpdatedMail($order, $oldStatus, $validated['status'])
+            );
         }
 
         return redirect()->back()

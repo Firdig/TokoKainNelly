@@ -52,6 +52,7 @@
                                     @php
                                         $statusColors = [
                                             'pending' => 'bg-yellow-100 text-yellow-700',
+                                            'in_preparation' => 'bg-orange-100 text-orange-700',
                                             'ready_for_pickup' => 'bg-blue-100 text-blue-700',
                                             'shipped' => 'bg-indigo-100 text-indigo-700',
                                             'completed' => 'bg-green-100 text-green-700',
@@ -59,6 +60,7 @@
                                         ];
                                         $statusLabels = [
                                             'pending' => 'Menunggu',
+                                            'in_preparation' => 'Diproses',
                                             'ready_for_pickup' => 'Siap Diambil',
                                             'shipped' => 'Dikirim',
                                             'completed' => 'Selesai',

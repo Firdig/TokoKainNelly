@@ -10,6 +10,7 @@ use App\Http\Controllers\WebController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerOrderController;
+use App\Http\Controllers\CustomerProfileController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\StockReportController;
 use App\Http\Controllers\ProductController;
@@ -58,6 +59,11 @@ Route::middleware(['auth'])->group(function () {
         ->name('checkout.process');
     Route::get('/invoice/{id}', [CheckoutFrontController::class, 'success'])->name('checkout.success');
 
+    // Customer Profile Management
+    Route::get('/profile', [CustomerProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [CustomerProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [CustomerProfileController::class, 'updatePassword'])->name('profile.password');
+
     // Customer Order Tracking
     Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{id}', [CustomerOrderController::class, 'show'])->name('orders.show');
@@ -105,6 +111,10 @@ Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
     Route::post('scanner/verify', [\App\Http\Controllers\Admin\BopsScannerController::class, 'verify'])->name('admin.scanner.verify');
     Route::post('scanner/handover/{order}', [\App\Http\Controllers\Admin\BopsScannerController::class, 'handover'])->name('admin.scanner.handover');
 
+    // Customer Management
+    Route::get('customers', [\App\Http\Controllers\Admin\CustomerController::class, 'index'])->name('admin.customers.index');
+    Route::get('customers/{customer}', [\App\Http\Controllers\Admin\CustomerController::class, 'show'])->name('admin.customers.show');
+
     // User Management
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'store', 'destroy']);
 
@@ -113,4 +123,7 @@ Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
 
     // Laporan Penjualan (Overall Sales)
     Route::get('sales-report', [\App\Http\Controllers\Admin\SalesReportController::class, 'index'])->name('admin.sales-report.index');
+
+    // Laporan Penjualan Per Produk (Historical Sales per Product)
+    Route::get('product-sales-report', [\App\Http\Controllers\Admin\ProductSalesReportController::class, 'index'])->name('admin.product-sales-report.index');
 });

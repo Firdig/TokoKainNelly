@@ -59,7 +59,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-sm font-bold text-brand-900 mb-2">Nomor Telepon <span class="text-red-400">*</span></label>
-                                    <input type="text" name="customer_phone" value="{{ old('customer_phone') }}"
+                                    <input type="text" name="customer_phone" value="{{ old('customer_phone', auth()->user()->phone ?? '') }}"
                                         class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all text-sm"
                                         placeholder="08xxxxxxxxxx" required>
                                     @error('customer_phone')
@@ -113,7 +113,7 @@
                                 <label class="block text-sm font-bold text-brand-900 mb-2">Alamat Pengiriman <span class="text-red-400">*</span></label>
                                 <textarea name="delivery_address" rows="3"
                                     class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all text-sm"
-                                    placeholder="Masukkan alamat lengkap pengiriman">{{ old('delivery_address') }}</textarea>
+                                    placeholder="Masukkan alamat lengkap pengiriman">{{ old('delivery_address', auth()->user()->address ?? '') }}</textarea>
                                 @error('delivery_address')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror

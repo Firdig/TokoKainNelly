@@ -39,6 +39,7 @@
                     <div class="text-sm font-bold text-brand-900 truncate">{{ auth()->user()->name }}</div>
                     <div class="text-xs text-slate-400 truncate">{{ auth()->user()->email }}</div>
                 </div>
+                <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-slate-600 hover:bg-brand-50 hover:text-brand-800 font-medium transition-colors">Profil Saya</a>
                 <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-sm text-slate-600 hover:bg-brand-50 hover:text-brand-800 font-medium transition-colors">Pesanan Saya</a>
                 <form method="POST" action="{{ route('logout') }}" class="mt-1 border-t border-brand-50 pt-1">
                     @csrf

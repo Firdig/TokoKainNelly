@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CheckoutRequest;
+use App\Mail\OrderConfirmationMail;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Services\CheckoutService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 
 /**
@@ -66,6 +68,11 @@ class CheckoutFrontController extends Controller
 
             // Clear the cart after successful checkout
             $cart->items()->delete();
+
+            // Send order confirmation email
+            if (Auth::user() && Auth::user()->email) {
+                Mail::to(Auth::user()->email)->queue(new OrderConfirmationMail($order));
+            }
 
             return redirect()->route('checkout.success', $order->id);
         } catch (\Exception $e) {

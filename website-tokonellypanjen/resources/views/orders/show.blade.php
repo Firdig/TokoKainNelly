@@ -30,6 +30,7 @@
             @php
                 $statusColors = [
                     'pending' => 'bg-yellow-100 text-yellow-700 border-yellow-200',
+                    'in_preparation' => 'bg-orange-100 text-orange-700 border-orange-200',
                     'ready_for_pickup' => 'bg-blue-100 text-blue-700 border-blue-200',
                     'shipped' => 'bg-indigo-100 text-indigo-700 border-indigo-200',
                     'completed' => 'bg-green-100 text-green-700 border-green-200',
@@ -37,6 +38,7 @@
                 ];
                 $statusLabels = [
                     'pending' => 'Menunggu Konfirmasi',
+                    'in_preparation' => 'Sedang Diproses',
                     'ready_for_pickup' => 'Siap Diambil di Toko',
                     'shipped' => 'Sedang Dikirim',
                     'completed' => 'Pesanan Selesai',
@@ -60,8 +62,8 @@
                 <div class="flex items-center justify-between mb-2">
                     @php
                         $steps = $order->transaction_type === 'bops'
-                            ? ['pending' => 'Dipesan', 'ready_for_pickup' => 'Siap Ambil', 'completed' => 'Selesai']
-                            : ['pending' => 'Dipesan', 'shipped' => 'Dikirim', 'completed' => 'Selesai'];
+                            ? ['pending' => 'Dipesan', 'in_preparation' => 'Diproses', 'ready_for_pickup' => 'Siap Ambil', 'completed' => 'Selesai']
+                            : ['pending' => 'Dipesan', 'in_preparation' => 'Diproses', 'shipped' => 'Dikirim', 'completed' => 'Selesai'];
 
                         $stepKeys = array_keys($steps);
                         $currentIndex = array_search($order->status, $stepKeys);

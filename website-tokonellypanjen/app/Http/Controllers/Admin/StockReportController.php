@@ -14,9 +14,11 @@ use Illuminate\Http\Request;
  */
 class StockReportController extends Controller
 {
-    /**
-     * Tampilkan halaman laporan pergerakan stok dengan filter & pagination.
-     */
+    public function __construct()
+    {
+        $this->middleware('role:admin');
+    }
+
     public function index(Request $request)
     {
         // ── 1. Ambil parameter filter ──────────────────────────────────────

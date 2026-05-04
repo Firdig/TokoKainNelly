@@ -81,13 +81,13 @@ Route::middleware(['auth', 'role:admin,staff'])->group(function () {
 });
 
 // ═══════════════════════════════════════════════════════════════
-// ADMIN ROUTES (Admin/Staff with is_admin middleware)
+// ADMIN ROUTES — Staff (admin & staff shared access)
 // ═══════════════════════════════════════════════════════════════
 
-Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
-    // Dashboard
+Route::prefix('admin')->middleware(['auth', 'role:admin,staff'])->group(function () {
+    // Dashboard (ringkasan harian)
     Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
-    Route::get('/dashboard', [DashboardController::class, 'index']); // alias
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 
     // Product Management (CRUD)
     Route::resource('products', ProductController::class);
@@ -114,14 +114,20 @@ Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
     // Customer Management
     Route::get('customers', [\App\Http\Controllers\Admin\CustomerController::class, 'index'])->name('admin.customers.index');
     Route::get('customers/{customer}', [\App\Http\Controllers\Admin\CustomerController::class, 'show'])->name('admin.customers.show');
+});
 
-    // User Management
+// ═══════════════════════════════════════════════════════════════
+// ADMIN ROUTES — Superadmin Only (role: admin)
+// ═══════════════════════════════════════════════════════════════
+
+Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
+    // User Management (kelola hak akses pengguna)
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'store', 'destroy']);
 
-    // Laporan Stok (Stock Movement Log)
+    // Laporan Stok (Stock Movement & Historical Data)
     Route::get('stock-report', [StockReportController::class, 'index'])->name('admin.stock-report.index');
 
-    // Laporan Penjualan (Overall Sales)
+    // Laporan Penjualan Komprehensif (Overall Sales)
     Route::get('sales-report', [\App\Http\Controllers\Admin\SalesReportController::class, 'index'])->name('admin.sales-report.index');
 
     // Laporan Penjualan Per Produk (Historical Sales per Product)

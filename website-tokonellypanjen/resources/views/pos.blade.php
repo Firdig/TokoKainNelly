@@ -21,6 +21,7 @@
                     <p class="text-sm font-bold text-brand-900">Kasir Utama</p>
                     <p class="text-xs text-brand-500">{{ date('d M Y') }}</p>
                 </div>
+                <a href="/admin" class="px-4 py-2 border border-brand-200 text-brand-600 hover:bg-brand-50 rounded-lg text-sm font-medium transition-colors">Dashboard Admin</a>
                 <a href="/" class="px-4 py-2 border border-brand-200 text-brand-600 hover:bg-brand-50 rounded-lg text-sm font-medium transition-colors">Ke Katalog Web</a>
             </div>
         </div>

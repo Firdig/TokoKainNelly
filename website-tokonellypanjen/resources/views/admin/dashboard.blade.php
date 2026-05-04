@@ -5,7 +5,8 @@
 @section('content')
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    <!-- Total Asset Card -->
+    @if(Auth::user()->role === 'admin')
+    <!-- Total Asset Card (Superadmin Only) -->
     <div class="bg-white rounded-2xl p-6 shadow-sm border border-brand-100 flex items-center gap-5">
         <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -15,6 +16,7 @@
             <div class="text-2xl font-extrabold text-brand-900 font-outfit">Rp{{ number_format($totalAssets, 0, ',', '.') }}</div>
         </div>
     </div>
+    @endif
 
     <!-- Total Products -->
     <div class="bg-white rounded-2xl p-6 shadow-sm border border-brand-100 flex items-center gap-5">
@@ -40,7 +42,8 @@
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- Chart -->
+    @if(Auth::user()->role === 'admin')
+    <!-- Chart (Superadmin Only) -->
     <div class="lg:col-span-2 bg-white rounded-3xl p-8 shadow-sm border border-brand-100">
         <div class="flex justify-between items-center mb-6">
             <h3 class="font-outfit font-bold text-xl text-brand-900">Grafik Penjualan E-Commerce (Bulan Ini)</h3>
@@ -49,9 +52,10 @@
             <canvas id="salesChart"></canvas>
         </div>
     </div>
+    @endif
 
     <!-- Recent Activity / Low Stock -->
-    <div class="bg-white rounded-3xl p-8 shadow-sm border border-brand-100">
+    <div class="{{ Auth::user()->role === 'admin' ? '' : 'lg:col-span-3' }} bg-white rounded-3xl p-8 shadow-sm border border-brand-100">
         <h3 class="font-outfit font-bold text-xl text-brand-900 mb-6">Peringatan Stok Terbatas</h3>
         <div class="space-y-4 max-h-72 overflow-y-auto pr-2 custom-scrollbar">
             @forelse($lowStockProducts as $variant)
@@ -70,6 +74,7 @@
     </div>
 </div>
 
+@if(Auth::user()->role === 'admin')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('salesChart').getContext('2d');
@@ -147,4 +152,5 @@
         });
     });
 </script>
+@endif
 @endsection

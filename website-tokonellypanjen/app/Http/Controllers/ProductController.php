@@ -9,6 +9,7 @@ use App\Models\ProductVariant;
 use App\Models\StockMovement;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Admin controller for managing fabric products and their variants.
@@ -55,13 +56,19 @@ class ProductController extends Controller
             'fabric_care'   => $validated['fabric_care'] ?? null,
         ]);
 
-        // Store gallery images
+        // Store gallery images (database + filesystem)
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $image) {
-                $product->images()->create([
+                $imgRecord = $product->images()->create([
                     'image_data' => base64_encode(file_get_contents($image->getRealPath())),
                     'image_mime' => $image->getMimeType(),
                 ]);
+                // Also save to filesystem for fast serving
+                $ext = $this->mimeToExtension($image->getMimeType());
+                Storage::disk('public')->put(
+                    "products/gallery/{$imgRecord->id}.{$ext}",
+                    file_get_contents($image->getRealPath())
+                );
             }
         }
 
@@ -81,6 +88,15 @@ class ProductController extends Controller
                 'image_data' => $imageData,
                 'image_mime' => $imageMime,
             ]);
+
+            // Also save variant image to filesystem for fast serving
+            if (isset($variantData['image'])) {
+                $ext = $this->mimeToExtension($variantData['image']->getMimeType());
+                Storage::disk('public')->put(
+                    "products/variants/{$variant->id}.{$ext}",
+                    file_get_contents($variantData['image']->getRealPath())
+                );
+            }
 
             if ($variant->stock > 0) {
                 StockMovement::create([
@@ -130,13 +146,18 @@ class ProductController extends Controller
             'fabric_care'   => $validated['fabric_care'] ?? null,
         ]);
 
-        // Add new gallery images
+        // Add new gallery images (database + filesystem)
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $image) {
-                $product->images()->create([
+                $imgRecord = $product->images()->create([
                     'image_data' => base64_encode(file_get_contents($image->getRealPath())),
                     'image_mime' => $image->getMimeType(),
                 ]);
+                $ext = $this->mimeToExtension($image->getMimeType());
+                Storage::disk('public')->put(
+                    "products/gallery/{$imgRecord->id}.{$ext}",
+                    file_get_contents($image->getRealPath())
+                );
             }
         }
 
@@ -167,7 +188,14 @@ class ProductController extends Controller
                     'image_mime' => $imageMime,
                 ]);
 
-                // Hapus pencatatan StockMovement dari sini karena sudah dipindah ke modul khusus
+                // Save updated variant image to filesystem
+                if (isset($variantData['image'])) {
+                    $ext = $this->mimeToExtension($variantData['image']->getMimeType());
+                    Storage::disk('public')->put(
+                        "products/variants/{$variant->id}.{$ext}",
+                        file_get_contents($variantData['image']->getRealPath())
+                    );
+                }
             } else {
                 $newVariant = $product->variants()->create([
                     'color_name' => $variantData['color_name'],
@@ -177,6 +205,15 @@ class ProductController extends Controller
                     'image_mime' => $imageMime,
                 ]);
                 $existingVariantIds[] = $newVariant->id;
+
+                // Save new variant image to filesystem
+                if (isset($variantData['image'])) {
+                    $ext = $this->mimeToExtension($variantData['image']->getMimeType());
+                    Storage::disk('public')->put(
+                        "products/variants/{$newVariant->id}.{$ext}",
+                        file_get_contents($variantData['image']->getRealPath())
+                    );
+                }
 
                 if ($newVariant->stock > 0) {
                     StockMovement::create([
@@ -217,5 +254,19 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')
             ->with('success', 'Produk kain berhasil dihapus!');
+    }
+
+    /**
+     * Convert MIME type to file extension.
+     */
+    private function mimeToExtension(?string $mime): string
+    {
+        return match ($mime) {
+            'image/png' => 'png',
+            'image/gif' => 'gif',
+            'image/webp' => 'webp',
+            'image/svg+xml' => 'svg',
+            default => 'jpg',
+        };
     }
 }

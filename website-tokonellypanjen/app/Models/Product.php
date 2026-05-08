@@ -59,6 +59,10 @@ class Product extends Model
      */
     public function getStockAttribute()
     {
+        // Use already-loaded variants to avoid N+1 query
+        if ($this->relationLoaded('variants')) {
+            return $this->variants->sum('stock');
+        }
         return $this->variants()->sum('stock');
     }
 

@@ -13,7 +13,7 @@ class HomeController extends Controller
     public function index()
     {
         // Ambil 4 produk terbaru untuk bagian "Rekomendasi / Terbaru"
-        $featuredProducts = Product::latest()->take(4)->get();
+        $featuredProducts = Product::with(['variants', 'images'])->latest()->take(4)->get();
         
         return view('home', compact('featuredProducts'));
     }

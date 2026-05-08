@@ -1,5 +1,13 @@
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+@php
+    // Compute cart count ONCE, reused in both desktop and mobile nav
+    $navCartId = \Illuminate\Support\Facades\Session::get('cart_id');
+    $navCartCount = $navCartId
+        ? \App\Models\CartItem::whereHas('cart', fn($q) => $q->where('session_id', $navCartId))->count()
+        : 0;
+@endphp
+
 <div x-data="{ mobileMenuOpen: false }" class="flex items-center">
     <!-- Desktop Navigation -->
     <nav class="hidden md:flex space-x-6 items-center font-outfit font-medium text-sm">
@@ -19,14 +27,8 @@
             <a href="{{ route('cart.index') }}" class="relative flex items-center gap-1.5 {{ request()->routeIs('cart.index') ? 'text-brand-700 font-bold' : 'text-slate-500 hover:text-brand-600 transition-colors' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                 <span>Keranjang</span>
-                @php
-                    $cartId = \Illuminate\Support\Facades\Session::get('cart_id');
-                    $cartCount = \App\Models\CartItem::whereHas('cart', function($q) use($cartId) {
-                        $q->where('session_id', $cartId);
-                    })->count();
-                @endphp
-                @if($cartCount > 0)
-                    <span class="absolute -top-2 -right-3 bg-brand-600 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{{ $cartCount }}</span>
+                @if($navCartCount > 0)
+                    <span class="absolute -top-2 -right-3 bg-brand-600 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{{ $navCartCount }}</span>
                 @endif
             </a>
 
@@ -63,14 +65,8 @@
     <div class="flex md:hidden items-center gap-4">
         <a href="{{ route('cart.index') }}" class="relative text-slate-500 hover:text-brand-600 transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-            @php
-                $cartId = \Illuminate\Support\Facades\Session::get('cart_id');
-                $cartCount = \App\Models\CartItem::whereHas('cart', function($q) use($cartId) {
-                    $q->where('session_id', $cartId);
-                })->count();
-            @endphp
-            @if($cartCount > 0)
-                <span class="absolute -top-2 -right-2 bg-brand-600 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{{ $cartCount }}</span>
+            @if($navCartCount > 0)
+                <span class="absolute -top-2 -right-2 bg-brand-600 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{{ $navCartCount }}</span>
             @endif
         </a>
         <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-slate-600 hover:text-brand-900 focus:outline-none bg-brand-50 p-2 rounded-lg">

@@ -14,11 +14,6 @@ use Illuminate\Http\Request;
  */
 class StockReportController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('role:admin');
-    }
-
     public function index(Request $request)
     {
         // ── 1. Ambil parameter filter ──────────────────────────────────────

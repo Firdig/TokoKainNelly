@@ -11,11 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class ProductSalesReportController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('role:admin');
-    }
-
     public function index(Request $request)
     {
         $dateFrom = $request->input('date_from');

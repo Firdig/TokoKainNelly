@@ -118,7 +118,7 @@
                                 </div>
                                 
                                 @if($variant->image_mime)
-                                    <img src="{{ route('image.variant', $variant->id) }}" class="w-16 h-16 object-cover rounded-md mb-3 shadow-sm border border-slate-100" alt="{{ $variant->color_name }}">
+                                    <img src="{{ route('image.variant', $variant->id) }}" loading="lazy" class="w-16 h-16 object-cover rounded-md mb-3 shadow-sm border border-slate-100" alt="{{ $variant->color_name }}">
                                 @else
                                     <div class="w-16 h-16 rounded-md mb-3 shadow-sm border border-slate-200" style="background-color: {{ $variant->hex_code ?? '#ccc' }}"></div>
                                 @endif
@@ -543,11 +543,8 @@
         .then(response => response.json())
         .then(data => {
             if (data.order && data.order.id) {
-                // Buka struk di tab baru
-                window.open('/kasir/receipt/' + data.order.id, '_blank');
-                // Reset keranjang dan muat ulang halaman POS
-                keranjang = [];
-                location.reload();
+                // Pindah ke halaman struk (menghindari popup blocker)
+                window.location.href = '/kasir/receipt/' + data.order.id;
             } else {
                 // Tampilkan pesan error dari server
                 alert(data.message || 'Terjadi kesalahan saat memproses transaksi.');

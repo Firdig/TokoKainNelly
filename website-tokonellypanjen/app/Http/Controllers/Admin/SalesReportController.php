@@ -9,11 +9,6 @@ use Illuminate\Http\Request;
 
 class SalesReportController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('role:admin');
-    }
-
     public function index(Request $request)
     {
         // 1. All-time stats

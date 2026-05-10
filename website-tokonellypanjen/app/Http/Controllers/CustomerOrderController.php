@@ -43,8 +43,8 @@ class CustomerOrderController extends Controller
     {
         $order = Order::where('user_id', Auth::id())->findOrFail($id);
 
-        if (!in_array($order->status, ['pending']) && !$order->isPaymentPending()) {
-            return back()->with('error', 'Pesanan ini tidak dapat dibatalkan.');
+        if (!$order->isPaymentPending()) {
+            return back()->with('error', 'Pesanan ini tidak dapat dibatalkan karena sudah dibayar atau diproses.');
         }
 
         // Return stock

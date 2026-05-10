@@ -113,9 +113,9 @@ class InventoryService
      * Restore stock when an order is cancelled.
      *
      * @param \App\Models\Order $order
-     * @param int $userId ID of the user cancelling the order
+     * @param int|null $userId ID of the user cancelling the order, or null if system/webhook
      */
-    public function restoreStockForCancelledOrder($order, int $userId): void
+    public function restoreStockForCancelledOrder($order, ?int $userId = null): void
     {
         DB::transaction(function () use ($order, $userId) {
             foreach ($order->items as $item) {

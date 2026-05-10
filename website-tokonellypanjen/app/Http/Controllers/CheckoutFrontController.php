@@ -149,6 +149,33 @@ class CheckoutFrontController extends Controller
     {
         $order = Order::with('items.productVariant.product')->findOrFail($id);
 
+        // Fetch latest status from Midtrans if it's still unpaid/pending but uses Midtrans
+        if ($order->usesMidtrans() && $order->isPaymentPending() && $order->snap_token) {
+            try {
+                \Midtrans\Config::$serverKey = config('midtrans.server_key');
+                \Midtrans\Config::$isProduction = config('midtrans.is_production');
+                
+                $midtransStatus = \Midtrans\Transaction::status($order->invoice_number);
+                
+                if ($midtransStatus && isset($midtransStatus->transaction_status)) {
+                    // Update locally by simulating the webhook payload structure
+                    $payload = (array) $midtransStatus;
+                    $payload['signature_key'] = hash('sha512', 
+                        ($payload['order_id'] ?? '') . 
+                        ($payload['status_code'] ?? '') . 
+                        ($payload['gross_amount'] ?? '') . 
+                        config('midtrans.server_key')
+                    );
+                    
+                    app(\App\Services\MidtransService::class)->handleNotification($payload);
+                    $order->refresh();
+                }
+            } catch (\Exception $e) {
+                // Ignore if transaction not found in Midtrans yet
+                \Illuminate\Support\Facades\Log::info('Midtrans status check info: ' . $e->getMessage());
+            }
+        }
+
         $clientKey = config('midtrans.client_key');
         $snapUrl   = config('midtrans.snap_url');
 

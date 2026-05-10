@@ -119,21 +119,40 @@
                     @endif
                 </div>
 
-                <!-- Midtrans Re-pay button (for unpaid/pending orders) -->
-                @if($order->usesMidtrans() && $order->isPaymentPending())
-                <div class="mb-8">
+                <!-- Action Buttons (for unpaid/pending orders) -->
+                @if($order->isPaymentPending())
+                <div class="mb-8 flex flex-col sm:flex-row gap-4">
+                    @if($order->usesMidtrans())
                     <button id="pay-button"
-                        class="w-full text-center px-8 py-4 bg-gradient-to-r from-brand-800 to-brand-900 text-white rounded-xl font-bold font-outfit text-lg shadow-xl shadow-brand-900/30 hover:-translate-y-1 hover:shadow-2xl transition-all flex items-center justify-center gap-3">
+                        class="w-full sm:flex-1 text-center px-8 py-4 bg-gradient-to-r from-brand-800 to-brand-900 text-white rounded-xl font-bold font-outfit text-lg shadow-xl shadow-brand-900/30 hover:-translate-y-1 hover:shadow-2xl transition-all flex items-center justify-center gap-3">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
                         </svg>
                         Bayar Sekarang
                     </button>
-                    <p class="text-center text-xs text-slate-400 mt-3">Klik untuk membuka halaman pembayaran Midtrans</p>
+                    @endif
+
+                    <form action="{{ route('orders.cancel', $order->id) }}" method="POST" class="w-full @if($order->usesMidtrans()) sm:flex-1 @endif" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini? Stok akan dikembalikan.');">
+                        @csrf
+                        <button type="submit" class="w-full h-full text-center px-8 py-4 bg-white text-red-600 border-2 border-red-200 rounded-xl font-bold font-outfit text-lg hover:bg-red-50 hover:border-red-300 transition-all flex items-center justify-center gap-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                            Batalkan Pesanan
+                        </button>
+                    </form>
                 </div>
+                @if($order->usesMidtrans())
+                <p class="text-center text-xs text-slate-400 mt-[-1rem] mb-8">Klik Bayar Sekarang untuk membuka halaman pembayaran Midtrans</p>
+                @endif
                 @endif
 
                 <!-- Flash Messages -->
+                @if(session('success'))
+                <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 text-sm text-green-800 font-medium">
+                    {{ session('success') }}
+                </div>
+                @endif
                 @if(session('warning'))
                 <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-sm text-amber-800 font-medium">
                     {{ session('warning') }}

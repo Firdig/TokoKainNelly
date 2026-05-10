@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $color_name
  * @property string $hex_code
  * @property float $stock
- * @property string|null $image_path
+ * @property string|null $image_mime
  */
 class ProductVariant extends Model
 {
@@ -24,7 +24,6 @@ class ProductVariant extends Model
         'color_name',
         'hex_code',
         'stock',
-        'image_data',
         'image_mime',
     ];
 
@@ -33,7 +32,7 @@ class ProductVariant extends Model
      */
     public function getImageUrlAttribute()
     {
-        if ($this->image_data) {
+        if ($this->image_mime) {
             return route('image.variant', $this->id);
         }
         return null;

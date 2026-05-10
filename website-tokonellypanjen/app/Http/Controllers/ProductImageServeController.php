@@ -7,88 +7,67 @@ use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Storage;
 
 /**
- * Serves product images with a filesystem-first strategy:
- * 1. Check if the image file exists on disk (fast)
- * 2. If not, fall back to database BLOB + auto-export to disk for next time
- * 3. Aggressive browser caching via Cache-Control headers
+ * Serves product images from the filesystem.
+ * Images are stored in storage/app/public/products/{variants|gallery}/.
  */
 class ProductImageServeController extends Controller
 {
     /**
-     * Serve a product variant image.
+     * Serve a product variant image from the filesystem.
      */
     public function variant(ProductVariant $variant)
     {
-        $extension = $this->mimeToExtension($variant->image_mime);
-        $path = "products/variants/{$variant->id}.{$extension}";
+        $path = $this->findImagePath('products/variants', $variant->id, $variant->image_mime);
 
-        // 1. Try filesystem first (fastest path)
-        if (Storage::disk('public')->exists($path)) {
-            return $this->respondFromFile($path, $variant->image_mime);
-        }
-
-        // 2. Fallback: read from database
-        if (!$variant->image_data) {
+        if (!$path) {
             abort(404);
         }
 
-        $imageBytes = base64_decode($variant->image_data);
-
-        // Auto-export to disk for next time
-        try {
-            Storage::disk('public')->put($path, $imageBytes);
-        } catch (\Throwable $e) {
-            // Silently fail – the image will still be served from DB
-        }
-
-        return response($imageBytes)
-            ->header('Content-Type', $variant->image_mime ?? 'image/jpeg')
-            ->header('Cache-Control', 'public, max-age=31536000, immutable');
+        return response()->file(Storage::disk('public')->path($path), [
+            'Content-Type' => $variant->image_mime ?? 'image/jpeg',
+            'Cache-Control' => 'public, max-age=31536000, immutable',
+        ]);
     }
 
     /**
-     * Serve a product gallery image.
+     * Serve a product gallery image from the filesystem.
      */
     public function gallery(ProductImage $image)
     {
-        $extension = $this->mimeToExtension($image->image_mime);
-        $path = "products/gallery/{$image->id}.{$extension}";
+        $path = $this->findImagePath('products/gallery', $image->id, $image->image_mime);
 
-        // 1. Try filesystem first (fastest path)
-        if (Storage::disk('public')->exists($path)) {
-            return $this->respondFromFile($path, $image->image_mime);
-        }
-
-        // 2. Fallback: read from database
-        if (!$image->image_data) {
+        if (!$path) {
             abort(404);
         }
 
-        $imageBytes = base64_decode($image->image_data);
-
-        // Auto-export to disk for next time
-        try {
-            Storage::disk('public')->put($path, $imageBytes);
-        } catch (\Throwable $e) {
-            // Silently fail
-        }
-
-        return response($imageBytes)
-            ->header('Content-Type', $image->image_mime ?? 'image/jpeg')
-            ->header('Cache-Control', 'public, max-age=31536000, immutable');
+        return response()->file(Storage::disk('public')->path($path), [
+            'Content-Type' => $image->image_mime ?? 'image/jpeg',
+            'Cache-Control' => 'public, max-age=31536000, immutable',
+        ]);
     }
 
     /**
-     * Respond with a file from the public disk, setting aggressive cache headers.
+     * Find the image file on disk. Tries the expected extension first,
+     * then falls back to checking common extensions.
      */
-    private function respondFromFile(string $path, ?string $mime): \Symfony\Component\HttpFoundation\Response
+    private function findImagePath(string $directory, int $id, ?string $mime): ?string
     {
-        $fullPath = Storage::disk('public')->path($path);
+        // Try expected extension first
+        $ext = $this->mimeToExtension($mime);
+        $path = "{$directory}/{$id}.{$ext}";
+        if (Storage::disk('public')->exists($path)) {
+            return $path;
+        }
 
-        return response()->file($fullPath, [
-            'Content-Type' => $mime ?? 'image/jpeg',
-            'Cache-Control' => 'public, max-age=31536000, immutable',
-        ]);
+        // Fallback: try other common extensions
+        foreach (['jpg', 'png', 'webp', 'gif'] as $fallbackExt) {
+            $fallbackPath = "{$directory}/{$id}.{$fallbackExt}";
+            if (Storage::disk('public')->exists($fallbackPath)) {
+                return $fallbackPath;
+            }
+        }
+
+        return null;
     }
 
     private function mimeToExtension(?string $mime): string

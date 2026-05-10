@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  * Admin controller for managing fabric products and their variants.
+ * Images are stored on the filesystem (storage/app/public/products/).
  * Uses Form Request classes for validation and flushes catalog cache on mutations.
  */
 class ProductController extends Controller
@@ -56,14 +57,12 @@ class ProductController extends Controller
             'fabric_care'   => $validated['fabric_care'] ?? null,
         ]);
 
-        // Store gallery images (database + filesystem)
+        // Store gallery images to filesystem
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $image) {
                 $imgRecord = $product->images()->create([
-                    'image_data' => base64_encode(file_get_contents($image->getRealPath())),
                     'image_mime' => $image->getMimeType(),
                 ]);
-                // Also save to filesystem for fast serving
                 $ext = $this->mimeToExtension($image->getMimeType());
                 Storage::disk('public')->put(
                     "products/gallery/{$imgRecord->id}.{$ext}",
@@ -74,10 +73,8 @@ class ProductController extends Controller
 
         // Create variants with optional images
         foreach ($request->variants as $variantData) {
-            $imageData = null;
             $imageMime = null;
             if (isset($variantData['image'])) {
-                $imageData = base64_encode(file_get_contents($variantData['image']->getRealPath()));
                 $imageMime = $variantData['image']->getMimeType();
             }
 
@@ -85,11 +82,10 @@ class ProductController extends Controller
                 'color_name' => $variantData['color_name'],
                 'hex_code'   => $variantData['hex_code'] ?? '#cccccc',
                 'stock'      => $variantData['stock'],
-                'image_data' => $imageData,
                 'image_mime' => $imageMime,
             ]);
 
-            // Also save variant image to filesystem for fast serving
+            // Save variant image to filesystem
             if (isset($variantData['image'])) {
                 $ext = $this->mimeToExtension($variantData['image']->getMimeType());
                 Storage::disk('public')->put(
@@ -146,11 +142,10 @@ class ProductController extends Controller
             'fabric_care'   => $validated['fabric_care'] ?? null,
         ]);
 
-        // Add new gallery images (database + filesystem)
+        // Add new gallery images to filesystem
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $image) {
                 $imgRecord = $product->images()->create([
-                    'image_data' => base64_encode(file_get_contents($image->getRealPath())),
                     'image_mime' => $image->getMimeType(),
                 ]);
                 $ext = $this->mimeToExtension($image->getMimeType());
@@ -172,10 +167,8 @@ class ProductController extends Controller
                 $existingVariantIds[] = $variant->id;
             }
 
-            $imageData = $variant ? $variant->image_data : null;
             $imageMime = $variant ? $variant->image_mime : null;
             if (isset($variantData['image'])) {
-                $imageData = base64_encode(file_get_contents($variantData['image']->getRealPath()));
                 $imageMime = $variantData['image']->getMimeType();
             }
 
@@ -184,7 +177,6 @@ class ProductController extends Controller
                     'color_name' => $variantData['color_name'],
                     'hex_code'   => $variantData['hex_code'],
                     // 'stock'      => $stockAfter, // Stok tidak lagi diperbarui dari katalog
-                    'image_data' => $imageData,
                     'image_mime' => $imageMime,
                 ]);
 
@@ -201,7 +193,6 @@ class ProductController extends Controller
                     'color_name' => $variantData['color_name'],
                     'hex_code'   => $variantData['hex_code'],
                     'stock'      => $variantData['stock'],
-                    'image_data' => $imageData,
                     'image_mime' => $imageMime,
                 ]);
                 $existingVariantIds[] = $newVariant->id;

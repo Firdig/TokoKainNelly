@@ -42,7 +42,7 @@ class Product extends Model
      */
     public function variants()
     {
-        return $this->hasMany(ProductVariant::class)->select(['id', 'product_id', 'color_name', 'hex_code', 'stock', 'image_mime', 'created_at', 'updated_at']);
+        return $this->hasMany(ProductVariant::class);
     }
 
     /**
@@ -50,7 +50,7 @@ class Product extends Model
      */
     public function images()
     {
-        return $this->hasMany(ProductImage::class)->select(['id', 'product_id', 'image_mime', 'created_at', 'updated_at']);
+        return $this->hasMany(ProductImage::class);
     }
 
     /**

@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Storage;
  * Artisan command to export product images from database BLOB storage
  * to the local filesystem for faster serving.
  *
+ * ⚠️ PENTING: Jalankan command ini SEBELUM migration drop_image_data!
+ * Urutan di Railway:
+ *   1. php artisan images:export
+ *   2. php artisan migrate (untuk drop kolom image_data)
+ *
  * Usage: php artisan images:export
  */
 class ExportImagesFromDb extends Command

@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductImage extends Model
 {
-    protected $fillable = ['product_id', 'image_data', 'image_mime'];
+    protected $fillable = ['product_id', 'image_mime'];
 
     /**
      * Get the URL to serve the gallery image.
      */
     public function getImageUrlAttribute()
     {
-        if ($this->image_data) {
+        if ($this->image_mime) {
             return route('image.gallery', $this->id);
         }
         return null;

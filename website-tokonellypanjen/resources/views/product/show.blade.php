@@ -362,15 +362,28 @@
             fetch(form.action, {
                 method: 'POST',
                 body: formData,
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                headers: { 
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
             }).then(response => {
+                if (response.status === 401) {
+                    return response.json().then(data => {
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    });
+                }
                 if(response.redirected || response.ok) {
                     openCartModal();
                 } else {
                     return response.text().then(text => { throw new Error(text); });
                 }
             }).catch(err => {
-                alert('Gagal menambahkan ke keranjang. Silakan coba lagi.');
+                if (err.message) {
+                    alert('Gagal menambahkan ke keranjang. Silakan coba lagi.');
+                }
+
             }).finally(() => {
                 btn.disabled = false;
                 btn.innerHTML = originalHTML;

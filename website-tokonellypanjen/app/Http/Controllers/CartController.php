@@ -32,6 +32,11 @@ class CartController extends Controller
      */
     public function index()
     {
+        if (!\Illuminate\Support\Facades\Auth::check()) {
+            Session::put('url.intended', route('cart.index'));
+            return redirect()->route('login')->with('error', 'Silakan login atau daftar terlebih dahulu untuk melihat keranjang belanja Anda.');
+        }
+
         $cart = $this->getCart();
         // Muat (Eager Load) item keranjang beserta data produknya
         $cart->load('items.productVariant.product');
@@ -44,6 +49,16 @@ class CartController extends Controller
      */
     public function add(Request $request)
     {
+        if (!\Illuminate\Support\Facades\Auth::check()) {
+            Session::put('url.intended', url()->previous());
+            Session::flash('error', 'Silakan login atau daftar terlebih dahulu untuk menambahkan ke keranjang.');
+            
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['redirect' => route('login')], 401);
+            }
+            return redirect()->route('login');
+        }
+
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'product_variant_id' => 'required|exists:product_variants,id',

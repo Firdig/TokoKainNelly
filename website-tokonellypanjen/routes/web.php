@@ -68,6 +68,7 @@ Route::middleware(['auth'])->group(function () {
     // Customer Order Tracking
     Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{id}', [CustomerOrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{id}/cancel', [CustomerOrderController::class, 'cancel'])->name('orders.cancel');
 });
 
 // ═══════════════════════════════════════════════════════════════

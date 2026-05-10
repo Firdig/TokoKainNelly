@@ -193,7 +193,43 @@
                                 <span class="font-outfit font-extrabold text-2xl text-brand-600">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</span>
                             </div>
                         </div>
+
+                        <!-- Action Buttons -->
+                        @if($order->status === 'pending' || $order->isPaymentPending())
+                            <div class="border-t border-brand-100 mt-6 pt-6 space-y-3">
+                                @if($order->usesMidtrans() && $order->isPaymentPending())
+                                    <a href="{{ route('checkout.payment', $order->id) }}" class="w-full text-center px-4 py-3 bg-gradient-to-r from-brand-800 to-brand-900 text-white rounded-xl font-bold font-outfit text-sm shadow-lg shadow-brand-900/30 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                                        </svg>
+                                        Lanjutkan Pembayaran
+                                    </a>
+                                @endif
+
+                                <form action="{{ route('orders.cancel', $order->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini? Stok akan dikembalikan.');">
+                                    @csrf
+                                    <button type="submit" class="w-full text-center px-4 py-3 bg-white text-red-600 border border-red-200 rounded-xl font-bold font-outfit text-sm hover:bg-red-50 hover:border-red-300 transition-all flex items-center justify-center gap-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                        Batalkan Pesanan
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
                     </div>
+                    
+                    <!-- Flash Messages -->
+                    @if(session('success'))
+                        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl mt-4 text-sm font-medium">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    @if(session('error'))
+                        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mt-4 text-sm font-medium">
+                            {{ session('error') }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

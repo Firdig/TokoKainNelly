@@ -160,25 +160,50 @@
                             @enderror
 
                             <div class="space-y-4">
-                                <label class="flex items-center justify-between p-4 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
-                                    <div class="flex items-center gap-4">
-                                        <input type="radio" name="payment_method" value="transfer_bca" class="w-4 h-4 text-brand-600 focus:ring-brand-500" required {{ old('payment_method') === 'transfer_bca' ? 'checked' : '' }}>
-                                        <span class="font-bold text-brand-900">Transfer Bank BCA</span>
-                                    </div>
-                                    <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded">Manual</span>
-                                </label>
-                                
-                                <label class="flex items-center justify-between p-4 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
-                                    <div class="flex items-center gap-4">
-                                        <input type="radio" name="payment_method" value="qris" class="w-4 h-4 text-brand-600 focus:ring-brand-500" {{ old('payment_method') === 'qris' ? 'checked' : '' }}>
-                                        <span class="font-bold text-brand-900">QRIS (Gopay, OVO, Dana)</span>
+                                <!-- Midtrans Online Payment -->
+                                <label class="block cursor-pointer group">
+                                    <input type="radio" name="payment_method" value="midtrans" class="peer sr-only" required {{ old('payment_method', 'midtrans') === 'midtrans' ? 'checked' : '' }}>
+                                    <div class="p-5 rounded-2xl border-2 border-slate-200 peer-checked:border-brand-600 peer-checked:bg-brand-50/50 hover:bg-slate-50 transition-all">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <h3 class="font-bold text-brand-900">Bayar Online</h3>
+                                                    <p class="text-xs text-slate-500">Pembayaran otomatis & aman via Midtrans</p>
+                                                </div>
+                                            </div>
+                                            <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-lg border border-green-100">Direkomendasikan</span>
+                                        </div>
+                                        <div class="flex flex-wrap gap-2 ml-13">
+                                            <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">Transfer Bank</span>
+                                            <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">QRIS</span>
+                                            <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">GoPay</span>
+                                            <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">ShopeePay</span>
+                                            <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">OVO</span>
+                                            <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">Dana</span>
+                                        </div>
                                     </div>
                                 </label>
 
-                                <label class="flex items-center justify-between p-4 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
-                                    <div class="flex items-center gap-4">
-                                        <input type="radio" name="payment_method" value="cod" class="w-4 h-4 text-brand-600 focus:ring-brand-500" {{ old('payment_method') === 'cod' ? 'checked' : '' }}>
-                                        <span class="font-bold text-brand-900">Bayar di Tempat (COD/Di Toko)</span>
+                                <!-- COD / Bayar di Tempat -->
+                                <label class="block cursor-pointer group">
+                                    <input type="radio" name="payment_method" value="cod" class="peer sr-only" {{ old('payment_method') === 'cod' ? 'checked' : '' }}>
+                                    <div class="p-5 rounded-2xl border-2 border-slate-200 peer-checked:border-brand-600 peer-checked:bg-brand-50/50 hover:bg-slate-50 transition-all">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <h3 class="font-bold text-brand-900">Bayar di Tempat (COD)</h3>
+                                                <p class="text-xs text-slate-500">Bayar tunai saat kain diterima / diambil di toko</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </label>
                             </div>

@@ -201,25 +201,62 @@
                 <div class="space-y-4">
                     <div>
                         <p class="text-xs text-slate-500 font-medium mb-1">Metode</p>
-                        <p class="font-bold text-slate-800 uppercase">{{ $order->payment_method ?? 'TUNAI' }}</p>
+                        <p class="font-bold text-slate-800 uppercase">
+                            @if($order->payment_method === 'midtrans')
+                                Midtrans (Online)
+                            @elseif($order->payment_method === 'cod')
+                                Bayar di Tempat (COD)
+                            @elseif($order->payment_method === 'cash')
+                                Tunai (Kasir)
+                            @else
+                                {{ $order->payment_method ?? 'TUNAI' }}
+                            @endif
+                        </p>
                     </div>
                     <div>
                         <p class="text-xs text-slate-500 font-medium mb-1">Status Pembayaran</p>
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-green-100 text-green-800">
-                            Lunas (Paid)
+                        @php
+                            $payColors = [
+                                'paid' => 'bg-green-100 text-green-800',
+                                'unpaid' => 'bg-yellow-100 text-yellow-800',
+                                'pending' => 'bg-amber-100 text-amber-800',
+                                'expired' => 'bg-red-100 text-red-800',
+                                'failed' => 'bg-red-100 text-red-800',
+                                'cancelled' => 'bg-slate-100 text-slate-800',
+                                'refunded' => 'bg-purple-100 text-purple-800',
+                            ];
+                            $payColor = $payColors[$order->payment_status ?? 'unpaid'] ?? 'bg-slate-100 text-slate-800';
+                            $payLabel = match($order->payment_status) {
+                                'paid' => 'Lunas (Paid)',
+                                'unpaid' => 'Belum Bayar',
+                                'pending' => 'Menunggu Pembayaran',
+                                'expired' => 'Kadaluarsa',
+                                'failed' => 'Gagal',
+                                'cancelled' => 'Dibatalkan',
+                                'refunded' => 'Refund',
+                                default => 'Belum Bayar',
+                            };
+                        @endphp
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold {{ $payColor }}">
+                            {{ $payLabel }}
                         </span>
                     </div>
-                    @if($order->payment_method != 'cash')
+                    @if($order->midtrans_payment_type)
                     <div>
-                        <p class="text-xs text-slate-500 font-medium mb-1">Bukti Transfer</p>
-                        @if($order->payment_proof)
-                            <a href="{{ Storage::url($order->payment_proof) }}" target="_blank" class="text-brand-600 hover:text-brand-800 font-bold text-sm flex items-center gap-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                Lihat Bukti
-                            </a>
-                        @else
-                            <span class="text-slate-400 italic text-sm">Tidak ada bukti unggahan</span>
-                        @endif
+                        <p class="text-xs text-slate-500 font-medium mb-1">Jenis Pembayaran (Midtrans)</p>
+                        <p class="font-bold text-slate-800">{{ str_replace('_', ' ', ucwords($order->midtrans_payment_type, '_')) }}</p>
+                    </div>
+                    @endif
+                    @if($order->midtrans_transaction_id)
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium mb-1">Midtrans Transaction ID</p>
+                        <p class="font-mono text-sm text-slate-700 bg-slate-50 px-3 py-2 rounded-lg border border-slate-100 break-all">{{ $order->midtrans_transaction_id }}</p>
+                    </div>
+                    @endif
+                    @if($order->paid_at)
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium mb-1">Waktu Pembayaran</p>
+                        <p class="font-medium text-slate-800">{{ $order->paid_at->format('d M Y, H:i:s') }}</p>
                     </div>
                     @endif
                 </div>

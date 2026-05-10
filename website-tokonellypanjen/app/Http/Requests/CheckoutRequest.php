@@ -22,7 +22,7 @@ class CheckoutRequest extends FormRequest
     {
         $rules = [
             'transaction_type' => 'required|in:bops,delivery',
-            'payment_method'   => 'required|string|max:50',
+            'payment_method'   => 'required|string|in:midtrans,cod',
             'customer_name'    => 'required|string|max:255',
             'customer_phone'   => 'required|string|max:20',
         ];

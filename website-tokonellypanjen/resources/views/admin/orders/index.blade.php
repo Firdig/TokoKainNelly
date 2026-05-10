@@ -50,7 +50,16 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-semibold text-brand-600">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</div>
-                            <div class="text-xs text-slate-400 mt-1">{{ $order->items ? $order->items->count() : 0 }} barang</div>
+                            <div class="flex items-center gap-1 mt-1">
+                                <span class="text-xs text-slate-400">{{ $order->items ? $order->items->count() : 0 }} barang</span>
+                                @if($order->payment_status === 'paid')
+                                    <span class="inline-block w-1.5 h-1.5 rounded-full bg-green-400 ml-1"></span>
+                                    <span class="text-[10px] font-bold text-green-600">Lunas</span>
+                                @elseif(in_array($order->payment_status, ['unpaid', 'pending']))
+                                    <span class="inline-block w-1.5 h-1.5 rounded-full bg-amber-400 ml-1"></span>
+                                    <span class="text-[10px] font-bold text-amber-600">Belum Bayar</span>
+                                @endif
+                            </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @php

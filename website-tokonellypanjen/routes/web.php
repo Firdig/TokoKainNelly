@@ -57,6 +57,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/checkout/process', [CheckoutFrontController::class, 'process'])
         ->middleware('throttle:checkout')
         ->name('checkout.process');
+    Route::get('/payment/{id}', [CheckoutFrontController::class, 'payment'])->name('checkout.payment');
     Route::get('/invoice/{id}', [CheckoutFrontController::class, 'success'])->name('checkout.success');
 
     // Customer Profile Management

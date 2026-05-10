@@ -1,7 +1,14 @@
-<!-- <?php
+<?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TransactionController; // Panggil controllernya di sini
+use App\Http\Controllers\MidtransController;
 
-// Jalur ini akan memproses pesanan dan memotong stok -->
+// ═══════════════════════════════════════════════════════════════
+// MIDTRANS WEBHOOK (No CSRF, No Auth)
+// ═══════════════════════════════════════════════════════════════
+
+// Midtrans sends POST notifications to this endpoint when payment
+// status changes (settlement, expire, cancel, etc.)
+// Security is handled via signature_key verification in MidtransService.
+Route::post('/midtrans/notification', [MidtransController::class, 'notification'])
+    ->name('midtrans.notification');

@@ -7,18 +7,22 @@ use App\Mail\OrderConfirmationMail;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Services\CheckoutService;
+use App\Services\MidtransService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 
 /**
  * Handles the E-Commerce checkout flow for online customers.
  * Delegates business logic to CheckoutService (thin controller pattern).
+ * Supports Midtrans online payments and COD.
  */
 class CheckoutFrontController extends Controller
 {
     public function __construct(
-        private readonly CheckoutService $checkoutService
+        private readonly CheckoutService $checkoutService,
+        private readonly MidtransService $midtransService,
     ) {}
 
     /**
@@ -41,6 +45,9 @@ class CheckoutFrontController extends Controller
     /**
      * Process the E-Commerce checkout using validated CheckoutRequest.
      * Uses CheckoutService with pessimistic locking for stock safety.
+     *
+     * For Midtrans payments: creates order → generates Snap token → redirects to payment page.
+     * For COD payments: creates order → redirects directly to success page.
      */
     public function process(CheckoutRequest $request)
     {
@@ -74,10 +81,65 @@ class CheckoutFrontController extends Controller
                 Mail::to(Auth::user()->email)->queue(new OrderConfirmationMail($order));
             }
 
+            // Route based on payment method
+            if ($order->payment_method === 'midtrans') {
+                // Generate Midtrans Snap token and redirect to payment page
+                try {
+                    $this->midtransService->createSnapToken($order);
+                    return redirect()->route('checkout.payment', $order->id);
+                } catch (\Exception $e) {
+                    Log::error('Midtrans Snap token failed, falling back to success page', [
+                        'order_id' => $order->id,
+                        'error'    => $e->getMessage(),
+                    ]);
+                    return redirect()->route('checkout.success', $order->id)
+                        ->with('warning', 'Pesanan berhasil dibuat, namun halaman pembayaran tidak dapat dimuat. Silakan hubungi admin.');
+                }
+            }
+
+            // COD: go directly to success page
             return redirect()->route('checkout.success', $order->id);
+
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
+    }
+
+    /**
+     * Display the Midtrans Snap payment page.
+     * Allows customer to pay or re-attempt payment for an unpaid order.
+     */
+    public function payment($id)
+    {
+        $order = Order::with('items.productVariant.product')
+            ->where('user_id', Auth::id())
+            ->findOrFail($id);
+
+        // If already paid, redirect to success
+        if ($order->isPaid()) {
+            return redirect()->route('checkout.success', $order->id)
+                ->with('info', 'Pesanan ini sudah dibayar.');
+        }
+
+        // If no snap token yet, or token might be expired, generate a new one
+        if (empty($order->snap_token)) {
+            try {
+                $this->midtransService->createSnapToken($order);
+                $order->refresh();
+            } catch (\Exception $e) {
+                Log::error('Failed to create Snap token on payment page', [
+                    'order_id' => $order->id,
+                    'error'    => $e->getMessage(),
+                ]);
+                return redirect()->route('checkout.success', $order->id)
+                    ->with('error', 'Gagal memuat halaman pembayaran. Silakan coba lagi atau hubungi admin.');
+            }
+        }
+
+        $clientKey = config('midtrans.client_key');
+        $snapUrl   = config('midtrans.snap_url');
+
+        return view('checkout.payment', compact('order', 'clientKey', 'snapUrl'));
     }
 
     /**
@@ -86,6 +148,10 @@ class CheckoutFrontController extends Controller
     public function success($id)
     {
         $order = Order::with('items.productVariant.product')->findOrFail($id);
-        return view('checkout.success', compact('order'));
+
+        $clientKey = config('midtrans.client_key');
+        $snapUrl   = config('midtrans.snap_url');
+
+        return view('checkout.success', compact('order', 'clientKey', 'snapUrl'));
     }
 }

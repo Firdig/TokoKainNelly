@@ -54,6 +54,9 @@ class CheckoutService
                 : null;
 
             // 1. Create the order header
+            // COD = paid immediately; Midtrans = unpaid until webhook confirms
+            $isCod = $paymentMethod === 'cod';
+
             $order = Order::create([
                 'invoice_number'       => 'INV-' . time() . '-' . strtoupper(Str::random(4)),
                 'user_id'              => $userId,
@@ -66,6 +69,8 @@ class CheckoutService
                 'customer_phone'       => $customerInfo['phone'] ?? null,
                 'delivery_address'     => $customerInfo['address'] ?? null,
                 'payment_method'       => $paymentMethod,
+                'payment_status'       => $isCod ? 'paid' : 'unpaid',
+                'paid_at'              => $isCod ? now() : null,
             ]);
 
             // 2. Process each cart item with pessimistic locking
@@ -143,6 +148,8 @@ class CheckoutService
                 'status'           => 'completed',
                 'total_amount'     => 0,
                 'payment_method'   => $paymentMethod,
+                'payment_status'   => 'paid',
+                'paid_at'          => now(),
             ]);
 
             foreach ($items as $itemData) {

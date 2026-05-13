@@ -15,16 +15,15 @@ class ProductImageServeController extends Controller
     /**
      * Serve a product variant image from the filesystem.
      */
-    public function variant(ProductVariant $variant)
+    public function variant($id)
     {
-        $path = $this->findImagePath('products/variants', $variant->id, $variant->image_mime);
+        $path = $this->findImagePath('products/variants', $id, null);
 
         if (!$path) {
             abort(404);
         }
 
         return response()->file(Storage::disk('public')->path($path), [
-            'Content-Type' => $variant->image_mime ?? 'image/jpeg',
             'Cache-Control' => 'public, max-age=31536000, immutable',
         ]);
     }
@@ -32,16 +31,15 @@ class ProductImageServeController extends Controller
     /**
      * Serve a product gallery image from the filesystem.
      */
-    public function gallery(ProductImage $image)
+    public function gallery($id)
     {
-        $path = $this->findImagePath('products/gallery', $image->id, $image->image_mime);
+        $path = $this->findImagePath('products/gallery', $id, null);
 
         if (!$path) {
             abort(404);
         }
 
         return response()->file(Storage::disk('public')->path($path), [
-            'Content-Type' => $image->image_mime ?? 'image/jpeg',
             'Cache-Control' => 'public, max-age=31536000, immutable',
         ]);
     }

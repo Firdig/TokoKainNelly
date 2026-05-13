@@ -35,7 +35,13 @@ class Product extends Model
         'width',
         'composition',
         'fabric_care',
+        'category_id',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 
     /**
      * Get the color variants of this product.

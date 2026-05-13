@@ -24,6 +24,7 @@ class StoreProductRequest extends FormRequest
             'name'                 => 'required|string|max:255',
             'description'          => 'required|string',
             'price'                => 'required|numeric|min:0',
+            'category_id'          => 'nullable|exists:categories,id',
             'fabric_type'          => 'nullable|string|max:100',
             'texture'              => 'nullable|string|max:255',
             'comfort_level'        => 'nullable|integer|min:1|max:5',

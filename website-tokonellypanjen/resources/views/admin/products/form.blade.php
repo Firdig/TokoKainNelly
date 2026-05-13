@@ -44,6 +44,17 @@
                     <textarea name="description" rows="4" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-shadow outline-none" placeholder="Masukkan detail bahan, motif, warna, dan kecocokan...">{{ old('description', $product->description ?? '') }}</textarea>
                 </div>
 
+                <!-- Kategori Produk -->
+                <div>
+                    <label class="block text-sm font-bold text-brand-900 mb-1">Kategori</label>
+                    <select name="category_id" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-shadow outline-none bg-white">
+                        <option value="">Pilih Kategori (Opsional)</option>
+                        @foreach(\App\Models\Category::orderBy('name')->get() as $cat)
+                            <option value="{{ $cat->id }}" {{ old('category_id', $product->category_id ?? '') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Fabric Type (Jenis Kain) -->
                     <div>

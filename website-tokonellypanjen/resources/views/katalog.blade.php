@@ -77,6 +77,19 @@
                                 </select>
                             </div>
 
+                            <!-- Category Filter -->
+                            @if(isset($categories) && $categories->count() > 0)
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Kategori</label>
+                                <select name="category" class="input-field text-sm py-2.5 bg-white" onchange="this.form.submit()">
+                                    <option value="">Semua Kategori</option>
+                                    @foreach($categories as $cat)
+                                        <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @endif
+
                             <!-- Fabric Type Filter -->
                             @if(isset($fabricTypes) && $fabricTypes->count() > 0)
                             <div>
@@ -90,12 +103,23 @@
                             </div>
                             @endif
 
+                            <!-- Price Range Filter -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Rentang Harga</label>
+                                <div class="flex gap-2">
+                                    <input type="number" name="price_min" value="{{ request('price_min') }}" placeholder="Min"
+                                        class="w-1/2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-400 text-sm py-2 px-3">
+                                    <input type="number" name="price_max" value="{{ request('price_max') }}" placeholder="Max"
+                                        class="w-1/2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-400 text-sm py-2 px-3">
+                                </div>
+                            </div>
+
                             <button type="submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-2 shadow-md shadow-brand-600/20">
                                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                                 <span>Cari</span>
                             </button>
 
-                            @if(request()->has('q') || request()->has('sort') || request()->has('fabric_type'))
+                            @if(request()->hasAny(['q', 'sort', 'fabric_type', 'category', 'price_min', 'price_max']))
                                 <a href="{{ route('katalog') }}" class="flex items-center justify-center gap-1.5 w-full text-center py-2 text-sm text-slate-500 hover:text-brand-600 font-medium transition-colors">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     Reset Filter

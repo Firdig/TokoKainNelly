@@ -94,6 +94,12 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,staff'])->group(function
     // Product Management (CRUD)
     Route::resource('products', ProductController::class);
 
+    // Category Management (CRUD)
+    Route::get('categories', [\App\Http\Controllers\Admin\CategoryController::class, 'index'])->name('admin.categories.index');
+    Route::post('categories', [\App\Http\Controllers\Admin\CategoryController::class, 'store'])->name('admin.categories.store');
+    Route::put('categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'update'])->name('admin.categories.update');
+    Route::delete('categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'destroy'])->name('admin.categories.destroy');
+
     // Stock Opname (Physical Audit)
     Route::get('stock-opname', [\App\Http\Controllers\Admin\StockOpnameController::class, 'index'])->name('stock-opname.index');
     Route::post('stock-opname', [\App\Http\Controllers\Admin\StockOpnameController::class, 'store'])->name('stock-opname.store');
@@ -134,4 +140,10 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
     // Laporan Penjualan Per Produk (Historical Sales per Product)
     Route::get('product-sales-report', [\App\Http\Controllers\Admin\ProductSalesReportController::class, 'index'])->name('admin.product-sales-report.index');
+
+    // Laporan Nilai Aset Inventaris (KF-11)
+    Route::get('asset-report', [\App\Http\Controllers\Admin\AssetReportController::class, 'index'])->name('admin.asset-report.index');
+
+    // Laporan Rekapitulasi Pembayaran (KF-35)
+    Route::get('payment-report', [\App\Http\Controllers\Admin\PaymentReportController::class, 'index'])->name('admin.payment-report.index');
 });

@@ -12,26 +12,26 @@
     <!-- Top Navigation -->
     <nav class="bg-white border-b border-brand-100 flex-shrink-0 z-10 shadow-sm relative">
         <div class="px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <img src="{{ asset('images/logo.jpg') }}" alt="Toko Kain Nelly" class="h-8 w-8 rounded object-cover shadow-sm">
-                <h1 class="font-outfit font-bold text-lg text-brand-900">Toko Kain Nelly <span class="text-brand-400 font-normal ml-2">| Point of Sale</span></h1>
+            <div class="flex items-center gap-2 sm:gap-3">
+                <img src="{{ asset('images/logo.jpg') }}" alt="Toko Kain Nelly" class="h-7 w-7 sm:h-8 sm:w-8 rounded object-cover shadow-sm">
+                <h1 class="font-outfit font-bold text-base sm:text-lg text-brand-900 truncate max-w-[150px] sm:max-w-none">Toko Kain Nelly <span class="text-brand-400 font-normal hidden sm:inline ml-2">| Point of Sale</span></h1>
             </div>
-            <div class="flex items-center gap-4">
-                <div class="text-right hidden sm:block">
+            <div class="flex items-center gap-2 sm:gap-4">
+                <div class="text-right hidden md:block">
                     <p class="text-sm font-bold text-brand-900">Kasir Utama</p>
                     <p class="text-xs text-brand-500">{{ date('d M Y') }}</p>
                 </div>
-                <a href="/admin" class="px-4 py-2 border border-brand-200 text-brand-600 hover:bg-brand-50 rounded-lg text-sm font-medium transition-colors">Dashboard Admin</a>
-                <a href="/" class="px-4 py-2 border border-brand-200 text-brand-600 hover:bg-brand-50 rounded-lg text-sm font-medium transition-colors">Ke Katalog Web</a>
+                <a href="/admin" class="px-3 py-1.5 sm:px-4 sm:py-2 border border-brand-200 text-brand-600 hover:bg-brand-50 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap">Dashboard Admin</a>
+                <a href="/" class="hidden sm:inline-block px-3 py-1.5 sm:px-4 sm:py-2 border border-brand-200 text-brand-600 hover:bg-brand-50 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap">Ke Katalog Web</a>
             </div>
         </div>
     </nav>
 
     <!-- Main Workspace -->
-    <div class="flex flex-1 overflow-hidden">
+    <div class="flex flex-1 overflow-hidden relative">
         
         <!-- Left Side: Product Grid -->
-        <main class="flex-1 flex flex-col bg-brand-50">
+        <main class="flex-1 flex flex-col bg-brand-50 w-full overflow-hidden" id="posProductSection">
             {{-- ── Header + Search + Filter Pills ── --}}
             <div class="px-6 pt-6 pb-3 flex-shrink-0">
                 <div class="flex items-center justify-between mb-3">
@@ -103,7 +103,7 @@
                     </button>
                 </div>
 
-                <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="productGrid">
+                <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4" id="productGrid">
                     @foreach($products as $product)
                         @foreach($product->variants as $variant)
                         <div class="product-card bg-white rounded-xl border border-brand-100 shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col h-full overflow-hidden {{ $variant->stock == 0 ? 'opacity-60 grayscale' : '' }}"
@@ -140,10 +140,13 @@
             </div>
         </main>
 
+        <!-- Overlay for mobile cart -->
+        <div id="cartOverlay" class="fixed inset-0 bg-slate-900/50 z-30 hidden lg:hidden transition-opacity opacity-0" onclick="toggleCart()"></div>
+
         <!-- Right Side: Cart / Checkout Panel -->
-        <aside class="w-96 bg-white border-l border-brand-200 flex flex-col shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.05)] z-20">
+        <aside id="cartSidebar" class="fixed inset-y-0 right-0 w-[90%] md:w-96 bg-white lg:border-l border-brand-200 flex flex-col shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.05)] z-40 transform translate-x-full lg:translate-x-0 transition-transform duration-300 lg:static">
             <!-- Header Cart -->
-            <div class="p-5 border-b border-brand-100 bg-brand-50/50">
+            <div class="p-5 border-b border-brand-100 bg-brand-50/50 flex justify-between items-center">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-brand-100 rounded-full flex items-center justify-center text-brand-600">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
@@ -153,6 +156,10 @@
                         <p class="text-xs text-brand-500" id="itemCount">0 Item</p>
                     </div>
                 </div>
+                <!-- Close Button for Mobile -->
+                <button onclick="toggleCart()" class="lg:hidden p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
 
             <!-- Cart Items List -->
@@ -165,49 +172,162 @@
 
             <!-- Footer Checkout -->
             <div class="bg-white border-t border-brand-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-
-                <!-- Metode Pembayaran -->
-                <div class="px-5 pt-4 pb-3 border-b border-brand-50">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Metode Pembayaran</p>
-                    <div class="grid grid-cols-3 gap-2" id="paymentOptions">
-                        <label class="payment-option cursor-pointer">
-                            <input type="radio" name="payment_method" value="cash" class="sr-only" checked>
-                            <div class="payment-btn selected flex flex-col items-center gap-1 p-2 rounded-xl border-2 text-center transition-all">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                                <span class="text-[10px] font-bold">Tunai</span>
-                            </div>
-                        </label>
-                        <label class="payment-option cursor-pointer">
-                            <input type="radio" name="payment_method" value="transfer" class="sr-only">
-                            <div class="payment-btn flex flex-col items-center gap-1 p-2 rounded-xl border-2 text-center transition-all">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
-                                <span class="text-[10px] font-bold">Transfer</span>
-                            </div>
-                        </label>
-                        <label class="payment-option cursor-pointer">
-                            <input type="radio" name="payment_method" value="qris" class="sr-only">
-                            <div class="payment-btn flex flex-col items-center gap-1 p-2 rounded-xl border-2 text-center transition-all">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
-                                <span class="text-[10px] font-bold">QRIS</span>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-
                 <!-- Total + Tombol Bayar -->
                 <div class="px-5 py-4">
                     <div class="flex justify-between items-end mb-3">
                         <span class="text-slate-500 font-semibold text-sm">Total Belanja</span>
                         <span class="font-outfit font-bold text-3xl text-brand-900" id="totalHarga">Rp0</span>
                     </div>
-                    <button class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold text-lg py-4 rounded-xl shadow-lg transition-all flex justify-center items-center gap-2 transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed" id="btnCheckout" onclick="prosesCheckoutPOS()" disabled>
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                        Bayar Sekarang
+                    <button class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold text-lg py-4 rounded-xl shadow-lg transition-all flex justify-center items-center gap-2 transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed" id="btnLanjutkanPembayaran" onclick="bukaModalPembayaran()" disabled>
+                        Lanjutkan Pembayaran
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </button>
                 </div>
             </div>
         </aside>
+
+        <!-- Floating Cart Button for Mobile -->
+        <button onclick="toggleCart()" class="lg:hidden fixed bottom-6 right-6 bg-brand-600 text-white p-4 rounded-full shadow-lg shadow-brand-600/30 z-30 flex items-center justify-center hover:bg-brand-700 active:scale-95 transition-all">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            <span id="mobileCartCountBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-white shadow-sm hidden">0</span>
+        </button>
     </div>
+
+    <!-- Modal Pembayaran -->
+    <div id="paymentModal" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300 px-4">
+        <div class="bg-slate-50 rounded-2xl shadow-xl w-full max-w-md md:max-w-xl overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]" id="paymentModalContent">
+            <div class="px-5 py-4 border-b border-brand-100 flex justify-between items-center bg-white shadow-sm flex-shrink-0 z-10">
+                <h2 class="font-outfit text-xl font-bold text-brand-900">Pembayaran</h2>
+                <button onclick="tutupModalPembayaran()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 md:p-5 custom-scrollbar">
+                <div class="max-w-2xl mx-auto">
+                    <!-- Total Tagihan -->
+                    <div class="bg-white p-4 md:p-5 rounded-2xl mb-6 flex justify-between items-center border border-slate-200 shadow-sm">
+                        <span class="text-slate-500 font-bold uppercase tracking-widest text-xs md:text-sm">Total Tagihan</span>
+                        <span class="font-outfit font-bold text-3xl md:text-4xl text-brand-900" id="paymentViewTotal">Rp0</span>
+                    </div>
+
+                    <!-- Metode Pembayaran -->
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Metode Pembayaran</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-3 mb-6" id="paymentOptions">
+                        <label class="payment-option cursor-pointer">
+                            <input type="radio" name="payment_method" value="cash" class="sr-only" checked>
+                            <div class="payment-btn selected flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 text-center transition-all h-full justify-center bg-white shadow-sm">
+                                <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                <span class="text-xs font-bold mt-0.5">Tunai</span>
+                            </div>
+                        </label>
+                        <label class="payment-option cursor-pointer">
+                            <input type="radio" name="payment_method" value="edc_bca" class="sr-only">
+                            <div class="payment-btn flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 text-center transition-all h-full justify-center bg-white shadow-sm">
+                                <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                                <span class="text-xs font-bold mt-0.5">EDC BCA</span>
+                            </div>
+                        </label>
+                        <label class="payment-option cursor-pointer">
+                            <input type="radio" name="payment_method" value="edc_bni" class="sr-only">
+                            <div class="payment-btn flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 text-center transition-all h-full justify-center bg-white shadow-sm">
+                                <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                                <span class="text-xs font-bold mt-0.5">EDC BNI</span>
+                            </div>
+                        </label>
+                        <label class="payment-option cursor-pointer">
+                            <input type="radio" name="payment_method" value="qris" class="sr-only">
+                            <div class="payment-btn flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 text-center transition-all h-full justify-center bg-white shadow-sm">
+                                <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+                                <span class="text-xs font-bold mt-0.5">QRIS</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Cash Input Section -->
+                    <div class="mb-6 bg-white p-4 md:p-5 rounded-2xl border border-slate-200 shadow-sm" id="cashSection">
+                        <label class="block text-xs font-bold text-slate-700 mb-2">Uang Diterima (Rp)</label>
+                        <div class="relative mb-4">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                <span class="text-slate-400 font-bold text-lg">Rp</span>
+                            </div>
+                            <input type="number" id="amountPaid" placeholder="0" 
+                                   oninput="calculateChange()"
+                                   class="w-full pl-10 pr-3 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-400 focus:border-brand-400 text-xl shadow-inner bg-slate-50 font-bold text-brand-900 transition-colors"
+                                   min="0">
+                        </div>
+                        
+                        <!-- Virtual Numpad -->
+                        <div class="grid grid-cols-4 gap-1.5 md:gap-2 mb-4" id="virtualNumpad">
+                            <button type="button" class="p-2 md:p-3 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 rounded-xl font-bold text-lg md:text-xl text-slate-800 transition-colors shadow-sm" onclick="appendNumpad('1')">1</button>
+                            <button type="button" class="p-2 md:p-3 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 rounded-xl font-bold text-lg md:text-xl text-slate-800 transition-colors shadow-sm" onclick="appendNumpad('2')">2</button>
+                            <button type="button" class="p-2 md:p-3 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 rounded-xl font-bold text-lg md:text-xl text-slate-800 transition-colors shadow-sm" onclick="appendNumpad('3')">3</button>
+                            <button type="button" class="p-2 md:p-3 bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200 rounded-xl font-bold text-sm md:text-base text-indigo-700 transition-colors shadow-sm" onclick="addQuickAmount(50000)">+50K</button>
+                            
+                            <button type="button" class="p-2 md:p-3 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 rounded-xl font-bold text-lg md:text-xl text-slate-800 transition-colors shadow-sm" onclick="appendNumpad('4')">4</button>
+                            <button type="button" class="p-2 md:p-3 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 rounded-xl font-bold text-lg md:text-xl text-slate-800 transition-colors shadow-sm" onclick="appendNumpad('5')">5</button>
+                            <button type="button" class="p-2 md:p-3 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 rounded-xl font-bold text-lg md:text-xl text-slate-800 transition-colors shadow-sm" onclick="appendNumpad('6')">6</button>
+                            <button type="button" class="p-2 md:p-3 bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200 rounded-xl font-bold text-sm md:text-base text-indigo-700 transition-colors shadow-sm" onclick="addQuickAmount(100000)">+100K</button>
+                            
+                            <button type="button" class="p-2 md:p-3 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 rounded-xl font-bold text-lg md:text-xl text-slate-800 transition-colors shadow-sm" onclick="appendNumpad('7')">7</button>
+                            <button type="button" class="p-2 md:p-3 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 rounded-xl font-bold text-lg md:text-xl text-slate-800 transition-colors shadow-sm" onclick="appendNumpad('8')">8</button>
+                            <button type="button" class="p-2 md:p-3 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 rounded-xl font-bold text-lg md:text-xl text-slate-800 transition-colors shadow-sm" onclick="appendNumpad('9')">9</button>
+                            <button type="button" class="p-2 md:p-3 bg-red-50 hover:bg-red-100 active:bg-red-200 rounded-xl font-bold text-sm md:text-base text-red-600 transition-colors shadow-sm" onclick="clearNumpad()">C</button>
+                            
+                            <button type="button" class="p-2 md:p-3 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 rounded-xl font-bold text-lg md:text-xl text-slate-800 transition-colors shadow-sm" onclick="appendNumpad('00')">00</button>
+                            <button type="button" class="p-2 md:p-3 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 rounded-xl font-bold text-lg md:text-xl text-slate-800 transition-colors shadow-sm" onclick="appendNumpad('0')">0</button>
+                            <button type="button" class="p-2 md:p-3 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 rounded-xl font-bold text-lg md:text-xl text-slate-800 transition-colors shadow-sm" onclick="appendNumpad('000')">000</button>
+                            <button type="button" class="p-2 md:p-3 bg-brand-50 hover:bg-brand-100 active:bg-brand-200 rounded-xl flex items-center justify-center text-brand-600 transition-colors shadow-sm" onclick="backspaceNumpad()">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z"></path></svg>
+                            </button>
+
+                            <button type="button" class="col-span-4 p-2.5 md:p-3 bg-emerald-50 hover:bg-emerald-100 active:bg-emerald-200 rounded-xl font-bold text-sm md:text-base text-emerald-700 transition-colors shadow-sm border border-emerald-200" onclick="setExactAmount()">Uang Pas (Sesuai Tagihan)</button>
+                        </div>
+                        
+                        <div class="pt-4 border-t border-slate-100 flex justify-between items-center">
+                            <span class="text-slate-500 font-bold uppercase tracking-wider text-xs">Kembalian</span>
+                            <span class="font-outfit font-bold text-2xl md:text-3xl text-emerald-500" id="changeAmount">Rp0</span>
+                        </div>
+                    </div>
+
+                    <!-- Nomor Referensi Pembayaran -->
+                    <div class="mb-6 bg-white p-4 md:p-5 rounded-2xl border border-slate-200 shadow-sm" id="refSection" style="display:none;">
+                        <label class="block text-xs font-bold text-slate-700 mb-2">No. Referensi / Approval Code <span class="text-slate-400 font-normal ml-1">(opsional)</span></label>
+                        <input type="text" id="paymentRef" placeholder="Masukkan nomor referensi dari struk EDC / QRIS..."
+                               class="w-full rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-400 text-sm py-3 px-4 bg-slate-50 shadow-inner">
+                        <div id="refWarning" class="hidden mt-3 flex items-start gap-2 text-amber-700 text-xs font-medium bg-amber-50 p-3 rounded-xl border border-amber-200">
+                            <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>
+                            <span class="leading-snug">Disarankan mengisi no. referensi untuk memudahkan rekonsiliasi data dengan laporan bank.</span>
+                        </div>
+                    </div>
+
+                    <button class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold text-lg py-3.5 rounded-2xl shadow-[0_8px_20px_-6px_rgba(30,58,95,0.4)] transition-all flex justify-center items-center gap-2 transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none mb-6" id="btnCheckout" onclick="prosesCheckoutPOS()">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        Konfirmasi & Cetak Struk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Ref Modal -->
+    <div id="confirmRefModal" class="fixed inset-0 bg-slate-900/60 z-[60] hidden flex items-center justify-center opacity-0 transition-opacity duration-300 px-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-300" id="confirmRefContent">
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-600">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">No. Referensi Kosong</h3>
+                <p class="text-slate-500 text-sm mb-6">Anda belum memasukkan nomor referensi pembayaran. Apakah Anda yakin ingin melanjutkan tanpa nomor referensi?</p>
+                <div class="flex gap-3">
+                    <button type="button" onclick="cancelCheckoutWithRef()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl transition-colors">Batal</button>
+                    <button type="button" onclick="proceedCheckoutWithoutRef()" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl transition-colors shadow-sm">Lanjutkan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
 <style>
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
@@ -274,6 +394,7 @@
 
 <script>
     let keranjang = [];
+    let currentTotalValue = 0;
 
     // ──────────────────────────────────────────────────
     // SEARCH & FILTER
@@ -458,8 +579,28 @@
     function updateTotal() {
         let total = 0; let totalItems = 0;
         keranjang.forEach(item => { total += item.price * item.quantity; totalItems += item.quantity; });
+        currentTotalValue = total;
+        
         document.getElementById('totalHarga').innerText = 'Rp' + total.toLocaleString('id-ID');
         document.getElementById('itemCount').innerText = totalItems.toLocaleString('id-ID') + ' m';
+        
+        // Update payment section total if it's open
+        const paymentViewTotal = document.getElementById('paymentViewTotal');
+        if (paymentViewTotal) {
+            paymentViewTotal.innerText = 'Rp' + total.toLocaleString('id-ID');
+            calculateChange();
+        }
+
+        // Update badge mobile
+        const badge = document.getElementById('mobileCartCountBadge');
+        if (badge) {
+            if (keranjang.length > 0) {
+                badge.innerText = keranjang.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
     }
 
     function renderKeranjang() {
@@ -471,7 +612,7 @@
                     <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                     <p class="font-medium text-sm">Belum ada barang di keranjang</p>
                 </div>`;
-            document.getElementById('btnCheckout').disabled = true;
+            document.getElementById('btnLanjutkanPembayaran').disabled = true;
         } else {
             let listHTML = '<div class="space-y-3">';
             keranjang.forEach((item, index) => {
@@ -501,25 +642,187 @@
             });
             listHTML += '</div>';
             listContainer.innerHTML = listHTML;
-            document.getElementById('btnCheckout').disabled = false;
+            document.getElementById('btnLanjutkanPembayaran').disabled = false;
         }
 
         updateTotal();
         listContainer.scrollTop = listContainer.scrollHeight;
     }
 
-    // Styling radio pembayaran
+    // Styling radio pembayaran + toggle referensi field
+    const refSection = document.getElementById('refSection');
+    const cashSection = document.getElementById('cashSection');
+    const refInput = document.getElementById('paymentRef');
+    const refWarning = document.getElementById('refWarning');
+    const methodsNeedingRef = ['edc_bca', 'edc_bni', 'qris'];
+
+    function updateRefVisibility() {
+        const selected = document.querySelector('input[name="payment_method"]:checked')?.value || 'cash';
+        if (methodsNeedingRef.includes(selected)) {
+            refSection.style.display = 'block';
+            cashSection.style.display = 'none';
+        } else {
+            refSection.style.display = 'none';
+            cashSection.style.display = 'block';
+            if (refInput) refInput.value = '';
+            if (refWarning) refWarning.classList.add('hidden');
+        }
+        validateCheckoutBtn();
+    }
+
     document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
         radio.addEventListener('change', function() {
             document.querySelectorAll('.payment-btn').forEach(b => b.classList.remove('selected'));
             this.closest('label').querySelector('.payment-btn').classList.add('selected');
+            updateRefVisibility();
         });
     });
 
-    function prosesCheckoutPOS() {
+    // Mobile Cart Toggle
+    function toggleCart() {
+        const sidebar = document.getElementById('cartSidebar');
+        const overlay = document.getElementById('cartOverlay');
+        
+        if (sidebar.classList.contains('translate-x-full')) {
+            sidebar.classList.remove('translate-x-full');
+            overlay.classList.remove('hidden');
+            setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+        } else {
+            sidebar.classList.add('translate-x-full');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+        }
+    }
+
+    function calculateChange() {
+        const amountPaidInput = document.getElementById('amountPaid').value;
+        const amountPaid = parseFloat(amountPaidInput) || 0;
+        let change = amountPaid - currentTotalValue;
+        if (change < 0) change = 0;
+        
+        document.getElementById('changeAmount').innerText = 'Rp' + change.toLocaleString('id-ID');
+        validateCheckoutBtn();
+    }
+
+    function validateCheckoutBtn() {
+        const selectedPayment = document.querySelector('input[name="payment_method"]:checked')?.value || 'cash';
+        const btn = document.getElementById('btnCheckout');
+        
+        if (selectedPayment === 'cash') {
+            const amountPaid = parseFloat(document.getElementById('amountPaid').value) || 0;
+            if (amountPaid < currentTotalValue && currentTotalValue > 0) {
+                btn.disabled = true;
+                return;
+            }
+        }
+        btn.disabled = false;
+    }
+
+    function bukaModalPembayaran() {
+        if (keranjang.length === 0) return;
+        
+        // Update total
+        document.getElementById('paymentViewTotal').innerText = 'Rp' + currentTotalValue.toLocaleString('id-ID');
+        
+        const modal = document.getElementById('paymentModal');
+        const content = document.getElementById('paymentModalContent');
+        
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95');
+        }, 10);
+        
+        // Focus cash input
+        const selectedPayment = document.querySelector('input[name="payment_method"]:checked')?.value || 'cash';
+        if (selectedPayment === 'cash') {
+            document.getElementById('amountPaid').value = currentTotalValue; // auto fill exact amount
+            calculateChange();
+            setTimeout(() => {
+                const input = document.getElementById('amountPaid');
+                input.focus();
+                input.select();
+            }, 100);
+        }
+    }
+
+    function tutupModalPembayaran() {
+        const modal = document.getElementById('paymentModal');
+        const content = document.getElementById('paymentModalContent');
+        
+        modal.classList.add('opacity-0');
+        content.classList.add('scale-95');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+
+    // Numpad Functions
+    function appendNumpad(val) {
+        const input = document.getElementById('amountPaid');
+        if (input.value === '0') input.value = val;
+        else input.value += val;
+        calculateChange();
+    }
+    
+    function addQuickAmount(amount) {
+        const input = document.getElementById('amountPaid');
+        let current = parseFloat(input.value) || 0;
+        input.value = current + amount;
+        calculateChange();
+    }
+    
+    function clearNumpad() {
+        const input = document.getElementById('amountPaid');
+        input.value = '';
+        calculateChange();
+    }
+    
+    function backspaceNumpad() {
+        const input = document.getElementById('amountPaid');
+        input.value = input.value.slice(0, -1);
+        calculateChange();
+    }
+    
+    function setExactAmount() {
+        const input = document.getElementById('amountPaid');
+        input.value = currentTotalValue;
+        calculateChange();
+    }
+
+    function cancelCheckoutWithRef() {
+        const modal = document.getElementById('confirmRefModal');
+        const content = document.getElementById('confirmRefContent');
+        modal.classList.add('opacity-0');
+        content.classList.add('scale-95');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+        
+        refInput?.focus();
+    }
+    
+    function proceedCheckoutWithoutRef() {
+        cancelCheckoutWithRef();
+        prosesCheckoutPOS(true);
+    }
+
+    function prosesCheckoutPOS(forceProceed = false) {
         if (keranjang.length === 0) return;
 
         const selectedPayment = document.querySelector('input[name="payment_method"]:checked')?.value || 'cash';
+        const paymentRef = (refInput?.value || '').trim();
+
+        // Peringatan visual jika no referensi kosong untuk EDC/QRIS
+        if (!forceProceed && methodsNeedingRef.includes(selectedPayment) && !paymentRef) {
+            refWarning.classList.remove('hidden');
+            
+            // Show custom confirm modal
+            const modal = document.getElementById('confirmRefModal');
+            const content = document.getElementById('confirmRefContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            }, 10);
+            return;
+        }
 
         let btn = document.getElementById('btnCheckout');
         btn.disabled = true;
@@ -528,8 +831,18 @@
         let dataPesanan = {
             transaction_type: 'pos',
             payment_method: selectedPayment,
+            payment_reference: paymentRef || null,
             items: keranjang.map(item => ({ product_variant_id: item.product_variant_id, quantity: item.quantity }))
         };
+
+        if (selectedPayment === 'cash') {
+            const amountPaid = parseFloat(document.getElementById('amountPaid').value) || 0;
+            let change = amountPaid - currentTotalValue;
+            if (change < 0) change = 0;
+            
+            dataPesanan.amount_paid = amountPaid;
+            dataPesanan.change_amount = change;
+        }
 
         fetch('/checkout', {
             method: 'POST',
@@ -543,19 +856,18 @@
         .then(response => response.json())
         .then(data => {
             if (data.order && data.order.id) {
-                // Pindah ke halaman struk (menghindari popup blocker)
+                // Pindah ke halaman struk
                 window.location.href = '/kasir/receipt/' + data.order.id;
             } else {
-                // Tampilkan pesan error dari server
                 alert(data.message || 'Terjadi kesalahan saat memproses transaksi.');
                 btn.disabled = false;
-                btn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> Bayar Sekarang`;
+                btn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> Konfirmasi Bayar`;
             }
         })
         .catch(error => {
             alert('Gagal terhubung ke server. Periksa koneksi Anda.');
             btn.disabled = false;
-            btn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> Bayar Sekarang`;
+            btn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> Konfirmasi Bayar`;
         });
     }
 </script>

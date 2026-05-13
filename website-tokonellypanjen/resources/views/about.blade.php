@@ -45,11 +45,11 @@
                     <div class="inline-block bg-brand-100 text-brand-600 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-4">Tentang Kami</div>
                     <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 font-outfit mb-6 leading-tight">Pusat Grosir & Eceran Kain Berkualitas Tinggi</h2>
                     <p class="text-slate-500 leading-relaxed mb-4">Toko Kain Nelly merupakan toko kain yang telah berpengalaman dalam menyediakan berbagai macam jenis kain berkualitas tinggi. Kami menyediakan kain untuk berbagai kebutuhan — mulai dari fashion, dekorasi rumah, seragam kantor, hingga keperluan jahit sehari-hari.</p>
-                    <p class="text-slate-500 leading-relaxed mb-6">Dengan 4 cabang yang tersebar di wilayah Malang Selatan — Kepanjen, Gondanglegi, Turen, dan Bululawang — kami berkomitmen untuk mendekatkan produk kain berkualitas ke masyarakat dengan harga yang terjangkau dan pelayanan yang ramah.</p>
+                    <p class="text-slate-500 leading-relaxed mb-6">Dengan 4 Toko yang tersebar di malang — kami berkomitmen untuk mendekatkan produk kain berkualitas ke masyarakat dengan harga yang terjangkau dan pelayanan yang ramah.</p>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-brand-50 rounded-2xl p-5 border border-brand-100">
                             <div class="font-outfit font-extrabold text-3xl text-brand-600 mb-1">4</div>
-                            <div class="text-sm text-slate-500 font-medium">Cabang Toko</div>
+                            <div class="text-sm text-slate-500 font-medium">Toko</div>
                         </div>
                         <div class="bg-brand-50 rounded-2xl p-5 border border-brand-100">
                             <div class="font-outfit font-extrabold text-3xl text-brand-600 mb-1">100+</div>
@@ -71,7 +71,7 @@
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                         </div>
                         <h3 class="font-outfit font-bold text-xl text-brand-900 mb-3">Visi</h3>
-                        <p class="text-slate-500 leading-relaxed">Menjadi toko kain terpercaya dan terlengkap di wilayah Malang Selatan yang mengutamakan kualitas, pelayanan, dan kepuasan pelanggan.</p>
+                        <p class="text-slate-500 leading-relaxed">Menjadi toko kain terpercaya dan terlengkap di wilayah Malang yang mengutamakan kualitas, pelayanan, dan kepuasan pelanggan.</p>
                     </div>
                     <div class="bg-white rounded-3xl p-8 shadow-sm border border-brand-100 hover:shadow-lg transition-shadow">
                         <div class="w-14 h-14 bg-brand-100 rounded-2xl flex items-center justify-center mb-5 text-brand-600">
@@ -92,23 +92,20 @@
             <section>
                 <div class="text-center mb-12">
                     <div class="inline-block bg-brand-100 text-brand-600 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-4">Lokasi Kami</div>
-                    <h2 class="text-3xl font-extrabold text-brand-900 font-outfit">4 Cabang di Malang Selatan</h2>
+                    <h2 class="text-3xl font-extrabold text-brand-900 font-outfit">4 Toko di Malang</h2>
                     <p class="text-slate-500 mt-3 max-w-xl mx-auto">Kunjungi cabang terdekat kami untuk melihat koleksi kain secara langsung.</p>
                 </div>
                 <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     <!-- Branch 1: Kepanjen (Active) -->
-                    <div class="bg-white rounded-3xl p-6 shadow-sm border-2 border-brand-400 relative overflow-hidden hover:shadow-lg transition-shadow">
-                        <div class="absolute top-4 right-4">
-                            <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">Online</span>
-                        </div>
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-brand-100 hover:shadow-lg transition-shadow">
                         <div class="w-12 h-12 bg-brand-100 rounded-xl flex items-center justify-center mb-4 text-brand-600">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         </div>
-                        <h3 class="font-outfit font-bold text-lg text-brand-900 mb-2">Cabang Kepanjen</h3>
-                        <p class="text-sm text-slate-500 mb-3">Jl. Pasar Kepanjen No. 12, Kepanjen, Kab. Malang</p>
+                        <h3 class="font-outfit font-bold text-lg text-brand-900 mb-2">(Pusat) Toko Nelly Pasar Besar</h3>
+                        <p class="text-sm text-slate-500 mb-3">Pasar Besar Malang LT.1, Blok Barat Utara C Jl. Pasar Besar No.21 10-18, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65118</p>
                         <div class="text-xs text-slate-400 space-y-1">
-                            <p>📞 0812-3456-7890</p>
-                            <p>🕐 Senin – Sabtu, 08.00–17.00</p>
+                            <p>📞 0821-3333-1111</p>
+                            <p>🕐 Senin - Minggu, 08.30–16.00</p>
                         </div>
                     </div>
                     <!-- Branch 2: Gondanglegi -->
@@ -116,11 +113,11 @@
                         <div class="w-12 h-12 bg-brand-100 rounded-xl flex items-center justify-center mb-4 text-brand-600">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         </div>
-                        <h3 class="font-outfit font-bold text-lg text-brand-900 mb-2">Cabang Gondanglegi</h3>
-                        <p class="text-sm text-slate-500 mb-3">Jl. Raya Gondanglegi No. 45, Gondanglegi, Kab. Malang</p>
+                        <h3 class="font-outfit font-bold text-lg text-brand-900 mb-2">(Cabang) Toko Nelly Kepanjen</h3>
+                        <p class="text-sm text-slate-500 mb-3">Jl. Pasar Kepanjen No. 12, Kepanjen, Kab. Malang</p>
                         <div class="text-xs text-slate-400 space-y-1">
-                            <p>📞 0812-3456-7891</p>
-                            <p>🕐 Senin – Sabtu, 08.00–17.00</p>
+                            <p>📞 0821-3333-2222</p>
+                            <p>🕐 Senin - Minggu, 08.30–16.00</p>
                         </div>
                     </div>
                     <!-- Branch 3: Turen -->
@@ -128,11 +125,11 @@
                         <div class="w-12 h-12 bg-brand-100 rounded-xl flex items-center justify-center mb-4 text-brand-600">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         </div>
-                        <h3 class="font-outfit font-bold text-lg text-brand-900 mb-2">Cabang Turen</h3>
-                        <p class="text-sm text-slate-500 mb-3">Jl. Pasar Turen No. 23, Turen, Kab. Malang</p>
+                        <h3 class="font-outfit font-bold text-lg text-brand-900 mb-2">(Cabang) Toko Nelly RUKO Pecinan</h3>
+                        <p class="text-sm text-slate-500 mb-3">Jl. Pecinan Square No.21-23, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65118</p>
                         <div class="text-xs text-slate-400 space-y-1">
-                            <p>📞 0812-3456-7892</p>
-                            <p>🕐 Senin – Sabtu, 08.00–17.00</p>
+                            <p>📞 0821-3333-3333</p>
+                            <p>🕐 Senin - Minggu, 08.30–16.00</p>
                         </div>
                     </div>
                     <!-- Branch 4: Bululawang -->
@@ -140,11 +137,11 @@
                         <div class="w-12 h-12 bg-brand-100 rounded-xl flex items-center justify-center mb-4 text-brand-600">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         </div>
-                        <h3 class="font-outfit font-bold text-lg text-brand-900 mb-2">Cabang Bululawang</h3>
-                        <p class="text-sm text-slate-500 mb-3">Jl. Raya Bululawang No. 8, Bululawang, Kab. Malang</p>
+                        <h3 class="font-outfit font-bold text-lg text-brand-900 mb-2">(Cabang) Toko Nelly Blimbing</h3>
+                        <p class="text-sm text-slate-500 mb-3">Jl. Laksda Adi Sucipto No.85, Blimbing, Kec. Blimbing, Kota Malang, Jawa Timur 65126</p>
                         <div class="text-xs text-slate-400 space-y-1">
-                            <p>📞 0812-3456-7893</p>
-                            <p>🕐 Senin – Sabtu, 08.00–17.00</p>
+                            <p>📞 0821-3333-4444</p>
+                            <p>🕐 Senin - Minggu, 08.30–16.00</p>
                         </div>
                     </div>
                 </div>

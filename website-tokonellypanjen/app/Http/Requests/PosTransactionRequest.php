@@ -22,7 +22,10 @@ class PosTransactionRequest extends FormRequest
     {
         return [
             'transaction_type'              => 'required|in:pos',
-            'payment_method'                => 'nullable|in:cash,transfer,qris',
+            'payment_method'                => 'nullable|in:cash,edc_bca,edc_bni,qris',
+            'payment_reference'             => 'nullable|string|max:100',
+            'amount_paid'                   => 'nullable|numeric|min:0',
+            'change_amount'                 => 'nullable|numeric|min:0',
             'items'                         => 'required|array|min:1',
             'items.*.product_variant_id'    => 'required|exists:product_variants,id',
             'items.*.quantity'              => 'required|numeric|min:0.5',

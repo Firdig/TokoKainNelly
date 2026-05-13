@@ -55,6 +55,7 @@ class ProductController extends Controller
             'width'         => $validated['width'] ?? null,
             'composition'   => $validated['composition'] ?? null,
             'fabric_care'   => $validated['fabric_care'] ?? null,
+            'category_id'   => $validated['category_id'] ?? null,
         ]);
 
         // Store gallery images to filesystem
@@ -140,6 +141,7 @@ class ProductController extends Controller
             'width'         => $validated['width'] ?? null,
             'composition'   => $validated['composition'] ?? null,
             'fabric_care'   => $validated['fabric_care'] ?? null,
+            'category_id'   => $validated['category_id'] ?? null,
         ]);
 
         // Add new gallery images to filesystem

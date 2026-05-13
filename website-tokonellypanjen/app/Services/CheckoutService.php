@@ -136,20 +136,23 @@ class CheckoutService
      *
      * @throws \Exception If stock is insufficient for any item.
      */
-    public function processPosTransaction(array $items, ?int $cashierId = null, string $paymentMethod = 'cash'): Order
+    public function processPosTransaction(array $items, ?int $cashierId = null, string $paymentMethod = 'cash', ?string $paymentReference = null, ?float $amountPaid = null, ?float $changeAmount = null): Order
     {
-        return DB::transaction(function () use ($items, $cashierId, $paymentMethod) {
+        return DB::transaction(function () use ($items, $cashierId, $paymentMethod, $paymentReference, $amountPaid, $changeAmount) {
             $totalAmount = 0;
 
             $order = Order::create([
-                'invoice_number'   => 'POS-' . time() . '-' . strtoupper(Str::random(4)),
-                'user_id'          => $cashierId,
-                'transaction_type' => 'pos',
-                'status'           => 'completed',
-                'total_amount'     => 0,
-                'payment_method'   => $paymentMethod,
-                'payment_status'   => 'paid',
-                'paid_at'          => now(),
+                'invoice_number'    => 'POS-' . time() . '-' . strtoupper(Str::random(4)),
+                'user_id'           => $cashierId,
+                'transaction_type'  => 'pos',
+                'status'            => 'completed',
+                'total_amount'      => 0,
+                'payment_method'    => $paymentMethod,
+                'payment_reference' => $paymentReference,
+                'amount_paid'       => $amountPaid,
+                'change_amount'     => $changeAmount,
+                'payment_status'    => 'paid',
+                'paid_at'           => now(),
             ]);
 
             foreach ($items as $itemData) {

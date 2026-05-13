@@ -334,8 +334,34 @@
 
         <div class="payment-row">
             <span>Metode Pembayaran</span>
-            <span style="font-weight:600; text-transform:uppercase;">{{ $order->payment_method ?? 'Tunai' }}</span>
+            @php
+                $posPayLabels = [
+                    'cash' => 'TUNAI', 'edc_bca' => 'EDC BCA', 'edc_bni' => 'EDC BNI',
+                    'qris' => 'QRIS', 'transfer' => 'TRANSFER', 'midtrans' => 'ONLINE',
+                ];
+            @endphp
+            <span style="font-weight:600;">{{ $posPayLabels[$order->payment_method] ?? strtoupper($order->payment_method ?? 'TUNAI') }}</span>
         </div>
+        @if($order->payment_method === 'cash')
+            @if($order->amount_paid)
+            <div class="payment-row">
+                <span>Uang Diterima</span>
+                <span style="font-weight:600;">Rp{{ number_format($order->amount_paid, 0, ',', '.') }}</span>
+            </div>
+            @endif
+            @if($order->change_amount !== null)
+            <div class="payment-row">
+                <span>Kembalian</span>
+                <span style="font-weight:600;">Rp{{ number_format($order->change_amount, 0, ',', '.') }}</span>
+            </div>
+            @endif
+        @endif
+        @if($order->payment_reference)
+        <div class="payment-row">
+            <span>No. Referensi</span>
+            <span style="font-weight:600;">{{ $order->payment_reference }}</span>
+        </div>
+        @endif
 
         <hr class="divider">
 

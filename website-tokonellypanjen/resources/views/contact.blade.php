@@ -44,7 +44,7 @@
                     </div>
                     <h3 class="font-outfit font-bold text-lg text-brand-900 mb-2">Telepon</h3>
                     <p class="text-brand-600 font-bold text-lg">0812-3456-7890</p>
-                    <p class="text-sm text-slate-400 mt-1">Senin – Sabtu, 08.00–17.00</p>
+                    <p class="text-sm text-slate-400 mt-1">Senin – Sabtu, 08.00–15.00</p>
                 </div>
                 <div class="bg-white rounded-3xl p-8 shadow-sm border border-brand-100 text-center hover:shadow-lg transition-shadow">
                     <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-5 text-green-600">
@@ -116,20 +116,25 @@
                         </h3>
                         <div class="space-y-5">
                             <div class="pl-4 border-l-2 border-brand-400">
-                                <h4 class="font-bold text-brand-900 text-sm">Cabang Kepanjen <span class="text-green-600 text-xs">(Online)</span></h4>
+                                <h4 class="font-bold text-brand-900 text-sm">(Pusat) Toko Nelly Pasar Besar</h4>
+                                <p class="text-sm text-slate-500">Pasar Besar Malang LT.1, Blok Barat Utara C Jl. Pasar Besar No.21 10-18, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65118</p>
+                                <p class="text-sm text-slate-500">0821-3333-1111</p>
+                            </div>
+                            <div class="pl-4 border-l-2 border-brand-400">
+                                <h4 class="font-bold text-brand-900 text-sm">(Cabang) Toko Nelly Kepanjen</h4>
                                 <p class="text-sm text-slate-500">Jl. Pasar Kepanjen No. 12, Kepanjen, Kab. Malang</p>
+                                <p class="text-sm text-slate-500">0821-3333-4444</p>
+                            </div>
+                            
+                            <div class="pl-4 border-l-2 border-brand-200">
+                                <h4 class="font-bold text-brand-900 text-sm">(Cabang) Toko Nelly RUKO Pecinan</h4>
+                                <p class="text-sm text-slate-500">Jl. Pecinan Square No.21-23, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65118</p>
+                                <p class="text-sm text-slate-500">0821-3333-5555</p>
                             </div>
                             <div class="pl-4 border-l-2 border-brand-200">
-                                <h4 class="font-bold text-brand-900 text-sm">Cabang Gondanglegi</h4>
-                                <p class="text-sm text-slate-500">Jl. Raya Gondanglegi No. 45, Gondanglegi, Kab. Malang</p>
-                            </div>
-                            <div class="pl-4 border-l-2 border-brand-200">
-                                <h4 class="font-bold text-brand-900 text-sm">Cabang Turen</h4>
-                                <p class="text-sm text-slate-500">Jl. Pasar Turen No. 23, Turen, Kab. Malang</p>
-                            </div>
-                            <div class="pl-4 border-l-2 border-brand-200">
-                                <h4 class="font-bold text-brand-900 text-sm">Cabang Bululawang</h4>
-                                <p class="text-sm text-slate-500">Jl. Raya Bululawang No. 8, Bululawang, Kab. Malang</p>
+                                <h4 class="font-bold text-brand-900 text-sm">(Cabang) Toko Nelly Blimbing</h4>
+                                <p class="text-sm text-slate-500">Jl. Laksda Adi Sucipto No.85, Blimbing, Kec. Blimbing, Kota Malang, Jawa Timur 65126</p>
+                                <p class="text-sm text-slate-500">0821-3333-6666</p>
                             </div>
                         </div>
                     </div>

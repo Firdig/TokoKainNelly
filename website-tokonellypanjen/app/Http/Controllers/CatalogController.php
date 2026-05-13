@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -22,7 +23,7 @@ class CatalogController extends Controller
         $cacheKey = 'catalog_' . md5($request->fullUrl());
 
         $products = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($request) {
-            $query = Product::with(['variants', 'images']);
+            $query = Product::with(['variants', 'images', 'category']);
 
             // Search by name or description
             if ($request->filled('q')) {
@@ -33,9 +34,22 @@ class CatalogController extends Controller
                 });
             }
 
+            // Filter by category
+            if ($request->filled('category')) {
+                $query->where('category_id', $request->category);
+            }
+
             // Filter by fabric type (jenis kain)
             if ($request->filled('fabric_type')) {
                 $query->filterByType($request->fabric_type);
+            }
+
+            // Filter by price range
+            if ($request->filled('price_min')) {
+                $query->where('price', '>=', $request->price_min);
+            }
+            if ($request->filled('price_max')) {
+                $query->where('price', '<=', $request->price_max);
             }
 
             // Filter by texture
@@ -73,7 +87,8 @@ class CatalogController extends Controller
             ->distinct()->pluck('fabric_type');
         $textures = Product::whereNotNull('texture')
             ->distinct()->pluck('texture');
+        $categories = Category::orderBy('name')->get();
 
-        return view('katalog', compact('products', 'fabricTypes', 'textures'));
+        return view('katalog', compact('products', 'fabricTypes', 'textures', 'categories'));
     }
 }

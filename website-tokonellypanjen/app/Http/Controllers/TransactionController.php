@@ -30,6 +30,9 @@ class TransactionController extends Controller
                 items: $request->validated('items'),
                 cashierId: Auth::id(),
                 paymentMethod: $request->validated('payment_method') ?? 'cash',
+                paymentReference: $request->validated('payment_reference'),
+                amountPaid: $request->validated('amount_paid'),
+                changeAmount: $request->validated('change_amount')
             );
 
             return response()->json([

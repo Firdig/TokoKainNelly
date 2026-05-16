@@ -8,12 +8,13 @@
     <div class="md:flex md:items-center md:justify-between mb-8">
         <div>
             <h2 class="font-outfit text-3xl font-bold text-brand-900">Daftar Pesanan Masuk</h2>
-            <p class="mt-1 text-sm text-slate-500">Pantau dan kelola pengiriman (Delivery) dan pengambilan lokal (BOPS).</p>
+            <p class="mt-1 text-sm text-slate-500">Pantau dan kelola pesanan pengiriman (Delivery), pengambilan lokal (BOPS), dan transaksi langsung di toko (POS).</p>
         </div>
         <div class="mt-4 md:mt-0 flex gap-2">
             <a href="{{ url('/admin/orders') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ !request('type') ? 'bg-brand-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' }}">Semua</a>
             <a href="{{ url('/admin/orders?type=bops') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ request('type') == 'bops' ? 'bg-brand-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' }}">BOPS (Pickup)</a>
             <a href="{{ url('/admin/orders?type=delivery') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ request('type') == 'delivery' ? 'bg-brand-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' }}">Delivery</a>
+            <a href="{{ url('/admin/orders?type=pos') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ request('type') == 'pos' ? 'bg-brand-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' }}">POS (Kasir)</a>
         </div>
     </div>
 
@@ -99,11 +100,12 @@
                                             </form>
                                         @elseif($order->status == 'in_preparation')
                                             <div class="flex gap-2">
-                                                <!-- Print Slip -->
+                                                {{-- Dinonaktifkan: tidak termasuk dalam Use Case Diagram
                                                 <a href="{{ url('/admin/orders/' . $order->id . '/picking-slip') }}" target="_blank" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg font-bold text-xs shadow-sm transition-all flex items-center gap-1">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                                                     Print Slip
                                                 </a>
+                                                --}}
                                                 <!-- Tahap 3: Mark as Ready -->
                                                 <form action="{{ url('/admin/orders/' . $order->id . '/status') }}" method="POST">
                                                     @csrf

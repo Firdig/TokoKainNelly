@@ -14,12 +14,18 @@ use Illuminate\Support\Facades\Mail;
 class OrderController extends Controller
 {
     /**
-     * Display all orders in admin panel with optional type filter.
-     * Uses Eager Loading to prevent N+1 query problem.
+     * Display incoming orders (Delivery & BOPS only) in admin panel.
+     * Per AD-12: POS orders and unpaid/pending-payment orders are excluded.
+     * Supports optional ?type filter (bops / delivery).
      */
     public function index(Request $request)
     {
-        $query = Order::with(['items.productVariant.product', 'user'])->latest();
+        // AD-12: Only show Delivery, BOPS, and POS orders
+        $query = Order::with(['items.productVariant.product', 'user'])
+            ->whereIn('transaction_type', ['bops', 'delivery', 'pos'])
+            // AD-12: Exclude orders still awaiting payment confirmation
+            ->whereNotIn('payment_status', ['unpaid', 'pending'])
+            ->latest();
 
         if ($request->has('type') && in_array($request->type, ['bops', 'delivery', 'pos'])) {
             $query->ofType($request->type);

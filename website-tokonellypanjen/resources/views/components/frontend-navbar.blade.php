@@ -13,8 +13,10 @@
     <nav class="hidden md:flex space-x-6 items-center font-outfit font-medium text-sm">
         <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'text-brand-700 font-bold' : 'text-slate-500 hover:text-brand-600 transition-colors' }}">Beranda</a>
         <a href="{{ route('katalog') }}" class="{{ request()->routeIs('katalog') || request()->routeIs('product.show') ? 'text-brand-700 font-bold' : 'text-slate-500 hover:text-brand-600 transition-colors' }}">Katalog Kain</a>
+        {{-- Dinonaktifkan: tidak termasuk dalam Use Case Diagram
         <a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'text-brand-700 font-bold' : 'text-slate-500 hover:text-brand-600 transition-colors' }}">Tentang Kami</a>
         <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'text-brand-700 font-bold' : 'text-slate-500 hover:text-brand-600 transition-colors' }}">Hubungi Kami</a>
+        --}}
         
         @auth
             @if(auth()->user()->role === 'admin' || auth()->user()->role === 'staff')
@@ -45,7 +47,9 @@
                         <div class="text-sm font-bold text-brand-900 truncate">{{ auth()->user()->name }}</div>
                         <div class="text-xs text-slate-400 truncate">{{ auth()->user()->email }}</div>
                     </div>
+                    {{-- Dinonaktifkan: tidak termasuk dalam Use Case Diagram
                     <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-slate-600 hover:bg-brand-50 hover:text-brand-800 font-medium transition-colors">Profil Saya</a>
+                    --}}
                     <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-sm text-slate-600 hover:bg-brand-50 hover:text-brand-800 font-medium transition-colors">Pesanan Saya</a>
                     <form method="POST" action="{{ route('logout') }}" class="mt-1 border-t border-brand-50 pt-1">
                         @csrf
@@ -80,14 +84,18 @@
         <div class="px-4 py-2 flex flex-col">
             <a href="{{ route('home') }}" class="py-3 border-b border-brand-50 text-brand-900 font-medium {{ request()->routeIs('home') ? 'text-brand-600 font-bold' : '' }}">Beranda</a>
             <a href="{{ route('katalog') }}" class="py-3 border-b border-brand-50 text-brand-900 font-medium {{ request()->routeIs('katalog') || request()->routeIs('product.show') ? 'text-brand-600 font-bold' : '' }}">Katalog Kain</a>
+            {{-- Dinonaktifkan: tidak termasuk dalam Use Case Diagram
             <a href="{{ route('about') }}" class="py-3 border-b border-brand-50 text-brand-900 font-medium {{ request()->routeIs('about') ? 'text-brand-600 font-bold' : '' }}">Tentang Kami</a>
             <a href="{{ route('contact') }}" class="py-3 border-b border-brand-50 text-brand-900 font-medium {{ request()->routeIs('contact') ? 'text-brand-600 font-bold' : '' }}">Hubungi Kami</a>
+            --}}
             
             @auth
                 @if(auth()->user()->role === 'admin' || auth()->user()->role === 'staff')
                     <a href="{{ url('/admin/dashboard') }}" class="py-3 border-b border-brand-50 text-brand-600 font-bold">Panel Admin</a>
                 @endif
+                {{-- Dinonaktifkan: tidak termasuk dalam Use Case Diagram
                 <a href="{{ route('profile.edit') }}" class="py-3 border-b border-brand-50 text-brand-900 font-medium">Profil Saya</a>
+                --}}
                 <a href="{{ route('orders.index') }}" class="py-3 border-b border-brand-50 text-brand-900 font-medium">Pesanan Saya</a>
                 <form method="POST" action="{{ route('logout') }}" class="py-3">
                     @csrf

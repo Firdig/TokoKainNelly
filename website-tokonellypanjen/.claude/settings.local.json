@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan *)",
+      "Bash(php -r \"require 'vendor/autoload.php'; echo 'PHP OK';\")",
+      "Read(//c/Users/Feist/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/b33aad22-cc6d-40e9-9101-e2ba06a91baa/d92caf09-1889-42c4-bd15-8edc616459c7/skills/docx/**)",
+      "Bash(python scripts/office/unpack.py \"C:\\\\Users\\\\Feist\\\\Downloads\\\\BAB_IV_Hasil_dan_Pembahasan.docx\" \"C:\\\\Users\\\\Feist\\\\Downloads\\\\BAB_IV_unpacked\")",
+      "Bash(pip install *)",
+      "Bash(grep -r \"schedule\\\\|CancelExpiredOrders\" \"E:\\\\Skripsi\\\\Website\\\\TokoKainNelly\\\\website-tokonellypanjen\\\\app\\\\Providers\\\\\\\\\")"
+    ]
+  }
+}

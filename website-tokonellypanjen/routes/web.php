@@ -24,8 +24,9 @@ use App\Http\Controllers\ProductImageServeController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/katalog', [CatalogController::class, 'index'])->name('katalog');
 Route::get('/produk/{id}', [ProductFrontController::class, 'show'])->name('product.show');
-Route::view('/tentang-kami', 'about')->name('about');
-Route::view('/hubungi-kami', 'contact')->name('contact');
+// Dinonaktifkan: tidak termasuk dalam Use Case Diagram
+// Route::view('/tentang-kami', 'about')->name('about');
+// Route::view('/hubungi-kami', 'contact')->name('contact');
 
 // Product Images from Database
 Route::get('/product-image/variant/{variant}', [ProductImageServeController::class, 'variant'])->name('image.variant');
@@ -60,10 +61,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/payment/{id}', [CheckoutFrontController::class, 'payment'])->name('checkout.payment');
     Route::get('/invoice/{id}', [CheckoutFrontController::class, 'success'])->name('checkout.success');
 
-    // Customer Profile Management
-    Route::get('/profile', [CustomerProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile', [CustomerProfileController::class, 'update'])->name('profile.update');
-    Route::put('/profile/password', [CustomerProfileController::class, 'updatePassword'])->name('profile.password');
+    // Dinonaktifkan: tidak termasuk dalam Use Case Diagram
+    // Route::get('/profile', [CustomerProfileController::class, 'edit'])->name('profile.edit');
+    // Route::put('/profile', [CustomerProfileController::class, 'update'])->name('profile.update');
+    // Route::put('/profile/password', [CustomerProfileController::class, 'updatePassword'])->name('profile.password');
 
     // Customer Order Tracking
     Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders.index');
@@ -100,9 +101,9 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,staff'])->group(function
     Route::put('categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'update'])->name('admin.categories.update');
     Route::delete('categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'destroy'])->name('admin.categories.destroy');
 
-    // Stock Opname (Physical Audit)
-    Route::get('stock-opname', [\App\Http\Controllers\Admin\StockOpnameController::class, 'index'])->name('stock-opname.index');
-    Route::post('stock-opname', [\App\Http\Controllers\Admin\StockOpnameController::class, 'store'])->name('stock-opname.store');
+    // Dinonaktifkan: tidak termasuk dalam Use Case Diagram
+    // Route::get('stock-opname', [\App\Http\Controllers\Admin\StockOpnameController::class, 'index'])->name('stock-opname.index');
+    // Route::post('stock-opname', [\App\Http\Controllers\Admin\StockOpnameController::class, 'store'])->name('stock-opname.store');
 
     // Restock (Penerimaan Stok)
     Route::get('restock', [\App\Http\Controllers\Admin\RestockController::class, 'index'])->name('admin.restock.index');
@@ -112,16 +113,17 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,staff'])->group(function
     Route::get('orders', [OrderController::class, 'index'])->name('admin.orders.index');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('admin.orders.show');
     Route::post('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('admin.orders.updateStatus');
-    Route::get('orders/{order}/picking-slip', [OrderController::class, 'pickingSlip'])->name('admin.orders.picking-slip');
+    // Dinonaktifkan: tidak termasuk dalam Use Case Diagram
+    // Route::get('orders/{order}/picking-slip', [OrderController::class, 'pickingSlip'])->name('admin.orders.picking-slip');
 
     // BOPS Scanner Module
     Route::get('scanner', [\App\Http\Controllers\Admin\BopsScannerController::class, 'index'])->name('admin.scanner.index');
     Route::post('scanner/verify', [\App\Http\Controllers\Admin\BopsScannerController::class, 'verify'])->name('admin.scanner.verify');
     Route::post('scanner/handover/{order}', [\App\Http\Controllers\Admin\BopsScannerController::class, 'handover'])->name('admin.scanner.handover');
 
-    // Customer Management
-    Route::get('customers', [\App\Http\Controllers\Admin\CustomerController::class, 'index'])->name('admin.customers.index');
-    Route::get('customers/{customer}', [\App\Http\Controllers\Admin\CustomerController::class, 'show'])->name('admin.customers.show');
+    // Dinonaktifkan: tidak termasuk dalam Use Case Diagram
+    // Route::get('customers', [\App\Http\Controllers\Admin\CustomerController::class, 'index'])->name('admin.customers.index');
+    // Route::get('customers/{customer}', [\App\Http\Controllers\Admin\CustomerController::class, 'show'])->name('admin.customers.show');
 });
 
 // ═══════════════════════════════════════════════════════════════

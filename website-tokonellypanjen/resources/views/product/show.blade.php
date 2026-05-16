@@ -81,14 +81,12 @@
 
                     <!-- RIGHT: Details Column -->
                     <div class="lg:w-7/12 p-6 lg:p-10 flex flex-col justify-center">
-                        
                         <!-- Tags -->
-                        @if($product->fabric_type)
+                        @if($product->category)
                         <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="text-xs bg-brand-100 text-brand-700 font-bold px-3 py-1 rounded-full">{{ $product->fabric_type }}</span>
+                            <span class="text-xs bg-brand-100 text-brand-700 font-bold px-3 py-1 rounded-full">{{ $product->category->name }}</span>
                         </div>
-                        @endif
-                        
+                        @endif                        
                         <h1 class="text-3xl lg:text-4xl font-extrabold text-brand-900 font-outfit mb-3 leading-tight">{{ $product->name }}</h1>
                         <p class="text-slate-500 leading-relaxed mb-5 text-sm">{{ $product->description }}</p>
 
@@ -99,17 +97,17 @@
                         </div>
 
                         <!-- Technical Specs (optional) -->
-                        @if($product->fabric_type || $product->width || $product->composition || $product->fabric_care)
+                        @if($product->category || $product->width || $product->composition || $product->fabric_care)
                         <div class="bg-brand-50 rounded-2xl p-5 border border-brand-100 mb-6">
                             <h3 class="text-xs font-bold text-brand-700 uppercase tracking-widest mb-4 flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                                 Informasi Teknis Kain
                             </h3>
                             <dl class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-sm">
-                                @if($product->fabric_type)
+                                @if($product->category)
                                 <div class="flex">
-                                    <dt class="text-slate-400 min-w-28">Jenis Kain</dt>
-                                    <dd class="font-bold text-brand-900">{{ $product->fabric_type }}</dd>
+                                    <dt class="text-slate-400 min-w-28">Kategori</dt>
+                                    <dd class="font-bold text-brand-900">{{ $product->category->name }}</dd>
                                 </div>
                                 @endif
                                 @if($product->width)

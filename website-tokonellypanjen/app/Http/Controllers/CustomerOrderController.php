@@ -37,19 +37,29 @@ class CustomerOrderController extends Controller
     }
 
     /**
-     * Cancel an order if it's still pending or unpaid.
+     * Cancel an order if it is still in 'pending' status (Diterima)
+     * or has not been paid yet (Menunggu Pembayaran).
+     * Per AD-19: Once the order moves to 'in_preparation' or beyond it cannot be cancelled.
      */
     public function cancel($id)
     {
         $order = Order::where('user_id', Auth::id())->findOrFail($id);
 
-        if (!$order->isPaymentPending()) {
-            return back()->with('error', 'Pesanan ini tidak dapat dibatalkan karena sudah dibayar atau diproses.');
+        // AD-19: Allow cancellation only when status is 'pending' OR payment is still pending.
+        // Block when order is already being prepared (in_preparation) or later stages.
+        $isCancellable = $order->status === 'pending' || $order->isPaymentPending();
+        $isAlreadyClosed = in_array($order->status, ['cancelled', 'completed']);
+
+        if ($isAlreadyClosed) {
+            return back()->with('error', 'Pesanan ini sudah ' . ($order->status === 'cancelled' ? 'dibatalkan' : 'selesai') . '.');
+        }
+
+        if (!$isCancellable) {
+            return back()->with('error', 'Pesanan tidak dapat dibatalkan karena sedang diproses atau sudah dikirim.');
         }
 
         // Return stock
         try {
-            // Using existing logic similar to MidtransService cancel
             $inventoryService = app(\App\Services\InventoryService::class);
             $inventoryService->restoreStockForCancelledOrder($order, null);
         } catch (\Exception $e) {
@@ -60,7 +70,7 @@ class CustomerOrderController extends Controller
         }
 
         $order->update([
-            'status' => 'cancelled',
+            'status'         => 'cancelled',
             'payment_status' => $order->isPaymentPending() ? 'cancelled' : $order->payment_status,
         ]);
 

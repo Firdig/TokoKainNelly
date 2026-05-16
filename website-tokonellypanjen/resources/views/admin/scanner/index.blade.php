@@ -49,16 +49,31 @@
             
             <div id="orderInfo" class="hidden w-full">
                 <h3 class="font-outfit font-bold text-2xl text-brand-900 mb-1" id="resInvoice">INV-XXXXX</h3>
-                <p class="text-sm text-slate-500 mb-6" id="resCustomer">Nama Pelanggan</p>
-                
+                <p class="text-sm text-slate-500 mb-4" id="resCustomer">Nama Pelanggan</p>
+
+                {{-- COD Warning Banner (AD-13) --}}
+                <div id="codBanner" class="hidden mb-4 bg-amber-50 border border-amber-300 rounded-xl p-3 text-left">
+                    <div class="flex items-start gap-2">
+                        <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>
+                        <div>
+                            <p class="text-xs font-bold text-amber-800">Bayar di Tempat (COD)</p>
+                            <p class="text-xs text-amber-700 mt-0.5">Tagih pembayaran tunai kepada pelanggan sebelum menyerahkan pesanan. Sistem akan otomatis mencatat status <strong>Lunas</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="bg-slate-50 rounded-2xl p-4 mb-6 border border-slate-100 text-left">
                     <div class="flex justify-between text-sm mb-2">
                         <span class="text-slate-500">Jumlah Barang</span>
                         <span class="font-bold text-brand-900" id="resItemsCount">0 Item</span>
                     </div>
-                    <div class="flex justify-between text-sm">
+                    <div class="flex justify-between text-sm mb-2">
                         <span class="text-slate-500">Total Nominal</span>
                         <span class="font-bold text-brand-600" id="resTotal">Rp0</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-500">Status Pembayaran</span>
+                        <span class="font-bold" id="resPaymentStatus">-</span>
                     </div>
                 </div>
 
@@ -66,7 +81,7 @@
                     @csrf
                     <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white px-6 py-4 rounded-xl font-bold text-lg shadow-lg shadow-green-600/20 transition-all flex items-center justify-center gap-2">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        Selesaikan Pesanan
+                        <span id="btnHandoverLabel">Selesaikan Pesanan</span>
                     </button>
                 </form>
             </div>
@@ -150,18 +165,35 @@
             document.getElementById('resCustomer').innerText = order.customer_name;
             document.getElementById('resItemsCount').innerText = order.items_count + ' Barang';
             document.getElementById('resTotal').innerText = 'Rp' + order.total_amount;
-            
+
+            // AD-13: Show payment status and COD banner if needed
+            const paymentStatusEl = document.getElementById('resPaymentStatus');
+            const codBanner = document.getElementById('codBanner');
+            const btnLabel = document.getElementById('btnHandoverLabel');
+
+            if (order.needs_cod) {
+                paymentStatusEl.textContent = 'Belum Bayar (COD)';
+                paymentStatusEl.className = 'font-bold text-amber-600';
+                codBanner.classList.remove('hidden');
+                btnLabel.textContent = 'Tandai Sudah Dibayar & Selesaikan';
+            } else {
+                paymentStatusEl.textContent = 'Lunas';
+                paymentStatusEl.className = 'font-bold text-green-600';
+                codBanner.classList.add('hidden');
+                btnLabel.textContent = 'Selesaikan Pesanan';
+            }
+
             // Set Form Action
             handoverForm.action = '/admin/scanner/handover/' + order.id;
 
             // Toggle Visibility
             emptyState.classList.add('hidden');
             orderInfo.classList.remove('hidden');
-            
+
             // Highlight Section
             resultSection.classList.remove('opacity-50', 'grayscale', 'pointer-events-none');
             resultSection.classList.add('ring-4', 'ring-green-100', 'border-green-200');
-            
+
             resultIcon.className = 'w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6 shadow-sm';
             resultIcon.innerHTML = '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
         }

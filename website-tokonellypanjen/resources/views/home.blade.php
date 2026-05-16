@@ -128,10 +128,12 @@
                             </div>
                         </div>
                     </div>
+                    {{-- Dinonaktifkan: tidak termasuk dalam Use Case Diagram
                     <a href="{{ route('about') }}" class="btn-outline inline-flex items-center gap-2 text-sm">
                         Selengkapnya Tentang Kami
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </a>
+                    --}}
                 </div>
             </div>
         </div>
@@ -207,7 +209,7 @@
         </div>
     </section>
 
-    <!-- Contact Us CTA -->
+    {{-- Dinonaktifkan: tidak termasuk dalam Use Case Diagram
     <section class="bg-gradient-to-br from-brand-700 to-brand-900 py-20 relative overflow-hidden">
         <div class="absolute inset-0 opacity-10">
             <div class="absolute top-0 right-0 w-96 h-96 rounded-full border-[40px] border-white -translate-y-1/2 translate-x-1/3"></div>
@@ -222,6 +224,7 @@
             </a>
         </div>
     </section>
+    --}}
 
     <!-- Footer -->
     <footer class="bg-brand-950 text-brand-100 pt-16 pb-8 mt-auto">
@@ -253,8 +256,10 @@
                     <ul class="space-y-2.5 text-sm text-brand-400">
                         <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">Beranda</a></li>
                         <li><a href="{{ route('katalog') }}" class="hover:text-white transition-colors">Katalog Kain</a></li>
+                        {{-- Dinonaktifkan: tidak termasuk dalam Use Case Diagram
                         <li><a href="{{ route('about') }}" class="hover:text-white transition-colors">Tentang Kami</a></li>
                         <li><a href="{{ route('contact') }}" class="hover:text-white transition-colors">Hubungi Kami</a></li>
+                        --}}
                     </ul>
                 </div>
                 <!-- Cabang -->

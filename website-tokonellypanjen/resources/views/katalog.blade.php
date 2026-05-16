@@ -90,18 +90,7 @@
                             </div>
                             @endif
 
-                            <!-- Fabric Type Filter -->
-                            @if(isset($fabricTypes) && $fabricTypes->count() > 0)
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Jenis Kain</label>
-                                <select name="fabric_type" class="input-field text-sm py-2.5 bg-white" onchange="this.form.submit()">
-                                    <option value="">Semua Jenis</option>
-                                    @foreach($fabricTypes as $type)
-                                        <option value="{{ $type }}" {{ request('fabric_type') == $type ? 'selected' : '' }}>{{ $type }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            @endif
+
 
                             <!-- Price Range Filter -->
                             <div>
@@ -119,7 +108,7 @@
                                 <span>Cari</span>
                             </button>
 
-                            @if(request()->hasAny(['q', 'sort', 'fabric_type', 'category', 'price_min', 'price_max']))
+                            @if(request()->hasAny(['q', 'sort', 'category', 'price_min', 'price_max']))
                                 <a href="{{ route('katalog') }}" class="flex items-center justify-center gap-1.5 w-full text-center py-2 text-sm text-slate-500 hover:text-brand-600 font-medium transition-colors">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     Reset Filter
@@ -213,11 +202,7 @@
                                         <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">{{ $product->description }}</p>
                                     </div>
                                     
-                                    @if($product->fabric_type)
-                                        <div class="flex gap-2 mb-3 flex-wrap">
-                                            <span class="text-[10px] bg-brand-50 text-brand-600 font-bold px-2 py-0.5 rounded-full">{{ $product->fabric_type }}</span>
-                                        </div>
-                                    @endif
+
 
                                     <div class="pt-4 border-t border-brand-50 flex items-center justify-between">
                                         <div>

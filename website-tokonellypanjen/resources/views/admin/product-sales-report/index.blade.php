@@ -60,7 +60,7 @@
                 <thead class="bg-brand-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-bold text-brand-900 uppercase">Produk</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-brand-900 uppercase">Jenis Kain</th>
+
                         <th class="px-6 py-3 text-right text-xs font-bold text-brand-900 uppercase">Stok Sisa</th>
                         <th class="px-6 py-3 text-right text-xs font-bold text-brand-900 uppercase">Terjual (m)</th>
                         <th class="px-6 py-3 text-center text-xs font-bold text-brand-900 uppercase">Transaksi</th>
@@ -76,7 +76,7 @@
                                 {{ $product->variants->count() }} varian warna
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-sm text-slate-600">{{ $product->fabric_type ?? '-' }}</td>
+
                         <td class="px-6 py-4 text-right">
                             @php $totalStock = $product->variants->sum('stock'); @endphp
                             <span class="text-sm font-bold {{ $totalStock <= 10 ? 'text-red-600' : 'text-brand-900' }}">

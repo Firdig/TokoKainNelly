@@ -68,24 +68,7 @@
                     </button>
                 </div>
 
-                {{-- Filter Pills (dynamic dari fabric_type) --}}
-                @php
-                    $fabricTypes = $products->pluck('fabric_type')->filter()->unique()->sort()->values();
-                @endphp
-                @if($fabricTypes->isNotEmpty())
-                <div class="flex flex-wrap gap-2" id="filterPills">
-                    <button onclick="setFilter('')"
-                            data-filter=""
-                            class="filter-pill active px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all"
-                            id="pill_semua">Semua</button>
-                    @foreach($fabricTypes as $type)
-                    <button onclick="setFilter('{{ addslashes($type) }}')"
-                            data-filter="{{ $type }}"
-                            class="filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all"
-                            id="pill_{{ Str::slug($type) }}">{{ ucfirst($type) }}</button>
-                    @endforeach
-                </div>
-                @endif
+
             </div>
 
             <div class="flex-1 overflow-y-auto px-6 pb-6 custom-scrollbar">
@@ -97,7 +80,7 @@
                     </svg>
                     <p class="text-base font-semibold text-slate-400">Produk tidak ditemukan.</p>
                     <p class="text-sm text-slate-300 mt-1">Coba kata kunci atau filter yang berbeda.</p>
-                    <button onclick="clearSearchInput(); setFilter('')"
+                    <button onclick="clearSearchInput()"
                             class="mt-4 px-4 py-2 bg-brand-50 text-brand-600 rounded-lg text-sm font-semibold hover:bg-brand-100 transition-colors">
                         Reset Pencarian
                     </button>
@@ -109,7 +92,7 @@
                         <div class="product-card bg-white rounded-xl border border-brand-100 shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col h-full overflow-hidden {{ $variant->stock == 0 ? 'opacity-60 grayscale' : '' }}"
                              data-name="{{ strtolower($product->name) }}"
                              data-color="{{ strtolower($variant->color_name) }}"
-                             data-type="{{ strtolower($product->fabric_type ?? '') }}"
+
                              onclick="{{ $variant->stock > 0 ? "tambahKeKeranjang({$variant->id}, '" . addslashes($product->name . ' - ' . $variant->color_name) . "', {$product->price}, {$variant->stock})" : "alert('Stok Habis!')" }}">
                             <div class="p-4 flex-1 flex flex-col items-center text-center justify-center relative">
                                 <!-- Quick add indication overlay -->
@@ -407,13 +390,7 @@
         debounceTimer = setTimeout(filterProducts, 200);
     }
 
-    function setFilter(type) {
-        activeFilter = type.toLowerCase();
-        // Update pill styles
-        document.querySelectorAll('.filter-pill').forEach(pill => {
-            const isActive = pill.dataset.filter.toLowerCase() === activeFilter;
-            pill.classList.toggle('active', isActive);
-        });
+    function setFilter() {
         filterProducts();
     }
 
@@ -429,12 +406,9 @@
         cards.forEach(card => {
             const name  = card.dataset.name  || '';
             const color = card.dataset.color || '';
-            const type  = card.dataset.type  || '';
-
             const matchText   = !query || name.includes(query) || color.includes(query);
-            const matchFilter = !activeFilter || type === activeFilter;
 
-            if (matchText && matchFilter) {
+            if (matchText) {
                 card.style.display = '';
                 visible++;
             } else {

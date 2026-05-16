@@ -56,25 +56,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Fabric Type (Jenis Kain) -->
-                    <div>
-                        <label class="block text-sm font-bold text-brand-900 mb-1">Jenis Kain</label>
-                        <select name="fabric_type" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-shadow outline-none bg-white">
-                            <option value="">Pilih Jenis Kain (Opsional)</option>
-                            <option value="Katun" {{ old('fabric_type', $product->fabric_type ?? '') == 'Katun' ? 'selected' : '' }}>Katun</option>
-                            <option value="Sutra" {{ old('fabric_type', $product->fabric_type ?? '') == 'Sutra' ? 'selected' : '' }}>Sutra</option>
-                            <option value="Polyester" {{ old('fabric_type', $product->fabric_type ?? '') == 'Polyester' ? 'selected' : '' }}>Polyester</option>
-                            <option value="Satin" {{ old('fabric_type', $product->fabric_type ?? '') == 'Satin' ? 'selected' : '' }}>Satin</option>
-                            <option value="Linen" {{ old('fabric_type', $product->fabric_type ?? '') == 'Linen' ? 'selected' : '' }}>Linen</option>
-                            <option value="Rayon" {{ old('fabric_type', $product->fabric_type ?? '') == 'Rayon' ? 'selected' : '' }}>Rayon</option>
-                            <option value="Chiffon" {{ old('fabric_type', $product->fabric_type ?? '') == 'Chiffon' ? 'selected' : '' }}>Chiffon</option>
-                            <option value="Denim" {{ old('fabric_type', $product->fabric_type ?? '') == 'Denim' ? 'selected' : '' }}>Denim</option>
-                            <option value="Brokat" {{ old('fabric_type', $product->fabric_type ?? '') == 'Brokat' ? 'selected' : '' }}>Brokat</option>
-                            <option value="Batik" {{ old('fabric_type', $product->fabric_type ?? '') == 'Batik' ? 'selected' : '' }}>Batik</option>
-                            <option value="Wol" {{ old('fabric_type', $product->fabric_type ?? '') == 'Wol' ? 'selected' : '' }}>Wol</option>
-                            <option value="Nilon" {{ old('fabric_type', $product->fabric_type ?? '') == 'Nilon' ? 'selected' : '' }}>Nilon</option>
-                        </select>
-                    </div>
+
 
                     <!-- Price -->
                     <div>
@@ -88,34 +70,10 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    <!-- Texture -->
-                    <div>
-                        <label class="block text-sm font-bold text-brand-900 mb-1">Tekstur Permukaan</label>
-                        <select name="texture" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-shadow outline-none bg-white">
-                            <option value="">Pilih Tekstur (Opsional)</option>
-                            <option value="Halus Lembut" {{ old('texture', $product->texture ?? '') == 'Halus Lembut' ? 'selected' : '' }}>Halus & Lembut</option>
-                            <option value="Licin Mengkilap" {{ old('texture', $product->texture ?? '') == 'Licin Mengkilap' ? 'selected' : '' }}>Licin & Mengkilap</option>
-                            <option value="Kasar Bertekstur" {{ old('texture', $product->texture ?? '') == 'Kasar Bertekstur' ? 'selected' : '' }}>Kasar / Bertekstur</option>
-                            <option value="Tebal Kaku" {{ old('texture', $product->texture ?? '') == 'Tebal Kaku' ? 'selected' : '' }}>Tebal & Kaku</option>
-                            <option value="Jatuh Flowy" {{ old('texture', $product->texture ?? '') == 'Jatuh Flowy' ? 'selected' : '' }}>Jatuh / Flowy</option>
-                        </select>
-                    </div>
 
-                    <!-- Comfort Level -->
-                    <div>
-                        <label class="block text-sm font-bold text-brand-900 mb-1">Tingkat Kenyamanan (1-5)</label>
-                        <select name="comfort_level" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-shadow outline-none bg-white">
-                            <option value="">Nilai (Opsional)</option>
-                            @for($i=1; $i<=5; $i++)
-                                <option value="{{ $i }}" {{ old('comfort_level', $product->comfort_level ?? '') == $i ? 'selected' : '' }}>{{ $i }} Bintang ({{ ['Sangat Kurang','Kurang Nyaman','Cukup Nyaman','Nyaman / Adem','Sangat Mewah & Nyaman'][$i-1] }})</option>
-                            @endfor
-                        </select>
-                    </div>
-                </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                    <!-- Textures are above, adding width, composition, fabric care -->
+                    <!-- Info Teknis Tambahan -->
                     <div>
                         <label class="block text-sm font-bold text-brand-900 mb-1">Lebar Kain (m)</label>
                         <input type="text" name="width" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-shadow outline-none" placeholder="Misal: 1.5 meter" value="{{ old('width', $product->width ?? '') }}">

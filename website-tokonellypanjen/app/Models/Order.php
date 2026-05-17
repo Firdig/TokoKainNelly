@@ -15,6 +15,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $transaction_type  'pos', 'bops', or 'delivery'
  * @property string $status            'pending', 'in_preparation', 'ready_for_pickup', 'shipped', 'completed', 'cancelled'
  * @property float $total_amount
+ * @property float $shipping_cost
+ * @property string|null $shipping_courier_code
+ * @property string|null $shipping_courier_service
+ * @property string|null $shipping_courier_name
+ * @property string|null $shipping_etd
+ * @property string|null $shipping_tracking_id
+ * @property string|null $destination_area_id
  * @property string|null $pickup_code
  * @property \Carbon\Carbon|null $estimated_pickup_at
  * @property string|null $customer_name
@@ -37,6 +44,13 @@ class Order extends Model
         'transaction_type',
         'status',
         'total_amount',
+        'shipping_cost',
+        'shipping_courier_code',
+        'shipping_courier_service',
+        'shipping_courier_name',
+        'shipping_etd',
+        'shipping_tracking_id',
+        'destination_area_id',
         'pickup_code',
         'estimated_pickup_at',
         'customer_name',
@@ -58,6 +72,7 @@ class Order extends Model
      */
     protected $casts = [
         'total_amount'         => 'decimal:2',
+        'shipping_cost'        => 'decimal:2',
         'estimated_pickup_at'  => 'datetime',
         'paid_at'              => 'datetime',
     ];

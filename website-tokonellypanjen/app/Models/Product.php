@@ -36,6 +36,8 @@ class Product extends Model
         'composition',
         'fabric_care',
         'category_id',
+        'weight_value',
+        'weight_unit',
     ];
 
     public function category()

@@ -52,6 +52,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // CUSTOMER ROUTES (Authenticated Customers)
 // ═══════════════════════════════════════════════════════════════
 
+use App\Http\Controllers\BiteshipController;
+
 Route::middleware(['auth'])->group(function () {
     // E-Commerce Checkout (Rate Limited)
     Route::get('/checkout', [CheckoutFrontController::class, 'index'])->name('checkout.index');
@@ -61,10 +63,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/payment/{id}', [CheckoutFrontController::class, 'payment'])->name('checkout.payment');
     Route::get('/invoice/{id}', [CheckoutFrontController::class, 'success'])->name('checkout.success');
 
-    // Dinonaktifkan: tidak termasuk dalam Use Case Diagram
-    // Route::get('/profile', [CustomerProfileController::class, 'edit'])->name('profile.edit');
-    // Route::put('/profile', [CustomerProfileController::class, 'update'])->name('profile.update');
-    // Route::put('/profile/password', [CustomerProfileController::class, 'updatePassword'])->name('profile.password');
+    // Biteship Shipping API (AJAX endpoints for checkout)
+    Route::get('/api/biteship/areas', [BiteshipController::class, 'searchAreas'])->name('biteship.areas');
+    Route::post('/api/biteship/rates', [BiteshipController::class, 'getRates'])->name('biteship.rates');
+
+    // Customer Profile
+    Route::get('/profile', [CustomerProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [CustomerProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [CustomerProfileController::class, 'updatePassword'])->name('profile.password');
 
     // Customer Order Tracking
     Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders.index');

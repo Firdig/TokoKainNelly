@@ -13,6 +13,7 @@ use App\Http\Controllers\CustomerOrderController;
 use App\Http\Controllers\CustomerProfileController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\StockReportController;
+use App\Http\Controllers\Admin\ReportCenterController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductImageServeController;
@@ -140,18 +141,13 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     // User Management (kelola hak akses pengguna)
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'store', 'destroy']);
 
-    // Laporan Stok (Stock Movement & Historical Data)
-    Route::get('stock-report', [StockReportController::class, 'index'])->name('admin.stock-report.index');
+    // Pusat Laporan (gabungan 5 laporan: Penjualan, Per Produk, Stok, Aset, Pembayaran)
+    Route::get('report-center', [ReportCenterController::class, 'index'])->name('admin.report-center.index');
 
-    // Laporan Penjualan Komprehensif (Overall Sales)
-    Route::get('sales-report', [\App\Http\Controllers\Admin\SalesReportController::class, 'index'])->name('admin.sales-report.index');
-
-    // Laporan Penjualan Per Produk (Historical Sales per Product)
-    Route::get('product-sales-report', [\App\Http\Controllers\Admin\ProductSalesReportController::class, 'index'])->name('admin.product-sales-report.index');
-
-    // Laporan Nilai Aset Inventaris (KF-11)
-    Route::get('asset-report', [\App\Http\Controllers\Admin\AssetReportController::class, 'index'])->name('admin.asset-report.index');
-
-    // Laporan Rekapitulasi Pembayaran (KF-35)
-    Route::get('payment-report', [\App\Http\Controllers\Admin\PaymentReportController::class, 'index'])->name('admin.payment-report.index');
+    // Route lama dikomentari — bisa dihapus setelah yakin semua berjalan baik
+    // Route::get('stock-report', [StockReportController::class, 'index'])->name('admin.stock-report.index');
+    // Route::get('sales-report', [\App\Http\Controllers\Admin\SalesReportController::class, 'index'])->name('admin.sales-report.index');
+    // Route::get('product-sales-report', [\App\Http\Controllers\Admin\ProductSalesReportController::class, 'index'])->name('admin.product-sales-report.index');
+    // Route::get('asset-report', [\App\Http\Controllers\Admin\AssetReportController::class, 'index'])->name('admin.asset-report.index');
+    // Route::get('payment-report', [\App\Http\Controllers\Admin\PaymentReportController::class, 'index'])->name('admin.payment-report.index');
 });

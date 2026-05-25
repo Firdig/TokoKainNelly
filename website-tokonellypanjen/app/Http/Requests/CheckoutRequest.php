@@ -27,9 +27,15 @@ class CheckoutRequest extends FormRequest
             'customer_phone'   => 'required|string|max:20',
         ];
 
-        // Delivery requires an address
+        // Delivery requires address + coordinates for Gojek/Grab
         if ($this->input('transaction_type') === 'delivery') {
-            $rules['delivery_address'] = 'required|string|max:500';
+            $rules['delivery_address']        = 'required|string|max:500';
+            $rules['destination_area_id']     = 'required|string|max:100';
+            $rules['shipping_cost']           = 'required|numeric|min:0';
+            $rules['shipping_courier_code']   = 'required|string|max:50';
+            $rules['shipping_courier_service'] = 'required|string|max:50';
+            $rules['shipping_courier_name']   = 'required|string|max:100';
+            $rules['shipping_etd']            = 'nullable|string|max:50';
         }
 
         return $rules;

@@ -38,9 +38,10 @@ class CheckoutService
         string $transactionType,
         string $paymentMethod,
         ?int $userId = null,
-        array $customerInfo = []
+        array $customerInfo = [],
+        array $shippingInfo = []
     ): Order {
-        return DB::transaction(function () use ($cartItems, $transactionType, $paymentMethod, $userId, $customerInfo) {
+        return DB::transaction(function () use ($cartItems, $transactionType, $paymentMethod, $userId, $customerInfo, $shippingInfo) {
             $totalAmount = 0;
 
             // Generate a unique pickup code for BOPS orders
@@ -58,19 +59,25 @@ class CheckoutService
             $isCod = $paymentMethod === 'cod';
 
             $order = Order::create([
-                'invoice_number'       => 'INV-' . time() . '-' . strtoupper(Str::random(4)),
-                'user_id'              => $userId,
-                'transaction_type'     => $transactionType,
-                'status'               => 'pending',
-                'total_amount'         => 0,
-                'pickup_code'          => $pickupCode,
-                'estimated_pickup_at'  => $estimatedPickup,
-                'customer_name'        => $customerInfo['name'] ?? null,
-                'customer_phone'       => $customerInfo['phone'] ?? null,
-                'delivery_address'     => $customerInfo['address'] ?? null,
-                'payment_method'       => $paymentMethod,
-                'payment_status'       => $isCod ? 'paid' : 'unpaid',
-                'paid_at'              => $isCod ? now() : null,
+                'invoice_number'          => 'INV-' . time() . '-' . strtoupper(Str::random(4)),
+                'user_id'                 => $userId,
+                'transaction_type'        => $transactionType,
+                'status'                  => 'pending',
+                'total_amount'            => 0,
+                'shipping_cost'           => $shippingInfo['shipping_cost'] ?? 0,
+                'shipping_courier_code'   => $shippingInfo['shipping_courier_code'] ?? null,
+                'shipping_courier_service' => $shippingInfo['shipping_courier_service'] ?? null,
+                'shipping_courier_name'   => $shippingInfo['shipping_courier_name'] ?? null,
+                'shipping_etd'            => $shippingInfo['shipping_etd'] ?? null,
+                'destination_area_id'     => $shippingInfo['destination_area_id'] ?? null,
+                'pickup_code'             => $pickupCode,
+                'estimated_pickup_at'     => $estimatedPickup,
+                'customer_name'           => $customerInfo['name'] ?? null,
+                'customer_phone'          => $customerInfo['phone'] ?? null,
+                'delivery_address'        => $customerInfo['address'] ?? null,
+                'payment_method'          => $paymentMethod,
+                'payment_status'          => $isCod ? 'paid' : 'unpaid',
+                'paid_at'                 => $isCod ? now() : null,
             ]);
 
             // 2. Process each cart item with pessimistic locking
@@ -117,8 +124,9 @@ class CheckoutService
                 ]);
             }
 
-            // 3. Update total amount
-            $order->update(['total_amount' => $totalAmount]);
+            // 3. Update total amount (product subtotal + shipping cost)
+            $shippingCost = (float) ($shippingInfo['shipping_cost'] ?? 0);
+            $order->update(['total_amount' => $totalAmount + $shippingCost]);
 
             return $order;
         });

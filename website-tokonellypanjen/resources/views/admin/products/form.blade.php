@@ -90,6 +90,21 @@
                     </div>
                 </div>
 
+                <!-- Berat Kain (untuk kalkulasi ongkos kirim) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div>
+                        <label class="block text-sm font-bold text-brand-900 mb-1">Berat Kain <span class="text-xs text-slate-400 font-normal">(untuk ongkos kirim)</span></label>
+                        <input type="number" name="weight_value" min="1" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-shadow outline-none" placeholder="Misal: 200" value="{{ old('weight_value', $product->weight_value ?? 200) }}">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-brand-900 mb-1">Satuan Berat</label>
+                        <select name="weight_unit" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-shadow outline-none bg-white">
+                            <option value="gsm" {{ old('weight_unit', $product->weight_unit ?? 'gsm') === 'gsm' ? 'selected' : '' }}>GSM (Gram per m²)</option>
+                            <option value="gpy" {{ old('weight_unit', $product->weight_unit ?? 'gsm') === 'gpy' ? 'selected' : '' }}>G/Y (Gram per Yard)</option>
+                        </select>
+                    </div>
+                </div>
+
                 <!-- Product Gallery -->
                 <div class="mt-8 pt-6 border-t border-brand-100">
                     <label class="block text-sm font-bold text-brand-900 mb-2">Galeri Foto Produk Tambahan (Opsional)</label>

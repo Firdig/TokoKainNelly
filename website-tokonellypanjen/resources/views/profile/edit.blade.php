@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Saya - Toko Nelly</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body class="bg-brand-50 min-h-screen font-sans flex flex-col">
 
@@ -76,8 +78,15 @@
 
                         <div>
                             <label class="block text-xs font-bold text-brand-900 mb-1.5 uppercase tracking-wide">Alamat Pengiriman</label>
-                            <textarea name="address" rows="3" placeholder="Masukkan alamat lengkap untuk pengiriman..."
+                            <textarea name="address" rows="2" id="profileAddress" placeholder="Masukkan alamat lengkap untuk pengiriman..."
                                 class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 text-sm outline-none transition-shadow resize-none">{{ old('address', $user->address) }}</textarea>
+                        </div>
+
+                        <!-- Map for Address -->
+                        <div>
+                            <label class="block text-xs font-bold text-brand-900 mb-1.5 uppercase tracking-wide">Lokasi di Peta <span class="text-slate-400 font-normal normal-case">(klik peta untuk menandai)</span></label>
+                            <div id="profileMap" class="w-full h-64 rounded-xl border border-slate-300 overflow-hidden z-0"></div>
+                            <p class="text-xs text-slate-400 mt-1">Klik pada peta untuk menandai lokasi alamat Anda</p>
                         </div>
 
                         <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold shadow-lg shadow-brand-600/20 transition-all hover:-translate-y-0.5">
@@ -122,6 +131,29 @@
             </div>
         </div>
     </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Default: Kepanjen, Malang
+        const defaultLat = -8.1351;
+        const defaultLng = 112.5689;
+        const map = L.map('profileMap').setView([defaultLat, defaultLng], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors',
+            maxZoom: 19,
+        }).addTo(map);
+
+        let marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+
+        map.on('click', function(e) {
+            marker.setLatLng(e.latlng);
+        });
+
+        // Fix Leaflet rendering in hidden/lazy containers
+        setTimeout(() => map.invalidateSize(), 200);
+    });
+</script>
 
 </body>
 </html>

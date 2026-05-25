@@ -70,7 +70,15 @@ class CheckoutFrontController extends Controller
                     'name'    => $request->validated('customer_name'),
                     'phone'   => $request->validated('customer_phone'),
                     'address' => $request->validated('delivery_address'),
-                ]
+                ],
+                shippingInfo: $request->validated('transaction_type') === 'delivery' ? [
+                    'shipping_cost'            => $request->validated('shipping_cost'),
+                    'shipping_courier_code'    => $request->validated('shipping_courier_code'),
+                    'shipping_courier_service' => $request->validated('shipping_courier_service'),
+                    'shipping_courier_name'    => $request->validated('shipping_courier_name'),
+                    'shipping_etd'             => $request->validated('shipping_etd'),
+                    'destination_area_id'      => $request->validated('destination_area_id'),
+                ] : []
             );
 
             // Clear the cart after successful checkout

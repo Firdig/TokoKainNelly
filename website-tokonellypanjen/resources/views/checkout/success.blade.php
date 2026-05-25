@@ -103,9 +103,25 @@
                         </div>
                     </div>
 
-                    <div class="relative z-10 border-t border-brand-100 mt-6 pt-6 flex justify-between items-end">
-                        <span class="font-bold text-brand-900 font-outfit">Total Pembayaran</span>
-                        <span class="font-extrabold text-brand-600 font-outfit text-2xl sm:text-3xl">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</span>
+                    <div class="relative z-10 border-t border-brand-100 mt-6 pt-6">
+                        @php $itemsSubtotal = $order->total_amount - $order->shipping_cost; @endphp
+                        <div class="flex justify-between items-center text-sm text-slate-600 mb-2">
+                            <span>Subtotal Produk</span>
+                            <span class="font-bold text-brand-900">Rp{{ number_format($itemsSubtotal, 0, ',', '.') }}</span>
+                        </div>
+                        @if($order->shipping_cost > 0)
+                        <div class="flex justify-between items-center text-sm text-slate-600 mb-2">
+                            <span>Ongkos Kirim <span class="text-xs text-slate-400">({{ $order->shipping_courier_name ?? '-' }})</span></span>
+                            <span class="font-bold text-blue-600">Rp{{ number_format($order->shipping_cost, 0, ',', '.') }}</span>
+                        </div>
+                        @if($order->shipping_etd)
+                        <div class="text-xs text-slate-400 mb-2">Estimasi pengiriman: {{ $order->shipping_etd }}</div>
+                        @endif
+                        @endif
+                        <div class="flex justify-between items-end pt-2">
+                            <span class="font-bold text-brand-900 font-outfit">Total Pembayaran</span>
+                            <span class="font-extrabold text-brand-600 font-outfit text-2xl sm:text-3xl">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</span>
+                        </div>
                     </div>
 
                     @if($order->isPaid() && $order->midtrans_payment_type)

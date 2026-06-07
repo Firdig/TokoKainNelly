@@ -86,10 +86,35 @@
                     Anda akan diarahkan ke halaman pembayaran aman Midtrans.<br>
                     Mendukung Transfer Bank, QRIS, GoPay, ShopeePay, dan lainnya.
                 </p>
+
+                <!-- Cancel Order Button -->
+                <div class="border-t border-brand-100 mt-6 pt-6">
+                    <form action="{{ route('orders.cancel', $order->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini? Stok akan dikembalikan.');">
+                        @csrf
+                        <button type="submit" class="w-full text-center px-8 py-4 bg-white text-red-600 border-2 border-red-200 rounded-xl font-bold font-outfit text-lg hover:bg-red-50 hover:border-red-300 transition-all flex items-center justify-center gap-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                            Batalkan Pesanan
+                        </button>
+                    </form>
+                </div>
             </div>
 
+            <!-- Flash Messages -->
+            @if(session('success'))
+                <div class="bg-green-50 border border-green-200 text-green-700 px-6 py-4 rounded-2xl mt-6 text-sm font-medium">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-2xl mt-6 text-sm font-medium">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <!-- Security Info -->
-            <div class="flex items-center justify-center gap-3 text-slate-400 text-xs">
+            <div class="flex items-center justify-center gap-3 text-slate-400 text-xs mt-6">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                 </svg>

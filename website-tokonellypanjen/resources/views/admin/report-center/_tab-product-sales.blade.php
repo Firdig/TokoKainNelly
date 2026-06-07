@@ -56,6 +56,7 @@
                 <thead class="bg-brand-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-bold text-brand-900 uppercase">Produk</th>
+                        <th class="px-6 py-3 text-right text-xs font-bold text-brand-900 uppercase">Stok Awal</th>
                         <th class="px-6 py-3 text-right text-xs font-bold text-brand-900 uppercase">Stok Sisa</th>
                         <th class="px-6 py-3 text-right text-xs font-bold text-brand-900 uppercase">Terjual (m)</th>
                         <th class="px-6 py-3 text-center text-xs font-bold text-brand-900 uppercase">Transaksi</th>
@@ -72,7 +73,15 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            @php $totalStock = $product->variants->sum('stock'); @endphp
+                            @php
+                                $totalStock = $product->variants->sum('stock');
+                                $stokAwal = $totalStock + $product->total_sold;
+                            @endphp
+                            <span class="text-sm font-bold text-slate-600">
+                                {{ number_format($stokAwal, 1) }}m
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-right">
                             <span class="text-sm font-bold {{ $totalStock <= 10 ? 'text-red-600' : 'text-brand-900' }}">
                                 {{ number_format($totalStock, 1) }}m
                             </span>
@@ -94,7 +103,8 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-12 text-center text-slate-400">Tidak ada data produk ditemukan.</td>
+                        <td colspan="6" class="px-6 py-12 text-center text-slate-400">Tidak ada data produk ditemukan.</td>
+                    </tr>
                     </tr>
                     @endforelse
                 </tbody>

@@ -25,9 +25,8 @@ use App\Http\Controllers\ProductImageServeController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/katalog', [CatalogController::class, 'index'])->name('katalog');
 Route::get('/produk/{id}', [ProductFrontController::class, 'show'])->name('product.show');
-// Dinonaktifkan: tidak termasuk dalam Use Case Diagram
-// Route::view('/tentang-kami', 'about')->name('about');
-// Route::view('/hubungi-kami', 'contact')->name('contact');
+Route::view('/tentang-kami', 'about')->name('about');
+Route::view('/hubungi-kami', 'contact')->name('contact');
 
 // Product Images from Database
 Route::get('/product-image/variant/{variant}', [ProductImageServeController::class, 'variant'])->name('image.variant');
@@ -99,15 +98,6 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,staff'])->group(function
     Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
-    // Product Management (CRUD)
-    Route::resource('products', ProductController::class);
-
-    // Category Management (CRUD)
-    Route::get('categories', [\App\Http\Controllers\Admin\CategoryController::class, 'index'])->name('admin.categories.index');
-    Route::post('categories', [\App\Http\Controllers\Admin\CategoryController::class, 'store'])->name('admin.categories.store');
-    Route::put('categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'update'])->name('admin.categories.update');
-    Route::delete('categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'destroy'])->name('admin.categories.destroy');
-
     // Dinonaktifkan: tidak termasuk dalam Use Case Diagram
     // Route::get('stock-opname', [\App\Http\Controllers\Admin\StockOpnameController::class, 'index'])->name('stock-opname.index');
     // Route::post('stock-opname', [\App\Http\Controllers\Admin\StockOpnameController::class, 'store'])->name('stock-opname.store');
@@ -138,6 +128,15 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,staff'])->group(function
 // ═══════════════════════════════════════════════════════════════
 
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
+    // Product Management (CRUD) — Superadmin Only
+    Route::resource('products', ProductController::class);
+
+    // Category Management (CRUD) — Superadmin Only
+    Route::get('categories', [\App\Http\Controllers\Admin\CategoryController::class, 'index'])->name('admin.categories.index');
+    Route::post('categories', [\App\Http\Controllers\Admin\CategoryController::class, 'store'])->name('admin.categories.store');
+    Route::put('categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'update'])->name('admin.categories.update');
+    Route::delete('categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'destroy'])->name('admin.categories.destroy');
+
     // User Management (kelola hak akses pengguna)
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'store', 'destroy']);
 

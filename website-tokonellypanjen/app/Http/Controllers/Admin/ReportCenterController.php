@@ -28,7 +28,11 @@ class ReportCenterController extends Controller
     public function index(Request $request)
     {
         // Determine active tab (default: sales)
+        // Payment tab has been merged into sales tab
         $activeTab = $request->input('tab', 'sales');
+        if ($activeTab === 'payment') {
+            $activeTab = 'sales';
+        }
 
         // ═══════════════════════════════════════════════════════════════
         // TAB 1: PENJUALAN KESELURUHAN
@@ -57,7 +61,7 @@ class ReportCenterController extends Controller
         }
 
         // Paginated orders with optional filters
-        $salesQuery = Order::with(['user', 'items'])
+        $salesQuery = Order::with(['user', 'items', 'processedBy'])
             ->where('status', '!=', 'cancelled')
             ->latest();
 

@@ -92,8 +92,8 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Order Info -->
                 <div class="md:col-span-2 space-y-6">
-                    <!-- BOPS Pickup Instructions -->
-                    @if($order->transaction_type === 'bops' && $order->pickup_code)
+                    <!-- BOPS Pickup Instructions (only shown after payment) -->
+                    @if($order->transaction_type === 'bops' && $order->pickup_code && $order->isPaid())
                     <div class="bg-gradient-to-br from-brand-600 to-brand-700 rounded-3xl p-8 text-white shadow-lg">
                         <h3 class="font-outfit font-bold text-xl mb-4 flex items-center gap-2">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
@@ -125,6 +125,19 @@
                                 <div>
                                     Tunjukkan <strong>kode pengambilan</strong> di atas kepada kasir saat mengambil kain Anda.
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    @elseif($order->transaction_type === 'bops' && $order->pickup_code && $order->isPaymentPending())
+                    {{-- BOPS order not yet paid: show notice instead of code --}}
+                    <div class="bg-amber-50 border-2 border-amber-200 rounded-3xl p-8">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                            </div>
+                            <div>
+                                <h3 class="font-outfit font-bold text-lg text-amber-900 mb-1">Kode Pengambilan Belum Tersedia</h3>
+                                <p class="text-sm text-amber-700 leading-relaxed">Kode pengambilan (BOPS) akan ditampilkan setelah pembayaran Anda dikonfirmasi. Silakan selesaikan pembayaran terlebih dahulu.</p>
                             </div>
                         </div>
                     </div>

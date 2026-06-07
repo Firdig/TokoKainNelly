@@ -9,17 +9,14 @@
 <body class="bg-brand-50 min-h-screen font-sans flex flex-col">
 
     <!-- Header Navigation -->
-    <header class="bg-white/80 backdrop-blur-md shadow-sm fixed top-0 w-full z-50 border-b border-brand-100 transition-all">
+    <header class="bg-white/90 backdrop-blur-md shadow-sm fixed top-0 w-full z-50 border-b border-brand-100 transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
                 <a href="{{ route('home') }}" class="flex items-center gap-3 group">
-                    <img src="{{ asset('images/logo.jpg') }}" alt="Toko Kain Nelly" class="h-12 w-12 rounded-xl object-cover shadow-lg shadow-brand-600/20 ring-1 ring-brand-200/50">
-                    <span class="font-outfit font-bold text-2xl text-brand-900 tracking-tight">Toko Nelly</span>
+                    <img src="{{ asset('images/logo.jpg') }}" alt="Toko Kain Nelly" class="h-14 w-auto rounded-xl object-contain">
+                    <span class="font-outfit font-bold text-xl text-brand-900 tracking-tight">Toko Kain Nelly</span>
                 </a>
-                <nav class="flex items-center gap-4">
-                    <a href="{{ route('katalog') }}" class="text-slate-500 hover:text-brand-900 text-sm font-bold transition-colors">Katalog</a>
-                    <a href="{{ route('cart.index') }}" class="text-slate-500 hover:text-brand-900 text-sm font-bold transition-colors">Keranjang</a>
-                </nav>
+                <x-frontend-navbar />
             </div>
         </div>
     </header>
@@ -27,9 +24,14 @@
     <main class="flex-1 pt-28 pb-20">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <div class="mb-8">
-                <h1 class="font-outfit font-bold text-3xl text-brand-900 mb-2">Pesanan Saya</h1>
-                <p class="text-slate-500">Lacak status pesanan Anda di sini.</p>
+            <div class="mb-8 flex items-center gap-4">
+                <a href="{{ route('home') }}" class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-500 hover:text-brand-600 hover:bg-brand-50 shadow-sm border border-slate-200 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                </a>
+                <div>
+                    <h1 class="font-outfit font-bold text-3xl text-brand-900 mb-1">Pesanan Saya</h1>
+                    <p class="text-slate-500 text-sm">Lacak status pesanan Anda di sini.</p>
+                </div>
             </div>
 
             @if($orders->isEmpty())
@@ -94,6 +96,8 @@
             @endif
         </div>
     </main>
+
+    <x-frontend-footer />
 
 </body>
 </html>

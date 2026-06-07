@@ -40,6 +40,7 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
+        'processed_by',
         'invoice_number',
         'transaction_type',
         'status',
@@ -83,6 +84,14 @@ class Order extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the staff/admin who processed this order.
+     */
+    public function processedBy()
+    {
+        return $this->belongsTo(User::class, 'processed_by');
     }
 
     /**

@@ -15,7 +15,7 @@
         <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/5 rounded-full"></div>
         <div class="absolute -left-6 -bottom-6 w-28 h-28 bg-white/5 rounded-full"></div>
         <p class="text-brand-300 text-sm font-bold uppercase tracking-wider mb-2">Total Nilai Aset Inventaris</p>
-        <p class="font-outfit font-black text-4xl sm:text-5xl relative z-10">Rp{{ number_format($totalAssets, 0, ',', '.') }}</p>
+        <p class="font-outfit font-black text-4xl sm:text-5xl relative z-[1]">Rp{{ number_format($totalAssets, 0, ',', '.') }}</p>
         <p class="text-brand-300 text-sm mt-2">{{ $products->count() }} produk &middot; {{ $products->sum('total_stock') }} meter total stok</p>
     </div>
 

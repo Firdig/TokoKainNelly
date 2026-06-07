@@ -11,11 +11,11 @@
 <body x-data="{ sidebarOpen: false }" class="bg-brand-50 min-h-screen font-sans flex">
 
     <!-- Mobile Overlay -->
-    <div x-show="sidebarOpen" x-transition.opacity @click="sidebarOpen = false" class="fixed inset-0 bg-brand-900/50 z-20 md:hidden" style="display: none;"></div>
+    <div x-show="sidebarOpen" x-transition.opacity @click="sidebarOpen = false" class="fixed inset-0 bg-brand-900/50 z-20 xl:hidden" style="display: none;"></div>
 
     <!-- Sidebar -->
-    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="w-64 bg-brand-900 text-white h-screen fixed left-0 top-0 flex flex-col transition-transform duration-300 z-30 shadow-2xl shadow-brand-900/50 md:translate-x-0">
-        <div class="h-20 flex items-center justify-center border-b border-brand-800">
+    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="w-64 bg-brand-900 text-white h-screen fixed left-0 top-0 flex flex-col transition-transform duration-300 z-30 shadow-2xl shadow-brand-900/50 xl:translate-x-0">
+        <div class="h-16 xl:h-20 flex items-center justify-center border-b border-brand-800">
             <a href="{{ url('/admin') }}" class="flex items-center gap-3">
                 <img src="{{ asset('images/logo.jpg') }}" alt="Toko Kain Nelly" class="h-10 w-10 rounded-lg object-cover shadow-lg">
                 <span class="font-outfit font-bold text-xl tracking-tight">Admin Panel</span>
@@ -39,6 +39,7 @@
                 <span>Dashboard</span>
             </a>
 
+            @if(Auth::user()->role === 'admin')
             <div class="pt-4 pb-2 px-4 text-xs font-bold text-brand-500 uppercase tracking-wider">Master Data</div>
             
             <a href="{{ url('/admin/products') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ request()->is('admin/products*') ? 'bg-brand-600 text-white font-bold' : 'text-brand-300 hover:bg-brand-800 hover:text-white' }}">
@@ -58,7 +59,6 @@
             </a>
             --}}
 
-            @if(Auth::user()->role === 'admin')
             <a href="{{ url('/admin/users') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ request()->is('admin/users*') ? 'bg-brand-600 text-white font-bold' : 'text-brand-300 hover:bg-brand-800 hover:text-white' }}">
                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 <span>Manajemen User</span>
@@ -67,9 +67,16 @@
 
             <div class="pt-4 pb-2 px-4 text-xs font-bold text-brand-500 uppercase tracking-wider">Operasional</div>
 
-            <a href="{{ url('/admin/orders') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ request()->is('admin/orders*') ? 'bg-brand-600 text-white font-bold' : 'text-brand-300 hover:bg-brand-800 hover:text-white' }}">
-                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                <span>Pesanan (Orders)</span>
+            <a href="{{ url('/admin/orders') }}" class="flex items-center justify-between px-4 py-3 rounded-xl transition-colors {{ request()->is('admin/orders*') ? 'bg-brand-600 text-white font-bold' : 'text-brand-300 hover:bg-brand-800 hover:text-white' }}">
+                <span class="flex items-center gap-3">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    <span>Pesanan (Orders)</span>
+                </span>
+                @if(($pendingOnlineOrders ?? 0) > 0)
+                <span class="w-5 h-5 flex items-center justify-center text-[10px] font-bold bg-red-500 text-white rounded-full shadow-sm">
+                    {{ $pendingOnlineOrders }}
+                </span>
+                @endif
             </a>
 
             <a href="{{ url('/admin/scanner') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ request()->is('admin/scanner*') ? 'bg-brand-600 text-white font-bold' : 'text-brand-300 hover:bg-brand-800 hover:text-white' }}">
@@ -89,9 +96,9 @@
             </a>
             --}}
 
-            @if(Auth::user()->role === 'admin')
             <div class="pt-4 pb-2 px-4 text-xs font-bold text-brand-500 uppercase tracking-wider">Laporan</div>
 
+            @if(Auth::user()->role === 'admin')
             <a href="{{ url('/admin/report-center') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ request()->is('admin/report-center*') ? 'bg-brand-600 text-white font-bold' : 'text-brand-300 hover:bg-brand-800 hover:text-white' }}">
                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 <span>Pusat Laporan</span>
@@ -116,18 +123,28 @@
     </aside>
 
     <!-- Main Content wrapper -->
-    <div class="md:ml-64 flex-1 flex flex-col min-h-screen w-full transition-all duration-300">
+    <div class="xl:ml-64 flex-1 flex flex-col min-h-screen w-full transition-all duration-300">
         
         <!-- Top Navbar -->
-        <header class="h-20 bg-white border-b border-brand-100 flex items-center justify-between px-4 md:px-8 sticky top-0 z-10 shadow-sm">
+        <header class="h-16 xl:h-20 bg-white border-b border-brand-100 flex items-center justify-between px-4 md:px-6 lg:px-8 sticky top-0 z-20 shadow-sm">
             <div class="flex items-center gap-3">
-                <button @click="sidebarOpen = true" class="md:hidden p-2 rounded-lg text-brand-600 hover:bg-brand-50 transition-colors focus:outline-none">
+                <button @click="sidebarOpen = true" class="xl:hidden p-2 rounded-lg text-brand-600 hover:bg-brand-50 transition-colors focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
                 <h1 class="text-xl font-bold font-outfit text-brand-900">@yield('title', 'Dashboard')</h1>
             </div>
             
             <div class="flex items-center gap-6">
+                <!-- Notification Bell -->
+                @if(($pendingOnlineOrders ?? 0) > 0)
+                <a href="{{ url('/admin/orders?status=pending') }}" class="relative p-2 rounded-lg text-brand-600 hover:bg-brand-50 transition-colors" title="Pesanan online menunggu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <span class="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center text-[10px] font-bold bg-red-500 text-white rounded-full shadow-sm">
+                        {{ $pendingOnlineOrders }}
+                    </span>
+                </a>
+                @endif
+
                 <!-- Branch Selector -->
                 <div class="hidden md:flex items-center gap-2 px-4 py-2 bg-brand-50 rounded-lg border border-brand-100">
                     <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
@@ -148,7 +165,7 @@
         </header>
 
         <!-- Page Content -->
-        <main class="flex-1 p-8">
+        <main class="flex-1 p-4 md:p-6 lg:p-8">
             @yield('content')
         </main>
 

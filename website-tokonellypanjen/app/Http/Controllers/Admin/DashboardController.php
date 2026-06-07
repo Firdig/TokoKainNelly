@@ -30,9 +30,21 @@ class DashboardController extends Controller
 
         $totalProducts = Product::count();
 
-        // Pending online orders (delivery + BOPS)
+        // Pending online orders (delivery + BOPS) — paid only
         $pendingOrders = Order::ofStatus('pending')
             ->whereIn('transaction_type', ['bops', 'delivery'])
+            ->where('payment_status', 'paid')
+            ->count();
+
+        // Breakdown for notification banner
+        $pendingBops = Order::ofStatus('pending')
+            ->where('transaction_type', 'bops')
+            ->where('payment_status', 'paid')
+            ->count();
+
+        $pendingDelivery = Order::ofStatus('pending')
+            ->where('transaction_type', 'delivery')
+            ->where('payment_status', 'paid')
             ->count();
 
         // Low stock alert: variants with ≤ 10m stock
@@ -48,6 +60,8 @@ class DashboardController extends Controller
             'totalAssets',
             'totalProducts',
             'pendingOrders',
+            'pendingBops',
+            'pendingDelivery',
             'lowStockProducts',
             'monthlySales'
         ));

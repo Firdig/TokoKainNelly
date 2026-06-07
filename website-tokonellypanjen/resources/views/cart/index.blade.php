@@ -174,16 +174,7 @@
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-brand-950 text-brand-100 py-10 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <img src="{{ asset('images/logo.jpg') }}" alt="Toko Kain Nelly" class="h-8 w-8 rounded-lg object-cover">
-                <span class="font-outfit font-bold text-lg text-white">Toko Nelly Panjen</span>
-            </div>
-            <p class="text-brand-500 text-sm">&copy; {{ date('Y') }} Toko Kain Nelly Panjen. All rights reserved.</p>
-        </div>
-    </footer>
+    <x-frontend-footer />
 
 <script>
 (function () {

@@ -68,30 +68,30 @@ class CartController extends Controller
         $product = Product::findOrFail($request->product_id);
         $variant = $product->variants()->findOrFail($request->product_variant_id);
         
-        // Validasi stok awal dari varian warna spesifik
+        // stock validation from variant color
         if ($variant->stock < $request->quantity) {
             return redirect()->back()->withErrors(['quantity' => 'Maaf, kuantitas melebihi stok warna yang tersedia.']);
         }
 
         $cart = $this->getCart();
 
-        // Cek apakah item ini (produk + warna spesifik) sudah ada di keranjang
+        // check product and variant if already in cart
         $cartItem = CartItem::where('cart_id', $cart->id)
                             ->where('product_variant_id', $variant->id)
                             ->first();
 
         if ($cartItem) {
-            // Update quantity jika sudah ada
+            // Quantity if already exist
             $newQuantity = $cartItem->quantity + $request->quantity;
             
-            // Validasi lagi stok gabungan varian
+            // validating stock
             if ($variant->stock < $newQuantity) {
                  return redirect()->back()->withErrors(['quantity' => 'Total pesanan ini di keranjang melebihi stok warna yang tersedia.']);
             }
 
             $cartItem->update(['quantity' => $newQuantity]);
         } else {
-            // Buat item baru di keranjang
+            // create new item
             CartItem::create([
                 'cart_id' => $cart->id,
                 'product_variant_id' => $variant->id,

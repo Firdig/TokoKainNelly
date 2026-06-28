@@ -22,7 +22,7 @@ class ReportService
     {
         $date = $date ?? Carbon::today();
 
-        $orders = Order::with(['items.productVariant.product'])
+        $orders = Order::with(['items.productVariant.product', 'user', 'processedBy'])
             ->whereDate('created_at', $date)
             ->where('status', '!=', 'cancelled')
             ->latest()

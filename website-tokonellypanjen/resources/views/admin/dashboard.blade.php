@@ -4,7 +4,33 @@
 
 @section('content')
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+{{-- Notification Banner: Pending Online Orders --}}
+@if($pendingOrders > 0)
+<div class="mb-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-5 shadow-sm">
+    <div class="flex items-center justify-between flex-wrap gap-4">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+            </div>
+            <div>
+                <h3 class="font-outfit font-bold text-amber-900 text-lg">{{ $pendingOrders }} Pesanan Online Menunggu!</h3>
+                <p class="text-sm text-amber-700 mt-0.5">
+                    @if($pendingBops > 0)<span class="font-semibold">{{ $pendingBops }} BOPS (Pickup)</span>@endif
+                    @if($pendingBops > 0 && $pendingDelivery > 0) &bull; @endif
+                    @if($pendingDelivery > 0)<span class="font-semibold">{{ $pendingDelivery }} Delivery</span>@endif
+                    — Segera proses untuk kepuasan pelanggan.
+                </p>
+            </div>
+        </div>
+        <a href="{{ url('/admin/orders?status=pending') }}" class="px-5 py-2.5 bg-brand-900 hover:bg-brand-800 text-white rounded-xl font-bold text-sm shadow-md transition-all hover:-translate-y-0.5 flex items-center gap-2 shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+            Lihat Pesanan
+        </a>
+    </div>
+</div>
+@endif
+
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
     @if(Auth::user()->role === 'admin')
     <!-- Total Asset Card (Superadmin Only) -->
     <div class="bg-white rounded-2xl p-6 shadow-sm border border-brand-100 flex items-center gap-5">

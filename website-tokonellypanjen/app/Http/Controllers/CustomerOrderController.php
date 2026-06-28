@@ -74,6 +74,6 @@ class CustomerOrderController extends Controller
             'payment_status' => $order->isPaymentPending() ? 'cancelled' : $order->payment_status,
         ]);
 
-        return back()->with('success', 'Pesanan berhasil dibatalkan.');
+        return redirect()->route('orders.index')->with('success', 'Pesanan berhasil dibatalkan.');
     }
 }

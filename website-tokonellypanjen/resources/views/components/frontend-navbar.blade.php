@@ -13,10 +13,8 @@
     <nav class="hidden md:flex space-x-6 items-center font-outfit font-medium text-sm">
         <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'text-brand-700 font-bold' : 'text-slate-500 hover:text-brand-600 transition-colors' }}">Beranda</a>
         <a href="{{ route('katalog') }}" class="{{ request()->routeIs('katalog') || request()->routeIs('product.show') ? 'text-brand-700 font-bold' : 'text-slate-500 hover:text-brand-600 transition-colors' }}">Katalog Kain</a>
-        {{-- Dinonaktifkan: tidak termasuk dalam Use Case Diagram
         <a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'text-brand-700 font-bold' : 'text-slate-500 hover:text-brand-600 transition-colors' }}">Tentang Kami</a>
         <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'text-brand-700 font-bold' : 'text-slate-500 hover:text-brand-600 transition-colors' }}">Hubungi Kami</a>
-        --}}
         
         @auth
             @if(auth()->user()->role === 'admin' || auth()->user()->role === 'staff')
@@ -82,10 +80,8 @@
         <div class="px-4 py-2 flex flex-col">
             <a href="{{ route('home') }}" class="py-3 border-b border-brand-50 text-brand-900 font-medium {{ request()->routeIs('home') ? 'text-brand-600 font-bold' : '' }}">Beranda</a>
             <a href="{{ route('katalog') }}" class="py-3 border-b border-brand-50 text-brand-900 font-medium {{ request()->routeIs('katalog') || request()->routeIs('product.show') ? 'text-brand-600 font-bold' : '' }}">Katalog Kain</a>
-            {{-- Dinonaktifkan: tidak termasuk dalam Use Case Diagram
             <a href="{{ route('about') }}" class="py-3 border-b border-brand-50 text-brand-900 font-medium {{ request()->routeIs('about') ? 'text-brand-600 font-bold' : '' }}">Tentang Kami</a>
             <a href="{{ route('contact') }}" class="py-3 border-b border-brand-50 text-brand-900 font-medium {{ request()->routeIs('contact') ? 'text-brand-600 font-bold' : '' }}">Hubungi Kami</a>
-            --}}
             
             @auth
                 @if(auth()->user()->role === 'admin' || auth()->user()->role === 'staff')

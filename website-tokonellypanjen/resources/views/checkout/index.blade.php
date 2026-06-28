@@ -226,8 +226,8 @@
                                 </label>
 
                                 <!-- COD / Bayar di Tempat -->
-                                <label class="block cursor-pointer group">
-                                    <input type="radio" name="payment_method" value="cod" class="peer sr-only" {{ old('payment_method') === 'cod' ? 'checked' : '' }}>
+                                <label id="payment-cod-label" class="block cursor-pointer group">
+                                    <input type="radio" name="payment_method" value="cod" id="payment-cod-radio" class="peer sr-only" {{ old('payment_method') === 'cod' ? 'checked' : '' }}>
                                     <div class="p-5 rounded-2xl border-2 border-slate-200 peer-checked:border-brand-600 peer-checked:bg-brand-50/50 hover:bg-slate-50 transition-all">
                                         <div class="flex items-center gap-3">
                                             <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
@@ -455,19 +455,29 @@
     function toggleDeliveryAddress(type) {
         const deliverySection = document.getElementById('deliveryAddressSection');
         const bopsSection = document.getElementById('bopsInfoSection');
+        const codLabel = document.getElementById('payment-cod-label');
+        const codRadio = document.getElementById('payment-cod-radio');
+        
         if (type === 'delivery') {
             deliverySection.classList.remove('hidden');
             bopsSection.classList.add('hidden');
+            if (codLabel) codLabel.classList.add('hidden');
+            if (codRadio && codRadio.checked) {
+                document.querySelector('input[name="payment_method"][value="midtrans"]').checked = true;
+            }
             setTimeout(() => initCheckoutMap(), 150);
         } else {
             deliverySection.classList.add('hidden');
             bopsSection.classList.remove('hidden');
+            if (codLabel) codLabel.classList.remove('hidden');
             clearShippingSelection();
         }
     }
 
     document.addEventListener('DOMContentLoaded', function() {
         if (!document.getElementById('deliveryAddressSection').classList.contains('hidden')) {
+            const codLabel = document.getElementById('payment-cod-label');
+            if (codLabel) codLabel.classList.add('hidden');
             setTimeout(() => initCheckoutMap(), 300);
         }
     });

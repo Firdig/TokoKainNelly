@@ -1,25 +1,20 @@
-@extends('layouts.admin')
+{{-- ═══════════════════════════════════════════════════════════════
+     TAB: NILAI ASET INVENTARIS
+     Konten dari admin/asset-report/index.blade.php
+═══════════════════════════════════════════════════════════════ --}}
 
-@section('title', 'Laporan Nilai Aset Inventaris')
+<div class="space-y-8">
 
-@section('content')
-<div class="max-w-7xl mx-auto space-y-8">
-
-    <div>
-        <h2 class="font-outfit text-3xl font-bold text-brand-900">Laporan Nilai Aset Inventaris</h2>
-        <p class="mt-1 text-sm text-slate-500">Nilai aset toko berdasarkan stok dan harga produk. Rumus: &Sigma; (Stok &times; Harga Jual) per produk.</p>
-    </div>
-
-    <!-- Total Asset Card -->
+    {{-- Total Asset Card --}}
     <div class="bg-gradient-to-br from-brand-800 to-brand-900 rounded-3xl p-8 text-white relative overflow-hidden">
         <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/5 rounded-full"></div>
         <div class="absolute -left-6 -bottom-6 w-28 h-28 bg-white/5 rounded-full"></div>
         <p class="text-brand-300 text-sm font-bold uppercase tracking-wider mb-2">Total Nilai Aset Inventaris</p>
-        <p class="font-outfit font-black text-4xl sm:text-5xl relative z-[1]">Rp{{ number_format($totalAssets, 0, ',', '.') }}</p>
-        <p class="text-brand-300 text-sm mt-2">{{ $products->count() }} produk &middot; {{ $products->sum('total_stock') }} meter total stok</p>
+        <p class="font-outfit font-black text-4xl sm:text-5xl relative z-[1]">Rp{{ number_format($assetTotal, 0, ',', '.') }}</p>
+        <p class="text-brand-300 text-sm mt-2">{{ $assetProducts->count() }} produk &middot; {{ $assetProducts->sum('total_stock') }} meter total stok</p>
     </div>
 
-    <!-- Ringkasan Per Kategori -->
+    {{-- Ringkasan Per Kategori --}}
     <div class="bg-white rounded-3xl shadow-sm border border-brand-100 overflow-hidden">
         <div class="px-6 py-5 border-b border-brand-100 bg-brand-50/50">
             <h3 class="font-outfit font-bold text-lg text-brand-900">Rincian Per Kategori</h3>
@@ -36,14 +31,14 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-brand-50">
-                    @foreach($categoryAssets as $cat)
+                    @foreach($assetCategories as $cat)
                         <tr class="hover:bg-brand-50 transition-colors">
                             <td class="px-6 py-4 font-bold text-brand-900 text-sm">{{ $cat['name'] }}</td>
                             <td class="px-6 py-4 text-center text-sm text-slate-600">{{ $cat['product_count'] }}</td>
                             <td class="px-6 py-4 text-right text-sm text-slate-600">{{ number_format($cat['total_stock'], 1, ',', '.') }}</td>
                             <td class="px-6 py-4 text-right text-sm font-bold text-brand-600">Rp{{ number_format($cat['asset_value'], 0, ',', '.') }}</td>
                             <td class="px-6 py-4 text-right text-sm text-slate-500">
-                                {{ $totalAssets > 0 ? number_format(($cat['asset_value'] / $totalAssets) * 100, 1) : 0 }}%
+                                {{ $assetTotal > 0 ? number_format(($cat['asset_value'] / $assetTotal) * 100, 1) : 0 }}%
                             </td>
                         </tr>
                     @endforeach
@@ -51,9 +46,9 @@
                 <tfoot class="bg-brand-50">
                     <tr>
                         <td class="px-6 py-4 font-bold text-brand-900 text-sm">Total</td>
-                        <td class="px-6 py-4 text-center font-bold text-brand-900 text-sm">{{ $products->count() }}</td>
-                        <td class="px-6 py-4 text-right font-bold text-brand-900 text-sm">{{ number_format($products->sum('total_stock'), 1, ',', '.') }}</td>
-                        <td class="px-6 py-4 text-right font-bold text-brand-900 text-sm">Rp{{ number_format($totalAssets, 0, ',', '.') }}</td>
+                        <td class="px-6 py-4 text-center font-bold text-brand-900 text-sm">{{ $assetProducts->count() }}</td>
+                        <td class="px-6 py-4 text-right font-bold text-brand-900 text-sm">{{ number_format($assetProducts->sum('total_stock'), 1, ',', '.') }}</td>
+                        <td class="px-6 py-4 text-right font-bold text-brand-900 text-sm">Rp{{ number_format($assetTotal, 0, ',', '.') }}</td>
                         <td class="px-6 py-4 text-right font-bold text-brand-900 text-sm">100%</td>
                     </tr>
                 </tfoot>
@@ -61,7 +56,7 @@
         </div>
     </div>
 
-    <!-- Rincian Per Produk -->
+    {{-- Rincian Per Produk --}}
     <div class="bg-white rounded-3xl shadow-sm border border-brand-100 overflow-hidden">
         <div class="px-6 py-5 border-b border-brand-100 bg-brand-50/50 flex justify-between items-center">
             <h3 class="font-outfit font-bold text-lg text-brand-900">Rincian Per Produk</h3>
@@ -83,9 +78,9 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-brand-50">
-                    @foreach($products as $index => $product)
+                    @foreach($assetProducts as $index => $product)
                         <tr class="hover:bg-brand-50 transition-colors">
-                            <td class="px-6 py-4 text-sm text-slate-500">{{ $index + 1 }}</td>
+                            <td class="px-6 py-4 text-sm text-slate-500">{{ $loop->iteration }}</td>
                             <td class="px-6 py-4 font-bold text-brand-900 text-sm">{{ $product->name }}</td>
                             <td class="px-6 py-4 text-sm text-slate-600">
                                 @if($product->category)
@@ -103,6 +98,4 @@
             </table>
         </div>
     </div>
-
 </div>
-@endsection

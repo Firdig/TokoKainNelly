@@ -2,9 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Order;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
 /**
@@ -27,9 +30,26 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (app()->environment('production')) {
-        URL::forceScheme('https');
-    }
+        if (app()->environment('production') || 
+            (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')) {
+            URL::forceScheme('https');
+        }
+
+        // ─────────────────────────────────────────────
+        // View Composer: inject pending order count into admin layout
+        // ─────────────────────────────────────────────
+        View::composer('layouts.admin', function ($view) {
+            if (Auth::check() && in_array(Auth::user()->role, ['admin', 'staff'])) {
+                $pendingOnlineOrders = Order::whereIn('transaction_type', ['bops', 'delivery'])
+                    ->where('status', 'pending')
+                    ->where('payment_status', 'paid')
+                    ->count();
+            } else {
+                $pendingOnlineOrders = 0;
+            }
+            $view->with('pendingOnlineOrders', $pendingOnlineOrders);
+        });
+
         // Rate Limiter: Login — 5 attempts per minute per IP
         // Prevents brute-force password attacks
         RateLimiter::for('login', function (Request $request) {

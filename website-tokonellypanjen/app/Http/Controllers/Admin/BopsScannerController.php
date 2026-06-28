@@ -8,19 +8,13 @@ use Illuminate\Http\Request;
 
 class BopsScannerController extends Controller
 {
-    /**
-     * Display the scanner interface.
-     */
+    
     public function index()
     {
         return view('admin.scanner.index');
     }
 
-    /**
-     * Verify the pickup code.
-     * AD-13: Returns order details including payment status so admin
-     * knows whether to collect COD payment before handover.
-     */
+   
     public function verify(Request $request)
     {
         $request->validate([
@@ -52,8 +46,6 @@ class BopsScannerController extends Controller
                 'message' => 'Pesanan belum siap untuk diambil. Status saat ini: ' . str_replace('_', ' ', $order->status)
             ], 400);
         }
-
-        // AD-13: Detect if payment is COD (not yet paid) so UI can prompt admin to collect cash
         $needsCodPayment = !$order->isPaid();
 
         return response()->json([
@@ -70,10 +62,7 @@ class BopsScannerController extends Controller
         ]);
     }
 
-    /**
-     * Finalize the order (Handover).
-     * AD-13: If order was not yet paid (COD), mark payment as paid upon handover.
-     */
+    
     public function handover(Request $request, Order $order)
     {
         if ($order->transaction_type !== 'bops') {
@@ -85,8 +74,9 @@ class BopsScannerController extends Controller
         }
 
         $updateData = [
-            'status'     => 'completed',
-            'updated_at' => now(),
+            'status'       => 'completed',
+            'processed_by' => \Illuminate\Support\Facades\Auth::id(),
+            'updated_at'   => now(),
         ];
 
         // AD-13: If the order was COD (not yet paid), record payment on handover

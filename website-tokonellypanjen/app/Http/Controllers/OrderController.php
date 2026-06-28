@@ -21,17 +21,23 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         // AD-12: Only show Delivery, BOPS, and POS orders
-        $query = Order::with(['items.productVariant.product', 'user'])
+        $query = Order::with(['items.productVariant.product', 'user', 'processedBy'])
             ->whereIn('transaction_type', ['bops', 'delivery', 'pos'])
             // AD-12: Exclude orders still awaiting payment confirmation
             ->whereNotIn('payment_status', ['unpaid', 'pending'])
             ->latest();
 
+        // Filter by transaction type
         if ($request->has('type') && in_array($request->type, ['bops', 'delivery', 'pos'])) {
             $query->ofType($request->type);
         }
 
-        $orders = $query->paginate(20);
+        // Filter by status
+        if ($request->has('status') && in_array($request->status, ['pending', 'in_preparation', 'ready_for_pickup', 'shipped', 'completed', 'cancelled'])) {
+            $query->ofStatus($request->status);
+        }
+
+        $orders = $query->paginate(20)->withQueryString();
 
         return view('admin.orders.index', compact('orders'));
     }
@@ -47,7 +53,10 @@ class OrderController extends Controller
         ]);
 
         $oldStatus = $order->status;
-        $order->update(['status' => $validated['status']]);
+        $order->update([
+            'status' => $validated['status'],
+            'processed_by' => \Illuminate\Support\Facades\Auth::id(),
+        ]);
 
         // Restore stock if the order is cancelled
         if ($oldStatus !== 'cancelled' && $validated['status'] === 'cancelled') {

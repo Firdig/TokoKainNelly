@@ -48,33 +48,55 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-brand-900 text-white font-outfit text-sm">
-                            <th class="py-4 px-6 font-semibold w-16 text-center">No</th>
-                            <th class="py-4 px-6 font-semibold">Nomor Nota</th>
-                            <th class="py-4 px-6 font-semibold text-center w-40">Waktu</th>
-                            <th class="py-4 px-6 font-semibold w-48">Tipe Pesanan</th>
-                            <th class="py-4 px-6 font-semibold text-right">Total Belanja</th>
+                            <th class="py-4 px-4 font-semibold w-12 text-center">No</th>
+                            <th class="py-4 px-4 font-semibold">Nomor Nota</th>
+                            <th class="py-4 px-4 font-semibold text-center w-24">Waktu</th>
+                            <th class="py-4 px-4 font-semibold w-32">Tipe</th>
+                            <th class="py-4 px-4 font-semibold">Pelaku / Pelanggan</th>
+                            <th class="py-4 px-4 font-semibold text-right">Total Belanja</th>
                         </tr>
                     </thead>
                     <tbody class="font-inter text-sm divide-y divide-brand-100">
                         @forelse($orders as $index => $order)
                         <tr class="hover:bg-brand-50 transition-colors even:bg-slate-50">
-                            <td class="py-3 px-6 text-center text-slate-500">{{ $index + 1 }}</td>
-                            <td class="py-3 px-6 font-medium text-brand-900">{{ $order->invoice_number }}</td>
-                            <td class="py-3 px-6 text-center text-slate-500">{{ $order->created_at->format('H:i:s') }}</td>
-                            <td class="py-3 px-6">
+                            <td class="py-3 px-4 text-center text-slate-500">{{ $index + 1 }}</td>
+                            <td class="py-3 px-4 font-medium text-brand-900">{{ $order->invoice_number }}</td>
+                            <td class="py-3 px-4 text-center text-slate-500">{{ $order->created_at->format('H:i:s') }}</td>
+                            <td class="py-3 px-4">
                                 <span class="px-3 py-1 text-xs font-semibold rounded-full 
                                     {{ $order->transaction_type == 'pos' ? 'bg-blue-100 text-blue-800' : 
                                       ($order->transaction_type == 'bops' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800') }}">
                                     {{ strtoupper($order->transaction_type) }}
                                 </span>
                             </td>
-                            <td class="py-3 px-6 text-right font-medium text-brand-900">
+                            <td class="py-3 px-4">
+                                @if($order->transaction_type == 'pos')
+                                    {{-- POS: hanya nama kasir, tanpa nama pelanggan --}}
+                                    <div class="text-sm text-brand-900 font-medium">
+                                        Kasir: {{ $order->user->name ?? ($order->processedBy->name ?? '-') }}
+                                    </div>
+                                @else
+                                    {{-- BOPS/Delivery: nama staff + nama pelanggan --}}
+                                    @if($order->processedBy)
+                                        <div class="text-xs text-brand-600 font-semibold">
+                                            Staff: {{ $order->processedBy->name }}
+                                        </div>
+                                    @endif
+                                    <div class="text-sm text-brand-900 font-medium">
+                                        {{ $order->customer_name ?? ($order->user->name ?? 'Walk-in') }}
+                                    </div>
+                                    @if($order->payment_status !== 'paid')
+                                        <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">Belum Bayar</span>
+                                    @endif
+                                @endif
+                            </td>
+                            <td class="py-3 px-4 text-right font-medium text-brand-900">
                                 Rp {{ number_format($order->total_amount, 0, ',', '.') }}
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="py-12 text-center text-slate-400">
+                            <td colspan="6" class="py-12 text-center text-slate-400">
                                 <svg class="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                                 Belum ada transaksi tercatat untuk hari ini.
                             </td>
@@ -83,7 +105,7 @@
                     </tbody>
                     <tfoot class="bg-brand-50 border-t-2 border-brand-200">
                         <tr>
-                            <td colspan="4" class="py-5 px-6 text-right font-outfit font-bold text-brand-900 text-sm uppercase tracking-wide">Total Omzet Harian:</td>
+                            <td colspan="5" class="py-5 px-6 text-right font-outfit font-bold text-brand-900 text-sm uppercase tracking-wide">Total Omzet Harian:</td>
                             <td class="py-5 px-6 text-right font-outfit font-bold text-accent-500 text-xl">
                                 Rp {{ number_format($totalOmzet, 0, ',', '.') }}
                             </td>
@@ -97,7 +119,8 @@
                 <div class="text-center w-48">
                     <p class="text-sm text-slate-600 mb-20 font-inter">Diserahkan Oleh,</p>
                     <div class="border-b border-brand-900 mx-auto w-40"></div>
-                    <p class="text-brand-900 font-bold font-outfit mt-2">Kasir Toko</p>
+                    <p class="text-brand-900 font-bold font-outfit mt-2">{{ Auth::user()->name ?? 'Kasir Toko' }}</p>
+                    <p class="text-xs text-slate-500 capitalize">{{ Auth::user()->role ?? '' }}</p>
                 </div>
                 
                 <div class="text-center w-48">
@@ -109,7 +132,7 @@
 
             <!-- Print Footer text -->
             <div class="mt-16 text-center text-xs text-slate-400 font-inter hidden print:block border-t border-brand-100 pt-4">
-                Dicetak oleh sistem pada {{ date('d M Y H:i:s') }}
+                Dicetak oleh {{ Auth::user()->name ?? '-' }} ({{ Auth::user()->role ?? '-' }}) pada {{ date('d M Y H:i:s') }}
             </div>
 
         </main>

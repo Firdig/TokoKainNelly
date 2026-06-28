@@ -13,6 +13,7 @@ use App\Http\Controllers\CustomerOrderController;
 use App\Http\Controllers\CustomerProfileController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\StockReportController;
+use App\Http\Controllers\Admin\ReportCenterController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductImageServeController;
@@ -24,9 +25,8 @@ use App\Http\Controllers\ProductImageServeController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/katalog', [CatalogController::class, 'index'])->name('katalog');
 Route::get('/produk/{id}', [ProductFrontController::class, 'show'])->name('product.show');
-// Dinonaktifkan: tidak termasuk dalam Use Case Diagram
-// Route::view('/tentang-kami', 'about')->name('about');
-// Route::view('/hubungi-kami', 'contact')->name('contact');
+Route::view('/tentang-kami', 'about')->name('about');
+Route::view('/hubungi-kami', 'contact')->name('contact');
 
 // Product Images from Database
 Route::get('/product-image/variant/{variant}', [ProductImageServeController::class, 'variant'])->name('image.variant');
@@ -98,15 +98,6 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,staff'])->group(function
     Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
-    // Product Management (CRUD)
-    Route::resource('products', ProductController::class);
-
-    // Category Management (CRUD)
-    Route::get('categories', [\App\Http\Controllers\Admin\CategoryController::class, 'index'])->name('admin.categories.index');
-    Route::post('categories', [\App\Http\Controllers\Admin\CategoryController::class, 'store'])->name('admin.categories.store');
-    Route::put('categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'update'])->name('admin.categories.update');
-    Route::delete('categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'destroy'])->name('admin.categories.destroy');
-
     // Dinonaktifkan: tidak termasuk dalam Use Case Diagram
     // Route::get('stock-opname', [\App\Http\Controllers\Admin\StockOpnameController::class, 'index'])->name('stock-opname.index');
     // Route::post('stock-opname', [\App\Http\Controllers\Admin\StockOpnameController::class, 'store'])->name('stock-opname.store');
@@ -137,21 +128,25 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,staff'])->group(function
 // ═══════════════════════════════════════════════════════════════
 
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
+    // Product Management (CRUD) — Superadmin Only
+    Route::resource('products', ProductController::class);
+
+    // Category Management (CRUD) — Superadmin Only
+    Route::get('categories', [\App\Http\Controllers\Admin\CategoryController::class, 'index'])->name('admin.categories.index');
+    Route::post('categories', [\App\Http\Controllers\Admin\CategoryController::class, 'store'])->name('admin.categories.store');
+    Route::put('categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'update'])->name('admin.categories.update');
+    Route::delete('categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'destroy'])->name('admin.categories.destroy');
+
     // User Management (kelola hak akses pengguna)
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'store', 'destroy']);
 
-    // Laporan Stok (Stock Movement & Historical Data)
-    Route::get('stock-report', [StockReportController::class, 'index'])->name('admin.stock-report.index');
+    // Pusat Laporan (gabungan 5 laporan: Penjualan, Per Produk, Stok, Aset, Pembayaran)
+    Route::get('report-center', [ReportCenterController::class, 'index'])->name('admin.report-center.index');
 
-    // Laporan Penjualan Komprehensif (Overall Sales)
-    Route::get('sales-report', [\App\Http\Controllers\Admin\SalesReportController::class, 'index'])->name('admin.sales-report.index');
-
-    // Laporan Penjualan Per Produk (Historical Sales per Product)
-    Route::get('product-sales-report', [\App\Http\Controllers\Admin\ProductSalesReportController::class, 'index'])->name('admin.product-sales-report.index');
-
-    // Laporan Nilai Aset Inventaris (KF-11)
-    Route::get('asset-report', [\App\Http\Controllers\Admin\AssetReportController::class, 'index'])->name('admin.asset-report.index');
-
-    // Laporan Rekapitulasi Pembayaran (KF-35)
-    Route::get('payment-report', [\App\Http\Controllers\Admin\PaymentReportController::class, 'index'])->name('admin.payment-report.index');
+    // Route lama dikomentari — bisa dihapus setelah yakin semua berjalan baik
+    // Route::get('stock-report', [StockReportController::class, 'index'])->name('admin.stock-report.index');
+    // Route::get('sales-report', [\App\Http\Controllers\Admin\SalesReportController::class, 'index'])->name('admin.sales-report.index');
+    // Route::get('product-sales-report', [\App\Http\Controllers\Admin\ProductSalesReportController::class, 'index'])->name('admin.product-sales-report.index');
+    // Route::get('asset-report', [\App\Http\Controllers\Admin\AssetReportController::class, 'index'])->name('admin.asset-report.index');
+    // Route::get('payment-report', [\App\Http\Controllers\Admin\PaymentReportController::class, 'index'])->name('admin.payment-report.index');
 });

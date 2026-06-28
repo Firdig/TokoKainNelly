@@ -10,12 +10,36 @@
             <h2 class="font-outfit text-3xl font-bold text-brand-900">Daftar Pesanan Masuk</h2>
             <p class="mt-1 text-sm text-slate-500">Pantau dan kelola pesanan pengiriman (Delivery), pengambilan lokal (BOPS), dan transaksi langsung di toko (POS).</p>
         </div>
-        <div class="mt-4 md:mt-0 flex gap-2">
-            <a href="{{ url('/admin/orders') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ !request('type') ? 'bg-brand-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' }}">Semua</a>
-            <a href="{{ url('/admin/orders?type=bops') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ request('type') == 'bops' ? 'bg-brand-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' }}">BOPS (Pickup)</a>
-            <a href="{{ url('/admin/orders?type=delivery') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ request('type') == 'delivery' ? 'bg-brand-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' }}">Delivery</a>
-            <a href="{{ url('/admin/orders?type=pos') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ request('type') == 'pos' ? 'bg-brand-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' }}">POS (Kasir)</a>
-        </div>
+    </div>
+
+    {{-- Filter: Tipe Transaksi --}}
+    <div class="mb-4 flex flex-wrap gap-2">
+        <span class="self-center text-xs font-bold text-slate-500 uppercase tracking-wider mr-2">Tipe:</span>
+        <a href="{{ url('/admin/orders?' . http_build_query(array_merge(request()->except('type', 'page'), []))) }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ !request('type') ? 'bg-brand-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' }}">Semua</a>
+        <a href="{{ url('/admin/orders?' . http_build_query(array_merge(request()->except('page'), ['type' => 'bops']))) }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ request('type') == 'bops' ? 'bg-brand-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' }}">BOPS (Pickup)</a>
+        <a href="{{ url('/admin/orders?' . http_build_query(array_merge(request()->except('page'), ['type' => 'delivery']))) }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ request('type') == 'delivery' ? 'bg-brand-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' }}">Delivery</a>
+        <a href="{{ url('/admin/orders?' . http_build_query(array_merge(request()->except('page'), ['type' => 'pos']))) }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ request('type') == 'pos' ? 'bg-brand-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' }}">POS (Kasir)</a>
+    </div>
+
+    {{-- Filter: Status --}}
+    <div class="mb-6 flex flex-wrap gap-2">
+        <span class="self-center text-xs font-bold text-slate-500 uppercase tracking-wider mr-2">Status:</span>
+        <a href="{{ url('/admin/orders?' . http_build_query(array_merge(request()->except('status', 'page'), []))) }}" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors border {{ !request('status') ? 'bg-brand-900 text-white border-brand-900 shadow-sm' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50' }}">Semua</a>
+        @php
+            $statusFilters = [
+                'pending' => ['label' => 'Pending', 'active_class' => 'bg-yellow-100 text-yellow-800 border-yellow-300'],
+                'in_preparation' => ['label' => 'Diproses', 'active_class' => 'bg-blue-100 text-blue-800 border-blue-300'],
+                'ready_for_pickup' => ['label' => 'Siap Diambil', 'active_class' => 'bg-indigo-100 text-indigo-800 border-indigo-300'],
+                'shipped' => ['label' => 'Dikirim', 'active_class' => 'bg-cyan-100 text-cyan-800 border-cyan-300'],
+                'completed' => ['label' => 'Selesai', 'active_class' => 'bg-green-100 text-green-800 border-green-300'],
+                'cancelled' => ['label' => 'Dibatalkan', 'active_class' => 'bg-red-100 text-red-800 border-red-300'],
+            ];
+        @endphp
+        @foreach($statusFilters as $statusKey => $statusInfo)
+            <a href="{{ url('/admin/orders?' . http_build_query(array_merge(request()->except('page'), ['status' => $statusKey]))) }}" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors border {{ request('status') == $statusKey ? $statusInfo['active_class'] . ' shadow-sm' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50' }}">
+                {{ $statusInfo['label'] }}
+            </a>
+        @endforeach
     </div>
 
     @if(session('success'))
@@ -32,6 +56,7 @@
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-brand-900 uppercase tracking-wider font-outfit">Invoice</th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-brand-900 uppercase tracking-wider font-outfit">Tipe Transaksi</th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-brand-900 uppercase tracking-wider font-outfit">Total Nominal</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-brand-900 uppercase tracking-wider font-outfit">Diproses Oleh</th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-brand-900 uppercase tracking-wider font-outfit w-40">Status Terkini</th>
                         <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-brand-900 uppercase tracking-wider font-outfit w-56">Aksi & Update</th>
                     </tr>
@@ -61,6 +86,14 @@
                                     <span class="text-[10px] font-bold text-amber-600">Belum Bayar</span>
                                 @endif
                             </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @if($order->processedBy)
+                                <div class="text-sm font-medium text-brand-900">{{ $order->processedBy->name }}</div>
+                                <div class="text-[10px] text-slate-400 uppercase font-bold">{{ $order->processedBy->role }}</div>
+                            @else
+                                <span class="text-xs text-slate-400 italic">Belum diproses</span>
+                            @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @php
@@ -93,7 +126,7 @@
                                             <form action="{{ url('/admin/orders/' . $order->id . '/status') }}" method="POST">
                                                 @csrf
                                                 <input type="hidden" name="status" value="in_preparation">
-                                                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-black px-3 py-2 rounded-lg font-bold text-xs shadow-md transition-all flex items-center gap-1">
+                                                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg font-bold text-xs shadow-md transition-all flex items-center gap-1">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                                     Confirm Stock
                                                 </button>
@@ -160,7 +193,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-12 text-center text-slate-400">
+                        <td colspan="6" class="px-6 py-12 text-center text-slate-400">
                             <h3 class="mt-2 text-sm font-medium text-brand-900">Belum ada pesanan masuk</h3>
                         </td>
                     </tr>
@@ -168,6 +201,12 @@
                 </tbody>
             </table>
         </div>
+
+        @if($orders->hasPages())
+        <div class="px-6 py-4 border-t border-brand-100">
+            {{ $orders->links() }}
+        </div>
+        @endif
     </div>
 </div>
 @endsection

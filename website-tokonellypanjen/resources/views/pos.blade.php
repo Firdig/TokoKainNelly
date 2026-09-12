@@ -89,11 +89,11 @@
                 <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4" id="productGrid">
                     @foreach($products as $product)
                         @foreach($product->variants as $variant)
-                        <div class="product-card bg-white rounded-xl border border-brand-100 shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col h-full overflow-hidden {{ $variant->stock == 0 ? 'opacity-60 grayscale' : '' }}"
+                        <div id="product-card-{{ $variant->id }}" class="product-card bg-white rounded-xl border border-brand-100 shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col h-full overflow-hidden {{ $variant->stock == 0 ? 'opacity-60 grayscale' : '' }}"
                              data-name="{{ strtolower($product->name) }}"
                              data-color="{{ strtolower($variant->color_name) }}"
 
-                             onclick="{{ $variant->stock > 0 ? "tambahKeKeranjang({$variant->id}, '" . addslashes($product->name . ' - ' . $variant->color_name) . "', {$product->price}, {$variant->stock})" : "alert('Stok Habis!')" }}">
+                             onclick="tambahKeKeranjang({{ $variant->id }}, '{{ addslashes($product->name . ' - ' . $variant->color_name) }}', {{ $product->price }})">
                             <div class="p-4 flex-1 flex flex-col items-center text-center justify-center relative">
                                 <!-- Quick add indication overlay -->
                                 <div class="absolute inset-0 bg-brand-600/5 items-center justify-center hidden group-active:flex transition-opacity z-20">
@@ -111,9 +111,9 @@
                                 <p class="text-brand-900 font-semibold mb-3 text-sm">Rp{{ number_format($product->price, 0, ',', '.') }}<span class="text-[10px] font-normal text-slate-400">/m</span></p>
                                 
                                 <div class="mt-auto w-full pt-3 border-t border-brand-50 flex justify-between items-center text-xs relative z-10">
-                                    <span class="text-slate-500 font-medium">Stok: <strong class="{{ $variant->stock < 10 ? 'text-red-500' : 'text-brand-900' }}">{{ $variant->stock }}m</strong></span>
-                                    <span class="bg-brand-50 text-brand-600 px-2 py-1 rounded {{ $variant->stock == 0 ? 'hidden' : '' }} font-bold text-[10px] uppercase">+ Tambah</span>
-                                    <span class="bg-red-50 text-red-600 px-2 py-1 rounded font-bold text-[10px] {{ $variant->stock > 0 ? 'hidden' : '' }}">HABIS</span>
+                                    <span class="text-slate-500 font-medium">Stok: <strong id="stock-text-{{ $variant->id }}" class="{{ $variant->stock < 10 ? 'text-red-500' : 'text-brand-900' }}">{{ $variant->stock }}m</strong></span>
+                                    <span id="badge-tambah-{{ $variant->id }}" class="bg-brand-50 text-brand-600 px-2 py-1 rounded {{ $variant->stock == 0 ? 'hidden' : '' }} font-bold text-[10px] uppercase">+ Tambah</span>
+                                    <span id="badge-habis-{{ $variant->id }}" class="bg-red-50 text-red-600 px-2 py-1 rounded font-bold text-[10px] {{ $variant->stock > 0 ? 'hidden' : '' }}">HABIS</span>
                                 </div>
                             </div>
                         </div>
@@ -378,6 +378,69 @@
 <script>
     let keranjang = [];
     let currentTotalValue = 0;
+    
+    const stockData = {
+        @foreach($products as $product)
+            @foreach($product->variants as $variant)
+                {{ $variant->id }}: {{ $variant->stock }},
+            @endforeach
+        @endforeach
+    };
+
+    // Live stock update every 10 seconds
+    function fetchStockUpdates() {
+        fetch('{{ route('pos.stock') }}')
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(variant => {
+                    let id = variant.id;
+                    let stock = parseFloat(variant.stock);
+                    
+                    // Update global stock data
+                    stockData[id] = stock;
+                    
+                    // Update DOM
+                    let card = document.getElementById('product-card-' + id);
+                    if (card) {
+                        let stockText = document.getElementById('stock-text-' + id);
+                        let badgeTambah = document.getElementById('badge-tambah-' + id);
+                        let badgeHabis = document.getElementById('badge-habis-' + id);
+                        
+                        if (stockText) {
+                            stockText.innerText = stock + 'm';
+                            if (stock < 10) {
+                                stockText.classList.remove('text-brand-900');
+                                stockText.classList.add('text-red-500');
+                            } else {
+                                stockText.classList.remove('text-red-500');
+                                stockText.classList.add('text-brand-900');
+                            }
+                        }
+
+                        if (stock <= 0) {
+                            card.classList.add('opacity-60', 'grayscale');
+                            if (badgeTambah) badgeTambah.classList.add('hidden');
+                            if (badgeHabis) badgeHabis.classList.remove('hidden');
+                        } else {
+                            card.classList.remove('opacity-60', 'grayscale');
+                            if (badgeTambah) badgeTambah.classList.remove('hidden');
+                            if (badgeHabis) badgeHabis.classList.add('hidden');
+                        }
+                    }
+                    
+                    // Update stock in keranjang if exists
+                    let item = keranjang.find(i => i.product_variant_id === id);
+                    if (item) {
+                        item.stock = stock;
+                    }
+                });
+                renderKeranjang();
+            })
+            .catch(err => console.error('Error fetching stock updates:', err));
+    }
+    
+    // Call every 10 seconds
+    setInterval(fetchStockUpdates, 10000);
 
     // ──────────────────────────────────────────────────
     // SEARCH & FILTER
@@ -464,7 +527,13 @@
         }
     });
 
-    function tambahKeKeranjang(id, nama, harga, stok) {
+    function tambahKeKeranjang(id, nama, harga) {
+        let stok = stockData[id];
+        if (stok <= 0) {
+            alert('Stok Habis!');
+            return;
+        }
+
         let itemIndex = keranjang.findIndex(item => item.product_variant_id === id);
         
         if (itemIndex > -1) {

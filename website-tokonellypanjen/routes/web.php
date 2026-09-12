@@ -87,6 +87,7 @@ Route::middleware(['auth', 'role:admin,staff'])->group(function () {
     Route::get('/kasir/receipt/{id}', [WebController::class, 'receipt'])->name('pos.receipt');
     Route::get('/laporan', [WebController::class, 'laporan'])->name('laporan');
     Route::post('/checkout', [TransactionController::class, 'store'])->name('pos.checkout');
+    Route::get('/api/pos/stock', [WebController::class, 'posStock'])->name('pos.stock');
 });
 
 // ═══════════════════════════════════════════════════════════════
@@ -98,7 +99,10 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,staff'])->group(function
     Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
-    // Dinonaktifkan: tidak termasuk dalam Use Case Diagram
+    // Real-time Notification API (AJAX polling)
+    Route::get('api/notifications/check', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'check'])->name('admin.notifications.check');
+    Route::get('api/orders/list', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'orderTableRows'])->name('admin.orders.list');
+
     // Route::get('stock-opname', [\App\Http\Controllers\Admin\StockOpnameController::class, 'index'])->name('stock-opname.index');
     // Route::post('stock-opname', [\App\Http\Controllers\Admin\StockOpnameController::class, 'store'])->name('stock-opname.store');
 

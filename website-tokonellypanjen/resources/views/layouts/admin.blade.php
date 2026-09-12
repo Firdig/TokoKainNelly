@@ -72,11 +72,9 @@
                     <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                     <span>Pesanan (Orders)</span>
                 </span>
-                @if(($pendingOnlineOrders ?? 0) > 0)
-                <span class="w-5 h-5 flex items-center justify-center text-[10px] font-bold bg-red-500 text-white rounded-full shadow-sm">
-                    {{ $pendingOnlineOrders }}
+                <span id="sidebar-order-badge" class="w-5 h-5 flex items-center justify-center text-[10px] font-bold bg-red-500 text-white rounded-full shadow-sm" @if(($pendingOnlineOrders ?? 0) == 0) style="display:none" @endif>
+                    {{ $pendingOnlineOrders ?? 0 }}
                 </span>
-                @endif
             </a>
 
             <a href="{{ url('/admin/scanner') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ request()->is('admin/scanner*') ? 'bg-brand-600 text-white font-bold' : 'text-brand-300 hover:bg-brand-800 hover:text-white' }}">
@@ -136,14 +134,12 @@
             
             <div class="flex items-center gap-6">
                 <!-- Notification Bell -->
-                @if(($pendingOnlineOrders ?? 0) > 0)
-                <a href="{{ url('/admin/orders?status=pending') }}" class="relative p-2 rounded-lg text-brand-600 hover:bg-brand-50 transition-colors" title="Pesanan online menunggu">
+                <a id="header-bell-container" href="{{ url('/admin/orders?status=pending') }}" class="relative p-2 rounded-lg text-brand-600 hover:bg-brand-50 transition-colors" title="Pesanan online menunggu" @if(($pendingOnlineOrders ?? 0) == 0) style="display:none" @endif>
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                    <span class="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center text-[10px] font-bold bg-red-500 text-white rounded-full shadow-sm">
-                        {{ $pendingOnlineOrders }}
+                    <span class="notif-badge-count absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center text-[10px] font-bold bg-red-500 text-white rounded-full shadow-sm">
+                        {{ $pendingOnlineOrders ?? 0 }}
                     </span>
                 </a>
-                @endif
 
                 <!-- Branch Selector -->
                 <div class="hidden md:flex items-center gap-2 px-4 py-2 bg-brand-50 rounded-lg border border-brand-100">
@@ -170,6 +166,338 @@
         </main>
 
     </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- REAL-TIME NOTIFICATION SYSTEM                                  -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-24 right-4 z-50 flex flex-col gap-3 pointer-events-none" style="max-width: 380px;"></div>
+
+    <style>
+        /* Toast notification animations */
+        @keyframes toastSlideIn {
+            from { transform: translateX(120%); opacity: 0; }
+            to   { transform: translateX(0);    opacity: 1; }
+        }
+        @keyframes toastSlideOut {
+            from { transform: translateX(0);    opacity: 1; }
+            to   { transform: translateX(120%); opacity: 0; }
+        }
+        .toast-enter {
+            animation: toastSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .toast-exit {
+            animation: toastSlideOut 0.3s ease-in forwards;
+        }
+        @keyframes toastProgress {
+            from { width: 100%; }
+            to   { width: 0%; }
+        }
+        .toast-progress-bar {
+            animation: toastProgress 6s linear forwards;
+        }
+        /* Pulse animation for new-order highlight */
+        @keyframes rowHighlight {
+            0%, 100% { background-color: transparent; }
+            50%      { background-color: rgb(254 243 199 / 0.7); }
+        }
+        .row-highlight {
+            animation: rowHighlight 1s ease-in-out 3;
+        }
+    </style>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ─────────────────────────────────────────────
+        // Configuration
+        // ─────────────────────────────────────────────
+        const POLL_INTERVAL   = 15000; // 15 seconds
+        const TOAST_DURATION  = 6000;  // 6 seconds
+        const CHECK_URL       = @json(route('admin.notifications.check'));
+        const ORDERS_LIST_URL = @json(route('admin.orders.list'));
+
+        let lastCheck = new Date().toISOString();
+        let audioCtx  = null;
+
+        // ─────────────────────────────────────────────
+        // Request browser notification permission
+        // ─────────────────────────────────────────────
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+
+        // ─────────────────────────────────────────────
+        // Notification Sound (Web Audio API)
+        // ─────────────────────────────────────────────
+        function playNotificationSound() {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+
+                const now = audioCtx.currentTime;
+
+                // First tone — high pitched "ding"
+                const osc1 = audioCtx.createOscillator();
+                const gain1 = audioCtx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(880, now);
+                gain1.gain.setValueAtTime(0.3, now);
+                gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                osc1.connect(gain1);
+                gain1.connect(audioCtx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.5);
+
+                // Second tone — slightly higher, short delay
+                const osc2 = audioCtx.createOscillator();
+                const gain2 = audioCtx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(1175, now + 0.15);
+                gain2.gain.setValueAtTime(0, now);
+                gain2.gain.setValueAtTime(0.25, now + 0.15);
+                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+                osc2.connect(gain2);
+                gain2.connect(audioCtx.destination);
+                osc2.start(now + 0.15);
+                osc2.stop(now + 0.7);
+            } catch (e) {
+                // Audio not available, silently ignore
+            }
+        }
+
+        // ─────────────────────────────────────────────
+        // Toast Notification
+        // ─────────────────────────────────────────────
+        function showToast(order) {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const typeColors = {
+                'bops':     { bg: 'bg-purple-50',  border: 'border-purple-200', icon: 'text-purple-600', label: 'BOPS (Pickup)' },
+                'delivery': { bg: 'bg-emerald-50', border: 'border-emerald-200', icon: 'text-emerald-600', label: 'Delivery' },
+                'pos':      { bg: 'bg-blue-50',    border: 'border-blue-200', icon: 'text-blue-600', label: 'POS' },
+            };
+            const tc = typeColors[order.transaction_type] || typeColors['delivery'];
+
+            const amount = new Intl.NumberFormat('id-ID').format(order.total_amount);
+
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto bg-white rounded-2xl shadow-2xl border ${tc.border} overflow-hidden toast-enter`;
+            toast.innerHTML = `
+                <div class="p-4">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-xl ${tc.bg} ${tc.icon} flex items-center justify-center shrink-0 mt-0.5">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-xs font-bold text-brand-900">Pesanan Baru!</span>
+                                <button onclick="this.closest('.toast-enter, [class*=pointer-events-auto]').remove()" class="text-slate-400 hover:text-slate-600 transition-colors p-0.5">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+                            <p class="text-sm font-bold text-brand-800 mt-1 truncate">${order.invoice_number}</p>
+                            <p class="text-xs text-slate-500 mt-0.5 truncate">${order.customer_name}</p>
+                            <div class="flex items-center gap-2 mt-2">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${tc.bg} ${tc.icon}">${tc.label}</span>
+                                <span class="text-xs font-bold text-brand-600">Rp${amount}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="h-1 bg-slate-100">
+                    <div class="h-full bg-brand-500 rounded-full toast-progress-bar"></div>
+                </div>
+            `;
+
+            container.appendChild(toast);
+
+            // Make toast clickable — navigate to orders
+            toast.querySelector('.flex.items-start').style.cursor = 'pointer';
+            toast.querySelector('.flex.items-start').addEventListener('click', function(e) {
+                if (e.target.closest('button')) return;
+                window.location.href = '/admin/orders?status=pending';
+            });
+
+            // Auto-remove after duration
+            setTimeout(() => {
+                toast.classList.remove('toast-enter');
+                toast.classList.add('toast-exit');
+                setTimeout(() => toast.remove(), 300);
+            }, TOAST_DURATION);
+        }
+
+        // ─────────────────────────────────────────────
+        // Browser Notification
+        // ─────────────────────────────────────────────
+        function showBrowserNotification(order) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                try {
+                    const amount = new Intl.NumberFormat('id-ID').format(order.total_amount);
+                    const notif = new Notification('🔔 Pesanan Baru — Toko Nelly', {
+                        body: `${order.invoice_number}\n${order.customer_name} — Rp${amount}\nTipe: ${order.transaction_type.toUpperCase()}`,
+                        icon: '/images/logo.jpg',
+                        tag: 'order-' + order.id,
+                        requireInteraction: false,
+                    });
+                    notif.onclick = function() {
+                        window.focus();
+                        window.location.href = '/admin/orders?status=pending';
+                        notif.close();
+                    };
+                } catch (e) {
+                    // Browser notification not supported
+                }
+            }
+        }
+
+        // ─────────────────────────────────────────────
+        // Update Badge Counters
+        // ─────────────────────────────────────────────
+        function updateBadges(data) {
+            // Sidebar badge (Pesanan link)
+            const sidebarBadge = document.getElementById('sidebar-order-badge');
+            if (sidebarBadge) {
+                if (data.pending_count > 0) {
+                    sidebarBadge.textContent = data.pending_count;
+                    sidebarBadge.style.display = '';
+                } else {
+                    sidebarBadge.style.display = 'none';
+                }
+            }
+
+            // Header bell badge
+            const headerBell = document.getElementById('header-bell-container');
+            if (headerBell) {
+                if (data.pending_count > 0) {
+                    headerBell.style.display = '';
+                    const badge = headerBell.querySelector('.notif-badge-count');
+                    if (badge) badge.textContent = data.pending_count;
+                } else {
+                    headerBell.style.display = 'none';
+                }
+            }
+        }
+
+        // ─────────────────────────────────────────────
+        // Update Dashboard (if on dashboard page)
+        // ─────────────────────────────────────────────
+        function updateDashboard(data) {
+            const pendingCard = document.getElementById('dashboard-pending-count');
+            if (pendingCard) {
+                pendingCard.textContent = data.pending_count;
+            }
+
+            // Update notification banner
+            const banner = document.getElementById('dashboard-pending-banner');
+            if (banner) {
+                if (data.pending_count > 0) {
+                    banner.style.display = '';
+                    const bannerCount = document.getElementById('dashboard-pending-banner-count');
+                    if (bannerCount) bannerCount.textContent = data.pending_count + ' Pesanan Online Menunggu!';
+
+                    const bannerDetail = document.getElementById('dashboard-pending-banner-detail');
+                    if (bannerDetail) {
+                        let parts = [];
+                        if (data.pending_bops > 0) parts.push(`<span class="font-semibold">${data.pending_bops} BOPS (Pickup)</span>`);
+                        if (data.pending_bops > 0 && data.pending_delivery > 0) parts.push(' &bull; ');
+                        if (data.pending_delivery > 0) parts.push(`<span class="font-semibold">${data.pending_delivery} Delivery</span>`);
+                        parts.push(' — Segera proses untuk kepuasan pelanggan.');
+                        bannerDetail.innerHTML = parts.join('');
+                    }
+                } else {
+                    banner.style.display = 'none';
+                }
+            }
+        }
+
+        // ─────────────────────────────────────────────
+        // Refresh Order Table (if on orders page)
+        // ─────────────────────────────────────────────
+        function refreshOrderTable() {
+            const tbody = document.getElementById('order-table-body');
+            if (!tbody) return; // Not on orders page
+
+            // Get current filter params from URL
+            const params = new URLSearchParams(window.location.search);
+            const url = ORDERS_LIST_URL + '?' + params.toString();
+
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'text/html',
+                }
+            })
+            .then(res => res.text())
+            .then(html => {
+                tbody.innerHTML = html;
+            })
+            .catch(err => {
+                console.warn('Order table refresh failed:', err);
+            });
+        }
+
+        // ─────────────────────────────────────────────
+        // Main Polling Function
+        // ─────────────────────────────────────────────
+        function pollNotifications() {
+            const url = CHECK_URL + '?last_check=' + encodeURIComponent(lastCheck);
+
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                // Update timestamp for next poll
+                if (data.server_time) {
+                    lastCheck = data.server_time;
+                }
+
+                // Update badge counters on all pages
+                updateBadges(data);
+
+                // Update dashboard if on dashboard
+                updateDashboard(data);
+
+                // If there are new orders
+                if (data.new_orders && data.new_orders.length > 0) {
+                    // Play sound once for all new orders
+                    playNotificationSound();
+
+                    // Show toast for each new order (max 5 to avoid overflow)
+                    const ordersToShow = data.new_orders.slice(0, 5);
+                    ordersToShow.forEach((order, idx) => {
+                        setTimeout(() => {
+                            showToast(order);
+                            showBrowserNotification(order);
+                        }, idx * 300); // Stagger toasts
+                    });
+
+                    // If on orders page, refresh the table
+                    refreshOrderTable();
+                }
+            })
+            .catch(err => {
+                console.warn('Notification poll failed:', err);
+            });
+        }
+
+        // ─────────────────────────────────────────────
+        // Start Polling
+        // ─────────────────────────────────────────────
+        setInterval(pollNotifications, POLL_INTERVAL);
+
+        // Also poll once immediately on page load (after a brief delay)
+        setTimeout(pollNotifications, 2000);
+    });
+    </script>
 
 </body>
 </html>

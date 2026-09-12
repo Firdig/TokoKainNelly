@@ -208,7 +208,7 @@
                         </div>
 
                         <!-- Action Buttons -->
-                        @if($order->isPaymentPending())
+                        @if($order->status === 'pending')
                             <div class="border-t border-brand-100 mt-6 pt-6 space-y-3">
                                 @if($order->usesMidtrans() && $order->isPaymentPending())
                                     <a href="{{ route('checkout.payment', $order->id) }}" class="w-full text-center px-4 py-3 bg-gradient-to-r from-brand-800 to-brand-900 text-white rounded-xl font-bold font-outfit text-sm shadow-lg shadow-brand-900/30 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">

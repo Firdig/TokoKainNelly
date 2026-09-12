@@ -37,25 +37,24 @@ class CustomerOrderController extends Controller
     }
 
     /**
-     * Cancel an order if it is still in 'pending' status (Diterima)
-     * or has not been paid yet (Menunggu Pembayaran).
-     * Per AD-19: Once the order moves to 'in_preparation' or beyond it cannot be cancelled.
+     * Cancel an order if it is still in 'pending' status (Menunggu Konfirmasi).
+     * Once the admin confirms the order (moves to 'in_preparation' / Diproses),
+     * the customer can no longer cancel.
      */
     public function cancel($id)
     {
         $order = Order::where('user_id', Auth::id())->findOrFail($id);
 
-        // AD-19: Allow cancellation only when status is 'pending' OR payment is still pending.
-        // Block when order is already being prepared (in_preparation) or later stages.
-        $isCancellable = $order->status === 'pending' || $order->isPaymentPending();
         $isAlreadyClosed = in_array($order->status, ['cancelled', 'completed']);
 
         if ($isAlreadyClosed) {
             return back()->with('error', 'Pesanan ini sudah ' . ($order->status === 'cancelled' ? 'dibatalkan' : 'selesai') . '.');
         }
 
-        if (!$isCancellable) {
-            return back()->with('error', 'Pesanan tidak dapat dibatalkan karena sedang diproses atau sudah dikirim.');
+        // Allow cancellation only when status is 'pending' (before admin confirms).
+        // Once the order moves to 'in_preparation' or beyond, it cannot be cancelled.
+        if ($order->status !== 'pending') {
+            return back()->with('error', 'Pesanan tidak dapat dibatalkan karena sudah dikonfirmasi dan sedang diproses.');
         }
 
         // Return stock
@@ -69,10 +68,41 @@ class CustomerOrderController extends Controller
             ]);
         }
 
+        // Refund payment if the order has already been paid via Midtrans
+        $refundSuccess = false;
+        $wasPaidViaMidtrans = $order->isPaid() && $order->usesMidtrans();
+
+        if ($wasPaidViaMidtrans) {
+            try {
+                $midtransService = app(\App\Services\MidtransService::class);
+                $refundSuccess = $midtransService->refundOrder($order);
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Refund failed during order cancellation', [
+                    'order_id' => $order->id,
+                    'error'    => $e->getMessage(),
+                ]);
+            }
+        }
+
+        // Determine new payment status
+        $newPaymentStatus = $order->payment_status;
+        if ($refundSuccess) {
+            $newPaymentStatus = 'refunded';
+        } elseif ($order->isPaymentPending()) {
+            $newPaymentStatus = 'cancelled';
+        }
+
         $order->update([
             'status'         => 'cancelled',
-            'payment_status' => $order->isPaymentPending() ? 'cancelled' : $order->payment_status,
+            'payment_status' => $newPaymentStatus,
         ]);
+
+        // Show appropriate message based on refund result
+        if ($refundSuccess) {
+            return redirect()->route('orders.index')->with('success', 'Pesanan berhasil dibatalkan. Dana akan dikembalikan ke metode pembayaran Anda.');
+        } elseif ($wasPaidViaMidtrans && !$refundSuccess) {
+            return redirect()->route('orders.index')->with('warning', 'Pesanan berhasil dibatalkan, namun pengembalian dana gagal diproses otomatis. Silakan hubungi admin untuk pengembalian dana.');
+        }
 
         return redirect()->route('orders.index')->with('success', 'Pesanan berhasil dibatalkan.');
     }

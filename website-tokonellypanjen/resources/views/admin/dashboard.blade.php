@@ -5,16 +5,15 @@
 @section('content')
 
 {{-- Notification Banner: Pending Online Orders --}}
-@if($pendingOrders > 0)
-<div class="mb-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-5 shadow-sm">
+<div id="dashboard-pending-banner" class="mb-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-5 shadow-sm" @if($pendingOrders == 0) style="display:none" @endif>
     <div class="flex items-center justify-between flex-wrap gap-4">
         <div class="flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
                 <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
             </div>
             <div>
-                <h3 class="font-outfit font-bold text-amber-900 text-lg">{{ $pendingOrders }} Pesanan Online Menunggu!</h3>
-                <p class="text-sm text-amber-700 mt-0.5">
+                <h3 id="dashboard-pending-banner-count" class="font-outfit font-bold text-amber-900 text-lg">{{ $pendingOrders }} Pesanan Online Menunggu!</h3>
+                <p id="dashboard-pending-banner-detail" class="text-sm text-amber-700 mt-0.5">
                     @if($pendingBops > 0)<span class="font-semibold">{{ $pendingBops }} BOPS (Pickup)</span>@endif
                     @if($pendingBops > 0 && $pendingDelivery > 0) &bull; @endif
                     @if($pendingDelivery > 0)<span class="font-semibold">{{ $pendingDelivery }} Delivery</span>@endif
@@ -28,7 +27,6 @@
         </a>
     </div>
 </div>
-@endif
 
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
     @if(Auth::user()->role === 'admin')
@@ -62,7 +60,7 @@
         </div>
         <div>
             <div class="text-sm font-bold text-slate-500 mb-1">Pesanan Online (Pending)</div>
-            <div class="text-2xl font-extrabold text-brand-900 font-outfit">{{ $pendingOrders }}</div>
+            <div id="dashboard-pending-count" class="text-2xl font-extrabold text-brand-900 font-outfit">{{ $pendingOrders }}</div>
         </div>
     </div>
 </div>

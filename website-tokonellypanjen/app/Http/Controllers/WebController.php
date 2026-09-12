@@ -32,6 +32,15 @@ class WebController extends Controller
     }
 
     /**
+     * Get current stock of all product variants for POS live update.
+     */
+    public function posStock()
+    {
+        $variants = \App\Models\ProductVariant::select('id', 'stock')->get();
+        return response()->json($variants);
+    }
+
+    /**
      * Display the POS receipt/struk for a given order.
      * Only accessible for POS transaction orders.
      */

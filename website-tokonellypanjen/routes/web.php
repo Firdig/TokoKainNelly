@@ -87,6 +87,7 @@ Route::middleware(['auth', 'role:admin,staff'])->group(function () {
     Route::get('/kasir/receipt/{id}', [WebController::class, 'receipt'])->name('pos.receipt');
     Route::get('/laporan', [WebController::class, 'laporan'])->name('laporan');
     Route::post('/checkout', [TransactionController::class, 'store'])->name('pos.checkout');
+    Route::get('/api/pos/stock', [WebController::class, 'posStock'])->name('pos.stock');
 });
 
 // ═══════════════════════════════════════════════════════════════

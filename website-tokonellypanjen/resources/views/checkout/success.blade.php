@@ -135,10 +135,10 @@
                     @endif
                 </div>
 
-                <!-- Action Buttons (for unpaid/pending orders) -->
-                @if($order->isPaymentPending())
+                <!-- Action Buttons (for pending orders - before admin confirms) -->
+                @if($order->status === 'pending')
                 <div class="mb-8 flex flex-col sm:flex-row gap-4">
-                    @if($order->usesMidtrans())
+                    @if($order->usesMidtrans() && $order->isPaymentPending())
                     <button id="pay-button"
                         class="w-full sm:flex-1 text-center px-8 py-4 bg-gradient-to-r from-brand-800 to-brand-900 text-white rounded-xl font-bold font-outfit text-lg shadow-xl shadow-brand-900/30 hover:-translate-y-1 hover:shadow-2xl transition-all flex items-center justify-center gap-3">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -148,7 +148,7 @@
                     </button>
                     @endif
 
-                    <form action="{{ route('orders.cancel', $order->id) }}" method="POST" class="w-full @if($order->usesMidtrans()) sm:flex-1 @endif" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini? Stok akan dikembalikan.');">
+                    <form action="{{ route('orders.cancel', $order->id) }}" method="POST" class="w-full @if($order->usesMidtrans() && $order->isPaymentPending()) sm:flex-1 @endif" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini? Stok akan dikembalikan.');">
                         @csrf
                         <button type="submit" class="w-full h-full text-center px-8 py-4 bg-white text-red-600 border-2 border-red-200 rounded-xl font-bold font-outfit text-lg hover:bg-red-50 hover:border-red-300 transition-all flex items-center justify-center gap-3">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -158,7 +158,7 @@
                         </button>
                     </form>
                 </div>
-                @if($order->usesMidtrans())
+                @if($order->usesMidtrans() && $order->isPaymentPending())
                 <p class="text-center text-xs text-slate-400 mt-[-1rem] mb-8">Klik Bayar Sekarang untuk membuka halaman pembayaran Midtrans</p>
                 @endif
                 @endif

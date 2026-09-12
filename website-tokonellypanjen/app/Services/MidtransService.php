@@ -245,4 +245,62 @@ class MidtransService
             'invoice'  => $order->invoice_number,
         ]);
     }
+
+    /**
+     * Refund a paid Midtrans order (full refund).
+     *
+     * Calls the Midtrans Refund API to return the payment to the buyer.
+     * Updates the order's payment_status to 'refunded' on success.
+     *
+     * @param  Order  $order  The paid order to refund
+     * @return bool True if refund was successful
+     */
+    public function refundOrder(Order $order): bool
+    {
+        if ($order->payment_status !== 'paid') {
+            Log::warning('Refund skipped: order is not paid', [
+                'order_id'       => $order->id,
+                'payment_status' => $order->payment_status,
+            ]);
+            return false;
+        }
+
+        if (empty($order->midtrans_transaction_id)) {
+            Log::warning('Refund skipped: no Midtrans transaction ID', [
+                'order_id' => $order->id,
+            ]);
+            return false;
+        }
+
+        $refundKey = 'refund-' . $order->invoice_number . '-' . time();
+        $params = [
+            'refund_key' => $refundKey,
+            'amount'     => (int) round($order->total_amount),
+            'reason'     => 'Pembatalan pesanan oleh pelanggan',
+        ];
+
+        try {
+            \Midtrans\Transaction::refund($order->midtrans_transaction_id, $params);
+
+            $order->update(['payment_status' => 'refunded']);
+
+            Log::info('Midtrans refund successful', [
+                'order_id'       => $order->id,
+                'invoice'        => $order->invoice_number,
+                'transaction_id' => $order->midtrans_transaction_id,
+                'amount'         => $params['amount'],
+            ]);
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Midtrans refund failed', [
+                'order_id'       => $order->id,
+                'invoice'        => $order->invoice_number,
+                'transaction_id' => $order->midtrans_transaction_id,
+                'error'          => $e->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
 }
